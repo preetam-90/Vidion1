@@ -1,0 +1,216 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 0 72.2% 50.6%;
+    --primary-foreground: 0 85.7% 97.3%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 72.2% 50.6%;
+    --primary-foreground: 0 85.7% 97.3%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+
+  /* Purple theme */
+  .purple {
+    --background: 280 20% 97%;
+    --foreground: 280 25% 10%;
+    --card: 280 20% 97%;
+    --card-foreground: 280 25% 10%;
+    --popover: 280 20% 97%;
+    --popover-foreground: 280 25% 10%;
+    --primary: 280 75% 45%;
+    --primary-foreground: 280 10% 97%;
+    --secondary: 280 15% 90%;
+    --secondary-foreground: 280 25% 10%;
+    --muted: 280 15% 90%;
+    --muted-foreground: 280 15% 40%;
+    --accent: 280 15% 90%;
+    --accent-foreground: 280 25% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 280 15% 85%;
+    --input: 280 15% 85%;
+    --ring: 280 75% 45%;
+  }
+
+  /* Green theme */
+  .green {
+    --background: 150 20% 97%;
+    --foreground: 150 25% 10%;
+    --card: 150 20% 97%;
+    --card-foreground: 150 25% 10%;
+    --popover: 150 20% 97%;
+    --popover-foreground: 150 25% 10%;
+    --primary: 150 75% 40%;
+    --primary-foreground: 150 10% 97%;
+    --secondary: 150 15% 90%;
+    --secondary-foreground: 150 25% 10%;
+    --muted: 150 15% 90%;
+    --muted-foreground: 150 15% 40%;
+    --accent: 150 15% 90%;
+    --accent-foreground: 150 25% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 15% 85%;
+    --input: 150 15% 85%;
+    --ring: 150 75% 40%;
+  }
+
+  /* Blue theme */
+  .blue {
+    --background: 210 20% 97%;
+    --foreground: 210 25% 10%;
+    --card: 210 20% 97%;
+    --card-foreground: 210 25% 10%;
+    --popover: 210 20% 97%;
+    --popover-foreground: 210 25% 10%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 210 10% 97%;
+    --secondary: 210 15% 90%;
+    --secondary-foreground: 210 25% 10%;
+    --muted: 210 15% 90%;
+    --muted-foreground: 210 15% 40%;
+    --accent: 210 15% 90%;
+    --accent-foreground: 210 25% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 15% 85%;
+    --input: 210 15% 85%;
+    --ring: 210 100% 50%;
+  }
+
+  /* Red theme */
+  .red {
+    --background: 0 20% 97%;
+    --foreground: 0 25% 10%;
+    --card: 0 20% 97%;
+    --card-foreground: 0 25% 10%;
+    --popover: 0 20% 97%;
+    --popover-foreground: 0 25% 10%;
+    --primary: 0 90% 50%;
+    --primary-foreground: 0 10% 97%;
+    --secondary: 0 15% 90%;
+    --secondary-foreground: 0 25% 10%;
+    --muted: 0 15% 90%;
+    --muted-foreground: 0 15% 40%;
+    --accent: 0 15% 90%;
+    --accent-foreground: 0 25% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 15% 85%;
+    --input: 0 15% 85%;
+    --ring: 0 90% 50%;
+  }
+
+  /* Orange theme */
+  .orange {
+    --background: 30 20% 97%;
+    --foreground: 30 25% 10%;
+    --card: 30 20% 97%;
+    --card-foreground: 30 25% 10%;
+    --popover: 30 20% 97%;
+    --popover-foreground: 30 25% 10%;
+    --primary: 30 100% 50%;
+    --primary-foreground: 30 10% 97%;
+    --secondary: 30 15% 90%;
+    --secondary-foreground: 30 25% 10%;
+    --muted: 30 15% 90%;
+    --muted-foreground: 30 15% 40%;
+    --accent: 30 15% 90%;
+    --accent-foreground: 30 25% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 15% 85%;
+    --input: 30 15% 85%;
+    --ring: 30 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom scrollbar styles */
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  /* Custom scrollbar for horizontal scrolling */
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.5);
+    border-radius: 9999px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(156, 163, 175, 0.8);
+  }
+
+  /* For snap scrolling */
+  .snap-x {
+    scroll-snap-type: x mandatory;
+  }
+  
+  .snap-start {
+    scroll-snap-align: start;
+  }
+}

@@ -1,0 +1,598 @@
+"use client"
+
+import React, { useState, useEffect, useRef } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useTheme } from "next-themes"
+import {
+  Home,
+  Compass,
+  TrendingUp,
+  Users,
+  Gamepad2,
+  Music,
+  Newspaper,
+  Film,
+  Clock,
+  History,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  Bookmark,
+  Settings,
+  Sun,
+  Moon,
+  PlusCircle,
+  Heart,
+  Bell,
+  Search,
+  HelpCircle,
+  LogOut,
+  User,
+  Flame,
+  Sparkles
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { 
+  Tooltip, 
+  TooltipContent, 
+  TooltipProvider, 
+  TooltipTrigger 
+} from "@/components/ui/tooltip"
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
+import { useMobile } from "@/hooks/use-mobile"
+import { cn } from "@/lib/utils"
+import { motion, AnimatePresence } from "framer-motion"
+
+interface SidebarItem {
+  icon: React.ElementType
+  label: string
+  href: string
+  badge?: number | string
+  highlight?: boolean
+}
+
+const mainItems: SidebarItem[] = [
+  { icon: Home, label: "Home", href: "/" },
+  { icon: Compass, label: "Explore", href: "/explore" },
+  { icon: TrendingUp, label: "Trending", href: "/trending" },
+  { icon: Music, label: "Music", href: "/music" },
+];
+
+const categoriesItems: SidebarItem[] = [
+  { icon: Gamepad2, label: "Gaming", href: "/category/gaming" },
+  { icon: Newspaper, label: "News", href: "/category/news" },
+  { icon: Film, label: "Movies", href: "/category/movies" },
+];
+
+const libraryItems: SidebarItem[] = [
+  { icon: Clock, label: "Watch Later", href: "/watch-later", badge: 5 },
+  { icon: History, label: "History", href: "/history" },
+  { icon: Heart, label: "Favorites", href: "/favorites" },
+];
+
+// Define props interface
+interface SidebarProps {
+  isMobileMenuOpen: boolean;
+  closeMobileMenu: () => void;
+  toggleMobileMenu: () => void;
+  userData?: {
+    name: string;
+    avatar?: string;
+    email?: string;
+  };
+}
+
+export default function Sidebar({ 
+  isMobileMenuOpen, 
+  closeMobileMenu, 
+  toggleMobileMenu,
+  userData = { name: "User", avatar: "" } 
+}: SidebarProps) {
+  const pathname = usePathname()
+  const isMobile = useMobile()
+  const { theme, setTheme } = useTheme()
+  const [isCollapsed, setIsCollapsed] = useState(true)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [notifications, setNotifications] = useState(3)
+  const [customCategories, setCustomCategories] = useState<SidebarItem[]>([])
+  const [pinned, setPinned] = useState<SidebarItem[]>([])
+  const sidebarRef = useRef<HTMLDivElement>(null)
+  
+  // Load saved state after mount
+  useEffect(() => {
+    const savedState = localStorage.getItem("sidebarCollapsed")
+    if (savedState !== null) {
+      setIsCollapsed(savedState === "true")
+    }
+  }, []);
+
+  // Save collapsed state in localStorage
+  useEffect(() => {
+    localStorage.setItem("sidebarCollapsed", String(isCollapsed))
+  }, [isCollapsed])
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    closeMobileMenu()
+  }, [pathname, closeMobileMenu])
+
+  // Close mobile menu when screen size changes to desktop
+  useEffect(() => {
+    if (!isMobile) {
+      closeMobileMenu()
+    }
+  }, [isMobile, closeMobileMenu])
+
+  // Close sidebar when clicking outside (mobile only)
+  useEffect(() => {
+    if (isMobile) {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          sidebarRef.current && 
+          !sidebarRef.current.contains(event.target as Node) && 
+          isMobileMenuOpen
+        ) {
+          closeMobileMenu()
+        }
+      }
+      
+      document.addEventListener("mousedown", handleClickOutside)
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside)
+      }
+    }
+  }, [isMobile, isMobileMenuOpen, closeMobileMenu])
+
+  // For demonstration purposes, simulate adding a custom category
+  const addCustomCategory = () => {
+    const newCategory: SidebarItem = {
+      icon: PlusCircle,
+      label: `Custom ${customCategories.length + 1}`,
+      href: `/custom-${customCategories.length + 1}`,
+    }
+    setCustomCategories([...customCategories, newCategory])
+  }
+
+  // For demonstration purposes, simulate pinning an item
+  const togglePinItem = (item: SidebarItem) => {
+    if (pinned.some(pinnedItem => pinnedItem.href === item.href)) {
+      setPinned(pinned.filter(pinnedItem => pinnedItem.href !== item.href))
+    } else {
+      setPinned([...pinned, item])
+    }
+  }
+
+  // Handle search submission
+  const handleSearch = (e: React.KeyboardEvent | React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      // Implement search functionality here
+      console.log(`Searching for: ${searchQuery}`)
+    }
+  }
+
+  const renderSidebarItem = (item: SidebarItem, isPinnable = false) => {
+    const isActive = pathname === item.href
+    const isPinned = pinned.some(pinnedItem => pinnedItem.href === item.href)
+    
+    const linkContent = (
+      <>
+        <item.icon className={cn(
+          "h-5 w-5", 
+          !isCollapsed && "mr-2",
+          item.highlight && "text-primary"
+        )} />
+        {!isCollapsed && (
+          <div className="flex flex-1 items-center justify-between">
+            <span className={item.highlight ? "font-medium text-primary" : ""}>{item.label}</span>
+            {item.badge && (
+              <Badge variant="outline" className="ml-2">
+                {item.badge}
+              </Badge>
+            )}
+          </div>
+        )}
+      </>
+    )
+
+    const itemContent = (
+      <div className="group flex items-center">
+        <Link
+          href={item.href}
+          className={cn(
+            "flex flex-1 items-center rounded-md px-3 py-2 text-sm font-medium",
+            "hover:bg-accent hover:text-accent-foreground",
+            isActive && "bg-accent text-accent-foreground",
+          )}
+        >
+          {linkContent}
+        </Link>
+        
+        {isPinnable && !isCollapsed && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 opacity-0 group-hover:opacity-100"
+            onClick={(e) => {
+              e.preventDefault()
+              togglePinItem(item)
+            }}
+          >
+            <Bookmark 
+              className={cn("h-4 w-4", isPinned && "fill-current text-primary")} 
+            />
+          </Button>
+        )}
+      </div>
+    )
+
+    if (isCollapsed) {
+      return (
+        <TooltipProvider key={item.href} delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href={item.href}
+                className={cn(
+                  "flex h-9 items-center justify-center rounded-md",
+                  "hover:bg-accent hover:text-accent-foreground",
+                  isActive && "bg-accent text-accent-foreground",
+                )}
+              >
+                {linkContent}
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>{item.label}</p>
+              {item.badge && <Badge variant="outline" className="ml-2">{item.badge}</Badge>}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )
+    }
+
+    return (
+      <motion.div
+        key={item.href}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.2 }}
+        layout
+      >
+        {itemContent}
+      </motion.div>
+    )
+  }
+
+  const SidebarContent = () => {
+    // Filter out pinned items from main sections
+    const filteredMainItems = mainItems.filter(
+      item => !pinned.some(pinnedItem => pinnedItem.href === item.href)
+    )
+    const filteredCategoriesItems = [...categoriesItems, ...customCategories].filter(
+      item => !pinned.some(pinnedItem => pinnedItem.href === item.href)
+    )
+    const filteredLibraryItems = libraryItems.filter(
+      item => !pinned.some(pinnedItem => pinnedItem.href === item.href)
+    )
+
+    return (
+      <>
+        {!isCollapsed && (
+          <div className="px-3 py-2">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSearch(e);
+                  }
+                }}
+                className="pl-8 h-9"
+              />
+            </div>
+          </div>
+        )}
+
+        {pinned.length > 0 && (
+          <div className="px-3 py-2">
+            <h2 className={cn("mb-2 text-lg font-semibold tracking-tight", isCollapsed && "sr-only")}>
+              Pinned
+            </h2>
+            <div className="space-y-1">
+              <AnimatePresence mode="popLayout">
+                {pinned.map(item => (
+                  <motion.div key={item.href}>
+                    {renderSidebarItem(item)}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>
+        )}
+
+        <div className="px-3 py-2">
+          <h2 className={cn("mb-2 text-lg font-semibold tracking-tight", isCollapsed && "sr-only")}>
+            Main
+          </h2>
+          <div className="space-y-1">
+            <AnimatePresence mode="popLayout">
+              {filteredMainItems.map(item => (
+                <motion.div key={item.href}>
+                  {renderSidebarItem(item, true)}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <div className="px-3 py-2">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className={cn("text-lg font-semibold tracking-tight", isCollapsed && "sr-only")}>
+              Categories
+            </h2>
+            {!isCollapsed && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={addCustomCategory}
+              >
+                <PlusCircle className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+          <div className="space-y-1">
+            <AnimatePresence mode="popLayout">
+              {filteredCategoriesItems.map(item => (
+                <motion.div key={item.href}>
+                  {renderSidebarItem(item, true)}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <div className="px-3 py-2">
+          <h2 className={cn("mb-2 text-lg font-semibold tracking-tight", isCollapsed && "sr-only")}>
+            Library
+          </h2>
+          <div className="space-y-1">
+            <AnimatePresence mode="popLayout">
+              {filteredLibraryItems.map(item => (
+                <motion.div key={item.href}>
+                  {renderSidebarItem(item, true)}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <div className="mt-auto px-3 py-2">
+          {!isCollapsed && (
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <Moon className="mr-2 h-4 w-4" />
+                <span className="text-sm">Dark Mode</span>
+              </div>
+              <Switch
+                checked={theme === "dark"}
+                onCheckedChange={() => setTheme(theme === "dark" ? "light" : "dark")}
+              />
+            </div>
+          )}
+
+          {isCollapsed ? (
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-full h-9 mt-2"
+                    onClick={() => setIsCollapsed(false)}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">Expand sidebar</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => setIsCollapsed(true)}
+            >
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Collapse
+            </Button>
+          )}
+        </div>
+      </>
+    )
+  }
+
+  const UserProfile = () => (
+    <div className={cn(
+      "border-t pt-2 pb-3",
+      isCollapsed ? "px-2" : "px-3",
+    )}>
+      {isCollapsed ? (
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                    <Avatar className="h-9 w-9">
+                      {userData.avatar ? (
+                        <AvatarImage src={userData.avatar} alt={userData.name} />
+                      ) : (
+                        <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                      )}
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <Avatar className="h-8 w-8">
+                      {userData.avatar ? (
+                        <AvatarImage src={userData.avatar} alt={userData.name} />
+                      ) : (
+                        <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                      )}
+                    </Avatar>
+                    <div className="flex flex-col space-y-1 leading-none">
+                      <p className="font-medium">{userData.name}</p>
+                      {userData.email && (
+                        <p className="text-xs text-muted-foreground">{userData.email}</p>
+                      )}
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    <span>Help & Support</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>{userData.name}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start font-normal"
+            >
+              <Avatar className="h-6 w-6 mr-2">
+                {userData.avatar ? (
+                  <AvatarImage src={userData.avatar} alt={userData.name} />
+                ) : (
+                  <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                )}
+              </Avatar>
+              <span className="truncate">{userData.name}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <div className="flex items-center justify-start gap-2 p-2">
+              <Avatar className="h-8 w-8">
+                {userData.avatar ? (
+                  <AvatarImage src={userData.avatar} alt={userData.name} />
+                ) : (
+                  <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                )}
+              </Avatar>
+              <div className="flex flex-col space-y-1 leading-none">
+                <p className="font-medium">{userData.name}</p>
+                {userData.email && (
+                  <p className="text-xs text-muted-foreground">{userData.email}</p>
+                )}
+              </div>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <HelpCircle className="mr-2 h-4 w-4" />
+              <span>Help & Support</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+    </div>
+  )
+
+  // Mobile sidebar
+  if (isMobile) {
+    return (
+      <>
+        {isMobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40" 
+            onClick={closeMobileMenu}
+            aria-hidden="true"
+          />
+        )}
+        <aside
+          ref={sidebarRef}
+          className={cn(
+            "fixed top-16 bottom-0 left-0 z-50 w-64 bg-background border-r transition-transform duration-300 ease-in-out",
+            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          )}
+          aria-hidden={!isMobileMenuOpen}
+        >
+          <div className="flex flex-col h-full">
+            <div className="flex-1 overflow-y-auto py-4">
+              <SidebarContent />
+            </div>
+            <UserProfile />
+          </div>
+        </aside>
+      </>
+    )
+  }
+
+  // Desktop sidebar
+  return (
+    <aside
+      className={cn(
+        "sticky top-16 h-[calc(100vh-4rem)] border-r transition-width duration-300 ease-in-out",
+        isCollapsed ? "w-16" : "w-64",
+      )}
+    >
+      <div className="flex flex-col h-full">
+        <div className="flex-1 overflow-y-auto py-2">
+          <SidebarContent />
+        </div>
+        <UserProfile />
+      </div>
+    </aside>
+  )
+}
