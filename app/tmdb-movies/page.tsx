@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getImageUrl, Movie, fetchIndianMovies } from '@/lib/tmdb-api';
+import { getImageUrl, Movie, fetchIndianMovies } from '../../lib/tmdb-api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import LatestMoviesCarousel from './components/LatestMoviesCarousel';

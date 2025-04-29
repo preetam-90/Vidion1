@@ -11,7 +11,7 @@ import {
   Movie,
   MovieCredits,
   MovieVideos
-} from '@/lib/tmdb-api';
+} from '../../../lib/tmdb-api';
 
 const MovieDetails = () => {
   const params = useParams();

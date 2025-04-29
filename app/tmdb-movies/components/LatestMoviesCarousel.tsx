@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { fetchNowPlayingMovies, fetchIndianMovies, getImageUrl, Movie } from '@/lib/tmdb-api';
+import { fetchNowPlayingMovies, fetchIndianMovies, getImageUrl, Movie } from '../../../lib/tmdb-api';
 
 export default function LatestMoviesCarousel() {
   const [movies, setMovies] = useState<Movie[]>([]);

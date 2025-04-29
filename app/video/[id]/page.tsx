@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
-import { videos } from "@/data"
+import { videos } from "../../../data"
 import { notFound } from "next/navigation"
 import VideoPlayer from "@/components/video-player"
 import VideoInfo from "@/components/video-info"

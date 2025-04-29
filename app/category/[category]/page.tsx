@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { videos as localVideos, Video } from "@/data";
-import VideoCard from "@/app/components/VideoCard";
+import { videos, Video } from "@/data";
+import VideoCard from "@/components/VideoCard";
 import { useRouter, useParams } from "next/navigation";
 import { useInView } from 'react-intersection-observer';
-import CategoryBar from "@/app/components/CategoryBar";
+import CategoryBar from "@/components/CategoryBar";
 
 export default function CategoryPage() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function CategoryPage() {
   };
 
   // Filter videos by the current category
-  const categoryVideos = localVideos.filter(
+  const categoryVideos = videos.filter(
     video => video.category && video.category.toLowerCase() === decodedCategory.toLowerCase()
   );
 

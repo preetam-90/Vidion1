@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { videos as localVideos, Video } from "@/data";
-import VideoCard from "@/app/components/VideoCard";
+import VideoCard from "@/components/VideoCard";
 import { useRouter } from "next/navigation";
 import { useInView } from 'react-intersection-observer';
-import CategoryBar from "@/app/components/CategoryBar";
-import VideoCardSkeleton from "@/app/components/VideoCardSkeleton";
+import CategoryBar from "@/components/CategoryBar";
+import VideoCardSkeleton from "@/components/VideoCardSkeleton";
 import { Button } from "@/components/ui/button";
 
 export default function HomePage() {

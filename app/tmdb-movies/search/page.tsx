@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { searchMovies, getImageUrl, Movie } from '@/lib/tmdb-api';
+import { searchMovies, getImageUrl, Movie } from '../../../lib/tmdb-api';
 import { Search, ArrowLeft } from 'lucide-react';
 
 function SearchContent() {

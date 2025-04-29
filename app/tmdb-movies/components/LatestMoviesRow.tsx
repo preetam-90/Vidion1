@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchNowPlayingMovies, fetchIndianMovies, getImageUrl, Movie } from '@/lib/tmdb-api';
+import { fetchNowPlayingMovies, fetchIndianMovies, getImageUrl, Movie } from '../../../lib/tmdb-api';
 
 export default function LatestMoviesRow() {
   const [movies, setMovies] = useState<Movie[]>([]);
