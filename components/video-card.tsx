@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
-import { MoreVertical, Share, Clock, Flag, Ban, Trash2 } from "lucide-react"
+import { MoreVertical, Share, Clock, Flag, Ban, Trash2, ThumbsUp } from "lucide-react"
 import type { Video } from "@/data"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,7 +18,7 @@ import { ReportDialog } from "./report-dialog"
 import { FeedbackDialog } from "./feedback-dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { useLikedVideos } from "@/contexts/liked-videos-context"
-import { LazyImage } from "@/components/ui/lazy-image"
+import Image from "next/image"
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver"
 
 interface VideoCardProps {
@@ -26,6 +26,7 @@ interface VideoCardProps {
   layout?: "grid" | "list"
   context?: 'history' | 'favorites' | string;
   onRemoveFromHistory?: (videoId: string | number) => void;
+  onClick?: () => void;
 }
 
 export default function VideoCard({ video, layout = "grid", context, onRemoveFromHistory }: VideoCardProps) {
@@ -38,7 +39,7 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
   const [isReported, setIsReported] = useState(false)
   const [isJustReported, setIsJustReported] = useState(false)
   const { addToWatchLater, removeFromWatchLater, isInWatchLater } = useWatchLater()
-  const { isLiked, removeFromLiked } = useLikedVideos()
+  const { isLiked, removeFromLiked, addToLiked } = useLikedVideos()
   const { toast } = useToast()
 
   useEffect(() => {
@@ -115,6 +116,23 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
       console.error('Error handling report:', error)
     }
   }
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isLiked(video.id)) {
+      removeFromLiked(video.id);
+      toast({ description: "Removed from Favorites", duration: 2000 });
+    } else {
+      const videoToAdd = {
+        ...video,
+        likes: typeof video.likes === 'string' 
+          ? (parseInt(video.likes.replace(/[^0-9]/g, '')) + 1).toString()
+          : (video.likes || 0) + 1
+      };
+      addToLiked(videoToAdd);
+      toast({ description: "Added to Favorites", duration: 2000 });
+    }
+  };
 
   // Format view count safely
   const formatViews = (views: number | string | undefined) => {
@@ -195,18 +213,25 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
   const thumbnailUrl = video?.thumbnail && video.thumbnail.trim() !== "" ? video.thumbnail : "/placeholder.svg?height=240&width=400"
   const isGoogleDrive = video?.thumbnail?.startsWith("https://drive.google.com") ?? false
 
+  if (!video) {
+    return null;
+  }
+
   return (
     <>
       {layout === "list" ? (
         <div className="flex gap-4 hover:bg-accent/10 p-2 rounded-lg transition-colors">
-          <Link href={`/watch/${videoId}`} className="aspect-video w-40 relative rounded-md overflow-hidden flex-shrink-0">
-            <LazyImage
+          <Link href={`/video/${videoId}`} className="aspect-video w-40 relative rounded-md overflow-hidden flex-shrink-0">
+            <Image
               src={thumbnailUrl}
               alt={video?.title || "Video thumbnail"}
               fill
               className="object-cover w-full h-full"
               style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-              fallbackSrc="/placeholder.svg?height=240&width=400"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "/placeholder.svg?height=240&width=400";
+              }}
             />
           </Link>
           <div className="flex-1 min-w-0">
@@ -271,78 +296,20 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
           </DropdownMenu>
         </div>
       ) : (
-        <div className="group relative">
-          <Link href={`/watch/${videoId}`} className="relative block aspect-video overflow-hidden rounded-md bg-muted">
-            <LazyImage
+        <div className="group relative aspect-video rounded-lg overflow-hidden">
+          <Link href={`/video/${videoId}`} className="block w-full h-full">
+            <Image
               src={thumbnailUrl}
               alt={video?.title || "Video thumbnail"}
               fill
               className="object-cover w-full h-full"
               style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-              fallbackSrc="/placeholder.svg?height=240&width=400"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "/placeholder.svg?height=240&width=400";
+              }}
             />
           </Link>
-          <div className="flex items-center justify-between mt-2">
-            <div>
-              <h3 className="text-base font-medium line-clamp-2">{video?.title}</h3>
-              <p className="text-sm text-muted-foreground mt-1">{video?.uploader}</p>
-              <div className="flex items-center text-xs text-muted-foreground mt-1">
-                <span>{formatViews(video?.views)} views</span>
-                <span className="mx-1">•</span>
-                <span>{formatDate(video?.uploadDate)}</span>
-              </div>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent/50">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setIsShareOpen(true)}>
-                  <Share className="mr-2 h-4 w-4" />
-                  Share
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleWatchLater}>
-                  <Clock className="mr-2 h-4 w-4" />
-                  {isInWatchLater(video?.id) ? "Remove from Watch Later" : "Add to Watch Later"}
-                </DropdownMenuItem>
-                {context === 'history' && video?.id ? (
-                  <DropdownMenuItem onClick={() => onRemoveFromHistory?.(video.id)}>
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Remove from watch history
-                  </DropdownMenuItem>
-                ) : (
-                  <DropdownMenuItem onClick={handleNotInterested}>
-                    <Ban className="mr-2 h-4 w-4" />
-                    Not Interested
-                  </DropdownMenuItem>
-                )}
-                {context === 'favorites' && (
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      e.preventDefault()
-                      if (onRemoveFromHistory) {
-                        onRemoveFromHistory(video.id)
-                        toast({
-                          title: "Removed from favorites",
-                          description: "This video has been removed from your favorites.",
-                        })
-                      }
-                    }}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Remove from favorites
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={() => setIsReportOpen(true)}>
-                  <Flag className="mr-2 h-4 w-4" />
-                  Report
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
         </div>
       )}
       
@@ -369,5 +336,3 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
     </>
   )
 }
-
-// Remove the unused thumbnailStyle constant at the end of the file

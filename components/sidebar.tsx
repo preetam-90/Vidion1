@@ -25,7 +25,6 @@ import {
   PlusCircle,
   Heart,
   Bell,
-  Search,
   HelpCircle,
   LogOut,
   User,
@@ -47,7 +46,6 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { useMobile } from "@/hooks/use-mobile"
@@ -67,6 +65,7 @@ const mainItems: SidebarItem[] = [
   { icon: Compass, label: "Explore", href: "/explore" },
   { icon: TrendingUp, label: "Trending", href: "/trending" },
   { icon: Music, label: "Music", href: "/music" },
+  { icon: Film, label: "TMDB Movies", href: "/tmdb-movies", highlight: true },
 ];
 
 const categoriesItems: SidebarItem[] = [
@@ -86,6 +85,7 @@ interface SidebarProps {
   isMobileMenuOpen: boolean;
   closeMobileMenu: () => void;
   toggleMobileMenu: () => void;
+  shouldOverlay?: boolean;
   userData?: {
     name: string;
     avatar?: string;
@@ -97,13 +97,13 @@ export default function Sidebar({
   isMobileMenuOpen, 
   closeMobileMenu, 
   toggleMobileMenu,
+  shouldOverlay = false,
   userData = { name: "User", avatar: "" } 
 }: SidebarProps) {
   const pathname = usePathname()
   const isMobile = useMobile()
   const { theme, setTheme } = useTheme()
   const [isCollapsed, setIsCollapsed] = useState(true)
-  const [searchQuery, setSearchQuery] = useState("")
   const [notifications, setNotifications] = useState(3)
   const [customCategories, setCustomCategories] = useState<SidebarItem[]>([])
   const [pinned, setPinned] = useState<SidebarItem[]>([])
@@ -111,16 +111,21 @@ export default function Sidebar({
   
   // Load saved state after mount
   useEffect(() => {
-    const savedState = localStorage.getItem("sidebarCollapsed")
-    if (savedState !== null) {
-      setIsCollapsed(savedState === "true")
+    // For movies page (shouldOverlay=true), we always keep it collapsed and don't load saved state
+    if (!shouldOverlay) {
+      const savedState = localStorage.getItem("sidebarCollapsed")
+      if (savedState !== null) {
+        setIsCollapsed(savedState === "true")
+      }
     }
-  }, []);
+  }, [shouldOverlay]);
 
   // Save collapsed state in localStorage
   useEffect(() => {
-    localStorage.setItem("sidebarCollapsed", String(isCollapsed))
-  }, [isCollapsed])
+    if (!shouldOverlay) {
+      localStorage.setItem("sidebarCollapsed", String(isCollapsed))
+    }
+  }, [isCollapsed, shouldOverlay])
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -173,15 +178,6 @@ export default function Sidebar({
     }
   }
 
-  // Handle search submission
-  const handleSearch = (e: React.KeyboardEvent | React.FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      // Implement search functionality here
-      console.log(`Searching for: ${searchQuery}`)
-    }
-  }
-
   const renderSidebarItem = (item: SidebarItem, isPinnable = false) => {
     const isActive = pathname === item.href
     const isPinned = pinned.some(pinnedItem => pinnedItem.href === item.href)
@@ -214,6 +210,7 @@ export default function Sidebar({
             "flex flex-1 items-center rounded-md px-3 py-2 text-sm font-medium",
             "hover:bg-accent hover:text-accent-foreground",
             isActive && "bg-accent text-accent-foreground",
+            shouldOverlay && isCollapsed && "justify-center"
           )}
         >
           {linkContent}
@@ -248,6 +245,7 @@ export default function Sidebar({
                   "flex h-9 items-center justify-center rounded-md",
                   "hover:bg-accent hover:text-accent-foreground",
                   isActive && "bg-accent text-accent-foreground",
+                  shouldOverlay && "mx-auto"
                 )}
               >
                 {linkContent}
@@ -290,26 +288,6 @@ export default function Sidebar({
 
     return (
       <>
-        {!isCollapsed && (
-          <div className="px-3 py-2">
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleSearch(e);
-                  }
-                }}
-                className="pl-8 h-9"
-              />
-            </div>
-          </div>
-        )}
-
         {pinned.length > 0 && (
           <div className="px-3 py-2">
             <h2 className={cn("mb-2 text-lg font-semibold tracking-tight", isCollapsed && "sr-only")}>
@@ -398,7 +376,8 @@ export default function Sidebar({
             </div>
           )}
 
-          {isCollapsed ? (
+          {/* Don't show expand/collapse buttons when in movies page (shouldOverlay=true) */}
+          {!shouldOverlay && (isCollapsed ? (
             <TooltipProvider delayDuration={300}>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -423,7 +402,7 @@ export default function Sidebar({
               <ChevronLeft className="mr-2 h-4 w-4" />
               Collapse
             </Button>
-          )}
+          ))}
         </div>
       </>
     )
@@ -572,7 +551,8 @@ export default function Sidebar({
             <div className="flex-1 overflow-y-auto py-4">
               <SidebarContent />
             </div>
-            <UserProfile />
+            {/* Don't render UserProfile when in movies page (shouldOverlay=true) */}
+            {!shouldOverlay && <UserProfile />}
           </div>
         </aside>
       </>
@@ -583,15 +563,24 @@ export default function Sidebar({
   return (
     <aside
       className={cn(
-        "sticky top-16 h-[calc(100vh-4rem)] border-r transition-width duration-300 ease-in-out",
+        "sticky top-16 h-[calc(100vh-4rem)] border-r transition-all duration-300 ease-in-out",
         isCollapsed ? "w-16" : "w-64",
+        shouldOverlay && !isCollapsed && "fixed z-40 shadow-lg",
+        shouldOverlay && !isCollapsed && "bg-background/80 backdrop-blur-md",
+        shouldOverlay && "border-r-0"
       )}
+      style={{
+        ...(shouldOverlay && {
+          borderRightColor: 'transparent'
+        })
+      }}
     >
       <div className="flex flex-col h-full">
         <div className="flex-1 overflow-y-auto py-2">
           <SidebarContent />
         </div>
-        <UserProfile />
+        {/* Don't render UserProfile when in movies page (shouldOverlay=true) */}
+        {!shouldOverlay && <UserProfile />}
       </div>
     </aside>
   )

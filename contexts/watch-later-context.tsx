@@ -21,9 +21,11 @@ export function WatchLaterProvider({ children }: { children: React.ReactNode }) 
     const savedVideos = localStorage.getItem("watchLater")
     if (savedVideos) {
       try {
-        setWatchLaterVideos(JSON.parse(savedVideos))
+        const parsedVideos = JSON.parse(savedVideos)
+        setWatchLaterVideos(Array.isArray(parsedVideos) ? parsedVideos : [])
       } catch (error) {
         console.error("Error loading watch later videos:", error)
+        setWatchLaterVideos([])
       }
     }
   }, [])

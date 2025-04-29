@@ -6,9 +6,27 @@ import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { videos } from "@/data"
 import { searchVideos, convertYouTubeVideoToVideo } from "@/lib/youtube-api"
+import { searchMovies, getImageUrl } from "@/lib/tmdb-api"
 import type { Video } from "@/data"
 import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+
+// Convert TMDB movie to Video format
+const convertTMDBMovieToVideo = (movie: any): Video => ({
+  id: `tmdb-${movie.id}`,
+  title: movie.title,
+  description: movie.overview || 'No description available',
+  thumbnail: getImageUrl(movie.poster_path, 'w185') || '/images/placeholder-poster.jpg',
+  uploader: 'TMDB',
+  views: movie.vote_count ? `${movie.vote_count} votes` : 'N/A',
+  likes: movie.vote_average ? `${movie.vote_average}/10` : 'N/A',
+  comments: '0',
+  uploadDate: movie.release_date || 'Unknown',
+  platform: 'TMDB',
+  category: 'Movies',
+  url: `/tmdb-movies/${movie.id}`,
+  duration: movie.release_date ? new Date(movie.release_date).getFullYear().toString() : 'N/A'
+})
 
 const ModernSearchBar = () => {
   const router = useRouter()
@@ -42,12 +60,27 @@ const ModernSearchBar = () => {
         .map(video => ({ ...video, id: `local-${video.id}` }))
 
       setSuggestions(localResults)
+      
+      // Search TMDB movies
+      try {
+        const moviesResponse = await searchMovies(searchTerm)
+        const tmdbResults = moviesResponse.results
+          .slice(0, 3)
+          .map(convertTMDBMovieToVideo)
+        
+        setSuggestions(prev => [...prev, ...tmdbResults])
+      } catch (err) {
+        console.error("TMDB API error:", err)
+      }
 
       // Then fetch YouTube results if needed
-      if (localResults.length < 5) {
+      if (localResults.length < 3) {
         try {
           const ytResults = await searchVideos(searchTerm)
-          const formattedResults = ytResults.map(convertYouTubeVideoToVideo).slice(0, 5 - localResults.length)
+          const formattedResults = ytResults
+            .map(convertYouTubeVideoToVideo)
+            .slice(0, 3 - localResults.length)
+            
           setSuggestions(prev => [...prev, ...formattedResults])
         } catch (err) {
           console.error("YouTube API error:", err)
@@ -99,7 +132,18 @@ const ModernSearchBar = () => {
           if (selectedIndex >= 0 && suggestions[selectedIndex]) {
             const video = suggestions[selectedIndex]
             setQuery(video.title)
-            router.push(`/search?q=${encodeURIComponent(video.title)}`)
+            // Route to different pages based on result type
+            if (String(video.id).startsWith('tmdb-')) {
+              const tmdbId = String(video.id).replace('tmdb-', '');
+              router.push(`/tmdb-movies/${tmdbId}`);
+            } else if (String(video.id).startsWith('local-')) {
+              const videoId = String(video.id).replace('local-', '');
+              router.push(`/video/${videoId}`);
+            } else {
+              // YouTube videos
+              const videoId = video.id;
+              router.push(`/video/${videoId}`);
+            }
             setIsFocused(false)
           }
           break
@@ -126,7 +170,7 @@ const ModernSearchBar = () => {
   }, [])
 
   return (
-    <div className="relative w-full max-w-2xl mx-4" ref={containerRef}>
+    <div className="relative w-full max-w-2xl mx-auto" ref={containerRef}>
       <form onSubmit={handleSearch} className="relative">
         <motion.div
           className={`relative flex items-center h-12 bg-white dark:bg-black rounded-lg shadow-md ${
@@ -225,7 +269,18 @@ const ModernSearchBar = () => {
                       }`}
                       onClick={() => {
                         setQuery(item.title)
-                        router.push(`/search?q=${encodeURIComponent(item.title)}`)
+                        // Route to different pages based on result type
+                        if (String(item.id).startsWith('tmdb-')) {
+                          const tmdbId = String(item.id).replace('tmdb-', '');
+                          router.push(`/tmdb-movies/${tmdbId}`);
+                        } else if (String(item.id).startsWith('local-')) {
+                          const videoId = String(item.id).replace('local-', '');
+                          router.push(`/video/${videoId}`);
+                        } else {
+                          // YouTube videos
+                          const videoId = item.id;
+                          router.push(`/video/${videoId}`);
+                        }
                         setIsFocused(false)
                       }}
                       onMouseEnter={() => setSelectedIndex(index)}
@@ -237,7 +292,11 @@ const ModernSearchBar = () => {
                           className="w-16 h-10 object-cover rounded-md"
                         />
                         <div className="absolute bottom-0 right-0 bg-black bg-opacity-70 text-white text-xs px-1 rounded">
-                          {String(item.id).startsWith('local-') ? 'Local' : 'YT'}
+                          {String(item.id).startsWith('local-') 
+                            ? 'Local' 
+                            : String(item.id).startsWith('tmdb-') 
+                              ? 'TMDB' 
+                              : 'YT'}
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
@@ -259,16 +318,5 @@ const ModernSearchBar = () => {
     </div>
   )
 }
-
-const PlayerPage = () => {
-  const searchParams = useSearchParams()
-  // Your component logic here
-}
-
-const Player = () => (
-  <Suspense fallback={<div>Loading...</div>}>
-    <PlayerPage />
-  </Suspense>
-)
 
 export default ModernSearchBar

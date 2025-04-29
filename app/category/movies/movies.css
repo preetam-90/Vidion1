@@ -1,0 +1,204 @@
+/* Sidebar styling for movies page */
+.movies-sidebar-wrapper {
+  position: fixed !important;
+  left: 0 !important;
+  top: 45% !important;
+  transform: translateY(-50%) !important;
+  height: auto !important;
+  z-index: 50 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Base style for sidebar on movies page - Apply visual overrides */
+aside.movies-sidebar,
+.movies-sidebar,
+.movies-sidebar-wrapper aside {
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+  background-color: rgba(20, 20, 20, 0.6) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  height: auto !important;
+  max-height: 80vh;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  overflow: hidden;
+}
+
+/* Remove any borders or outlines on hover */
+.movies-sidebar:hover,
+.movies-sidebar *:hover,
+.movies-sidebar a:hover,
+.movies-sidebar button:hover,
+.movies-sidebar:focus,
+.movies-sidebar *:focus,
+.movies-sidebar:focus-within {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove hover border-r that appears */
+.movies-sidebar.hover-border-r,
+.movies-sidebar.hover\:border-r,
+.movies-sidebar.hover\:border,
+.movies-sidebar[class*="hover:border"],
+aside[class*="hover:border"] {
+  border: none !important;
+  border-right: none !important;
+}
+
+/* Completely remove the expand/collapse button */
+.movies-sidebar .mt-auto,
+.movies-sidebar div[class*="mt-auto"],
+.movies-sidebar button[class*="w-full"][class*="justify-start"],
+.movies-sidebar button[class*="w-full h-9 mt-2"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Completely remove the user profile section */
+.movies-sidebar > div > div:last-child,
+.movies-sidebar [class*="border-t"][class*="pt-2"][class*="pb-3"],
+.movies-sidebar .user-profile-section,
+.movies-sidebar button[class*="rounded-full"],
+.movies-sidebar > div > div > div:last-child,
+.movies-sidebar [class*="avatar"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Animation for popup notification */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Styles for expanded sidebar - Override visuals and enable scroll */
+aside.movies-sidebar:not(.w-16),
+.movies-sidebar:not(.w-16),
+.movies-sidebar-wrapper aside:not(.w-16) {
+  background-color: rgba(20, 20, 20, 0.75) !important;
+  border-radius: 0 16px 16px 0 !important;
+  border-left: none !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  overflow-y: auto !important;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+/* Center items container and items themselves only when collapsed */
+.movies-sidebar.w-16 > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+  height: 100%;
+}
+
+.movies-sidebar.w-16 > div > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.movies-sidebar.w-16 .centered-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 8px 0;
+}
+
+/* Remove borders added by default sidebar component */
+.movies-sidebar [class*="border-t"],
+.movies-sidebar [class*="border-r"] {
+  border: none !important;
+}
+
+/* Make scrollbar slightly visible */
+.movies-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.movies-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+.movies-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Glow effect on hover */
+.movies-sidebar a:hover svg,
+.movies-sidebar button:hover svg {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+  transform: scale(1.1);
+}
+
+/* Transitions */
+.movies-sidebar a svg,
+.movies-sidebar button svg {
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/* Hide default headings and dark mode toggle when collapsed */
+.movies-sidebar.w-16 h2 {
+  display: none !important;
+}
+
+/* Spacing for sections */
+.movies-sidebar > div > div {
+  width: 100%;
+}
+
+.movies-sidebar:not(.w-16) > div > div {
+  margin-bottom: 10px;
+}
+
+/* Additional glass effect styling */
+.movies-sidebar a, 
+.movies-sidebar button {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease;
+}
+
+.movies-sidebar a:hover, 
+.movies-sidebar button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Active item highlight */
+.movies-sidebar a.bg-accent,
+.movies-sidebar button.bg-accent {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1) !important;
+} 

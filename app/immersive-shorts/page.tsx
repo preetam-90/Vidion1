@@ -8,10 +8,15 @@ import { Loader2 } from "lucide-react"
 import { getYouTubeShorts } from "@/lib/youtube-api"
 import type { Video } from "@/data"
 
+interface ImmersiveVideo extends Omit<Video, 'id'> {
+  id: string;
+  platform: "youtube" | "googleDrive";
+}
+
 export default function ImmersiveShortsPage() {
   usePageTitle("Immersive Shorts")
   
-  const [shortsVideos, setShortsVideos] = useState<Video[]>([])
+  const [shortsVideos, setShortsVideos] = useState<ImmersiveVideo[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [initialIndex, setInitialIndex] = useState(0)
@@ -29,7 +34,8 @@ export default function ImmersiveShortsPage() {
             .filter(video => !video.isShort)
             .slice(0, 10)
             .map(video => ({ ...video, isShort: true }))
-        );
+        )
+        .map(video => ({ ...video, id: String(video.id) })) as ImmersiveVideo[]
       
       try {
         // Try to fetch shorts from YouTube API - wrapped in try/catch to handle all API errors
@@ -37,7 +43,7 @@ export default function ImmersiveShortsPage() {
           const ytShorts = await getYouTubeShorts()
           if (ytShorts && ytShorts.length > 0) {
             console.log('Successfully loaded YouTube shorts')
-            setShortsVideos(ytShorts)
+            setShortsVideos(ytShorts as ImmersiveVideo[])
           } else {
             throw new Error('No YouTube shorts available')
           }

@@ -38,7 +38,14 @@ export function LikedVideosProvider({ children }: { children: React.ReactNode })
       if (prev.some(v => v.id === video.id)) {
         return prev
       }
-      const newList = [video, ...prev]
+      // Increment the like count
+      const videoToAdd = {
+        ...video,
+        likes: typeof video.likes === 'string' 
+          ? (parseInt(video.likes.replace(/[^0-9]/g, '')) + 1).toString()
+          : (video.likes || 0) + 1
+      };
+      const newList = [videoToAdd, ...prev]
       localStorage.setItem("likedVideos", JSON.stringify(newList))
       return newList
     })

@@ -399,21 +399,6 @@ export default function ImmersiveShortsPlayer({
 
         {/* Right Side Controls */}
         <div className="absolute right-4 bottom-28 flex flex-col items-center gap-6 text-white z-20">
-          {/* Like Button */}
-          <button 
-            onClick={toggleLike}
-            className="group flex flex-col items-center"
-          >
-            <div className={`w-12 h-12 rounded-full backdrop-blur-sm bg-black/20 flex items-center justify-center transition-all group-hover:bg-black/40 ${liked[currentVideo?.id] ? 'text-red-500' : ''}`}>
-              <Heart className={`${liked[currentVideo?.id] ? 'fill-current' : ''}`} size={28} />
-            </div>
-            <span className="text-sm mt-1">{
-              liked[currentVideo?.id] 
-                ? parseInt(currentVideo?.likeCount || '0') + 1 
-                : formatCount(currentVideo?.likeCount)
-            }</span>
-          </button>
-          
           {/* Comments Button */}
           <button 
             onClick={() => setShowComments(!showComments)}
@@ -430,8 +415,8 @@ export default function ImmersiveShortsPlayer({
             onClick={toggleSave}
             className="group flex flex-col items-center"
           >
-            <div className={`w-12 h-12 rounded-full backdrop-blur-sm bg-black/20 flex items-center justify-center transition-all group-hover:bg-black/40 ${saved[currentVideo?.id] ? 'text-blue-400' : ''}`}>
-              <Bookmark className={`${saved[currentVideo?.id] ? 'fill-current' : ''}`} size={26} />
+            <div className={`w-12 h-12 rounded-full backdrop-blur-sm bg-black/20 flex items-center justify-center transition-all group-hover:bg-black/40 ${saved[currentVideo?.id] ? 'text-blue-500' : ''}`}>
+              <Bookmark className={`${saved[currentVideo?.id] ? 'fill-current' : ''}`} size={28} />
             </div>
             <span className="text-sm mt-1">Save</span>
           </button>

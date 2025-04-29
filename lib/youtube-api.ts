@@ -1293,3 +1293,123 @@ export async function getComprehensiveMovieVideos(maxResults = 50, pageToken?: s
     return getFallbackTrendingVideos(maxResults, "1");
   }
 }
+
+// Helper function to convert ISO 8601 duration to seconds
+function convertDurationToSeconds(duration: string): number {
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
+  if (!match) return 0
+  
+  const hours = parseInt(match[1] || '0')
+  const minutes = parseInt(match[2] || '0')
+  const seconds = parseInt(match[3] || '0')
+  
+  return hours * 3600 + minutes * 60 + seconds
+}
+
+// Function to get YouTube Shorts
+export async function getYouTubeShorts(maxResults = 20) {
+  const keyManager = APIKeyManager.getInstance()
+  const cacheKey = `shorts:${maxResults}`
+
+  return withMemoryCache(cacheKey, CACHE_DURATIONS.SEARCH, () =>
+    keyManager.executeWithQuota(async (apiKey) => {
+      const params = new URLSearchParams({
+        part: 'snippet,contentDetails,statistics',
+        maxResults: maxResults.toString(),
+        type: 'video',
+        videoDuration: 'short',
+        key: apiKey
+      })
+
+      const response = await fetch(`${BASE_URL}/search?${params}`)
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error?.message || 'Failed to fetch shorts')
+      }
+
+      const data = await response.json()
+      if (!data.items || data.items.length === 0) {
+        return getFallbackShorts(maxResults)
+      }
+
+      // Get video IDs from search results
+      const videoIds = data.items
+        .map((item: any) => item.id.videoId)
+        .filter(Boolean)
+
+      if (videoIds.length === 0) {
+        return getFallbackShorts(maxResults)
+      }
+
+      // Fetch full video details
+      const detailsParams = new URLSearchParams({
+        part: 'snippet,statistics,contentDetails',
+        id: videoIds.join(','),
+        key: apiKey
+      })
+
+      const detailsResponse = await fetch(`${BASE_URL}/videos?${detailsParams}`)
+      if (!detailsResponse.ok) {
+        const error = await detailsResponse.json()
+        throw new Error(error.error?.message || 'Failed to fetch video details')
+      }
+
+      const detailsData = await detailsResponse.json()
+      if (!detailsData.items) {
+        return getFallbackShorts(maxResults)
+      }
+
+      // Filter for actual shorts (duration <= 60 seconds)
+      const shorts = detailsData.items
+        .filter((video: any) => {
+          if (!video.contentDetails?.duration) return false
+          const duration = convertDurationToSeconds(video.contentDetails.duration)
+          return duration <= 60
+        })
+        .map((video: any) => ({
+          id: video.id,
+          title: video.snippet.title,
+          thumbnail: video.snippet.thumbnails.high?.url || 
+                    video.snippet.thumbnails.medium?.url || 
+                    video.snippet.thumbnails.default?.url,
+          channelTitle: video.snippet.channelTitle,
+          publishedAt: video.snippet.publishedAt,
+          viewCount: video.statistics?.viewCount || '0',
+          duration: video.contentDetails?.duration || 'PT60S',
+          description: video.snippet.description,
+          platform: 'youtube',
+          category: 'shorts',
+          isShort: true,
+          url: `https://www.youtube.com/shorts/${video.id}`,
+          likes: video.statistics?.likeCount || '0',
+          comments: video.statistics?.commentCount || '0'
+        }))
+
+      return shorts.length > 0 ? shorts : getFallbackShorts(maxResults)
+    }, 101) // Cost is 100 for search + 1 for video details
+  ).catch(error => {
+    console.warn('Error fetching shorts:', error)
+    return getFallbackShorts(maxResults)
+  })
+}
+
+// Helper function to get fallback shorts from local videos
+function getFallbackShorts(maxResults = 20) {
+  const shorts = localVideos
+    .filter(video => video.isShort === true)
+    .concat(
+      localVideos
+        .filter(video => !video.isShort)
+        .slice(0, 10)
+        .map(video => ({ ...video, isShort: true }))
+    )
+    .slice(0, maxResults)
+    .map(video => ({
+      ...video,
+      platform: 'youtube',
+      category: 'shorts',
+      url: `https://www.youtube.com/shorts/${video.id}`
+    }))
+
+  return shorts
+}

@@ -21,79 +21,6 @@ import type { Video as AppVideo } from '@/types/data'; // Use the main Video typ
 // Use the main Video type for consistency
 interface Video extends AppVideo {}
 
-// Mock Data for Trending Videos
-const MOCK_TRENDING_VIDEOS: Video[] = [
-  {
-    id: 'mock-trend-1',
-    title: 'Top 10 Viral Moments of the Week',
-    thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg', // Placeholder
-    uploader: 'Trending Now TV',
-    views: '1.5M',
-    uploadDate: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-    description: 'Catch up on the most talked-about videos from the past week!',
-    platform: 'youtube',
-    category: 'entertainment',
-    likes: '50K',
-    comments: '2K',
-    url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    duration: 'PT12M30S'
-  },
-  {
-    id: 'mock-trend-2',
-    title: 'Amazing New Tech Gadgets You Need!',
-    thumbnail: 'https://i.ytimg.com/vi/tech-placeholder/maxresdefault.jpg', // Placeholder
-    uploader: 'Tech Reviews',
-    views: '800K',
-    uploadDate: new Date(Date.now() - 2 * 86400000).toISOString(), // 2 days ago
-    description: 'Check out these innovative gadgets hitting the market.',
-    platform: 'youtube',
-    category: 'technology',
-    likes: '35K',
-    comments: '1.5K',
-    url: 'https://www.youtube.com/watch?v=tech-placeholder',
-    duration: 'PT8M15S'
-  },
-  // Add more mock trending videos if needed
-];
-
-// Helper function for formatting view counts with safe handling
-const formatViewCount = (count: string | number | undefined): string => {
-  if (count === undefined) return "0 views"
-  const numCount = typeof count === "string" ? parseInt(count) : count
-  if (isNaN(numCount)) return "0 views"
-  
-  try {
-    if (numCount >= 1_000_000_000) {
-      return (numCount / 1_000_000_000).toFixed(1).replace(".0", "") + "B views"
-    }
-    if (numCount >= 1_000_000) {
-      return (numCount / 1_000_000).toFixed(1).replace(".0", "") + "M views"
-    }
-    if (numCount >= 1_000) {
-      return (numCount / 1_000).toFixed(1).replace(".0", "") + "K views"
-    }
-    return numCount.toString() + " views"
-  } catch (error) {
-    console.error("Error formatting view count:", error)
-    return "0 views"
-  }
-}
-
-// Helper function for safe date formatting
-const formatPublishedDate = (dateString: string | undefined): string => {
-  if (!dateString) return ""
-  try {
-    const date = new Date(dateString)
-    if (isNaN(date.getTime())) {
-      return ""
-    }
-    return formatDistanceToNowStrict(date) + " ago"
-  } catch (error) {
-    console.error("Error formatting date:", error)
-    return ""
-  }
-}
-
 export default function TrendingPage() {
   const router = useRouter()
   const [videos, setVideos] = useState<Video[]>([])
@@ -105,6 +32,7 @@ export default function TrendingPage() {
   const observerRef = useRef<IntersectionObserver | null>(null)
   const lastVideoRef = useRef<HTMLDivElement | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
+  const regionCode = "IN" // Explicitly set to India
 
   const loadMoreVideos = useCallback(async () => {
     if (loadingMore || (!nextPageToken && videos.length > 0 && hasMore)) return
@@ -118,7 +46,7 @@ export default function TrendingPage() {
         setLoadingMore(true)
       }
 
-      const response = await fetch(`/api/youtube/trending${nextPageToken ? `?pageToken=${nextPageToken}` : ''}`)
+      const response = await fetch(`/api/youtube/trending?region=IN${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`)
       
       if (!response.ok) {
         let errorMsg = 'Failed to fetch trending videos';
@@ -132,15 +60,6 @@ export default function TrendingPage() {
         console.error("Initial API Error:", errorMsg);
         setHasMore(false);
         if (videos.length > 0) {
-          setLoading(false);
-          setLoadingMore(false);
-          return;
-        }
-        
-        // For initial load failures, use mock data instead of throwing
-        if (videos.length === 0) {
-          console.warn("Using mock trending videos as fallback");
-          setVideos(MOCK_TRENDING_VIDEOS);
           setLoading(false);
           setLoadingMore(false);
           return;
@@ -182,14 +101,8 @@ export default function TrendingPage() {
         setNextPageToken(data.nextPageToken || null)
       }
     } catch (err) {
-      // Always attempt fallback if the initial load fails
-      if (videos.length === 0) {
-        console.warn("API fetch failed, using mock trending videos as fallback", err);
-        setVideos(MOCK_TRENDING_VIDEOS);
-      } else {
-        console.error("Error loading more videos:", err);
-      }
-      setHasMore(false); // Stop trying to load more if an error occurred
+      console.error("Error loading videos:", err);
+      setHasMore(false);
     } finally {
       setLoading(false)
       setLoadingMore(false)
@@ -265,8 +178,16 @@ export default function TrendingPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Trending Videos</h1>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Trending in India</h1>
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <span className="flex items-center gap-1">
+            <Flag className="w-4 h-4" />
+            India
+          </span>
+        </div>
+      </div>
       {videos.length > 0 ? (
         <div className="space-y-6">
           {videos.map((video, index) => (
@@ -354,14 +275,50 @@ export default function TrendingPage() {
 
       {isShareOpen && selectedVideo && (
         <SharePopup
-          videoId={selectedVideo.id}
-          videoTitle={selectedVideo.title}
-          onClose={() => {
-            setIsShareOpen(false)
-            setSelectedVideo(null)
-          }}
+          isOpen={isShareOpen}
+          url={selectedVideo.url}
+          title={selectedVideo.title}
+          onClose={() => setIsShareOpen(false)}
         />
       )}
     </div>
   )
+}
+
+// Helper function for formatting view counts with safe handling
+const formatViewCount = (count: string | number | undefined): string => {
+  if (count === undefined) return "0 views"
+  const numCount = typeof count === "string" ? parseInt(count) : count
+  if (isNaN(numCount)) return "0 views"
+  
+  try {
+    if (numCount >= 1_000_000_000) {
+      return (numCount / 1_000_000_000).toFixed(1).replace(".0", "") + "B views"
+    }
+    if (numCount >= 1_000_000) {
+      return (numCount / 1_000_000).toFixed(1).replace(".0", "") + "M views"
+    }
+    if (numCount >= 1_000) {
+      return (numCount / 1_000).toFixed(1).replace(".0", "") + "K views"
+    }
+    return numCount.toString() + " views"
+  } catch (error) {
+    console.error("Error formatting view count:", error)
+    return "0 views"
+  }
+}
+
+// Helper function for safe date formatting
+const formatPublishedDate = (dateString: string | undefined): string => {
+  if (!dateString) return ""
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) {
+      return ""
+    }
+    return formatDistanceToNowStrict(date) + " ago"
+  } catch (error) {
+    console.error("Error formatting date:", error)
+    return ""
+  }
 }

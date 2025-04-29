@@ -1,4 +1,4 @@
-import { MoreVertical, Share, Clock, Ban, Flag } from "lucide-react"
+import { MoreVertical, Share, Clock, Ban, Flag, ThumbsUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -7,18 +7,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useWatchLater } from "@/contexts/watch-later-context"
+import { useLikedVideos } from "@/contexts/liked-videos-context"
 import { useToast } from "@/components/ui/use-toast"
 
+interface Video {
+  id: string | number;
+  title: string;
+  thumbnail: string;
+  channelTitle: string;
+  viewCount: string;
+  publishedAt: string;
+  isShort?: boolean;
+  uploader?: string;
+  uploadDate?: string;
+  views?: string;
+  description?: string;
+  url?: string;
+  likes?: string;
+  comments?: string;
+  platform?: string;
+  category?: string;
+  duration?: string;
+}
+
 interface VideoOptionsDropdownProps {
-  video: {
-    id: string
-    title: string
-    thumbnail: string
-    channelTitle: string
-    viewCount: string
-    publishedAt: string
-    isShort?: boolean
-  }
+  video: Video
   onShare: () => void
   onFeedback: () => void
   onReport: () => void
@@ -34,6 +47,7 @@ export function VideoOptionsDropdown({
 }: VideoOptionsDropdownProps) {
   const { addToWatchLater, removeFromWatchLater, isInWatchLater } = useWatchLater()
   const { toast } = useToast()
+  const { addToLiked, removeFromLiked, isLiked } = useLikedVideos()
 
   return (
     <DropdownMenu>
@@ -51,6 +65,41 @@ export function VideoOptionsDropdown({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuItem onClick={(e) => {
+          e.stopPropagation()
+          if (isLiked(video.id)) {
+            removeFromLiked(video.id)
+            toast({
+              description: "Removed from Liked Videos",
+              duration: 2000,
+            })
+          } else {
+            addToLiked({
+              id: video.id,
+              title: video.title,
+              thumbnail: video.thumbnail,
+              uploader: video.channelTitle,
+              views: parseInt(video.viewCount.replace(/[^0-9]/g, '')),
+              uploadDate: video.publishedAt,
+              platform: 'youtube',
+              category: video.isShort ? 'shorts' : 'video',
+              url: video.isShort 
+                ? `https://www.youtube.com/shorts/${video.id}`
+                : `https://www.youtube.com/watch?v=${video.id}`,
+              duration: '',
+              description: '',
+              likes: 0,
+              comments: 0
+            })
+            toast({
+              description: "Added to Liked Videos",
+              duration: 2000,
+            })
+          }
+        }}>
+          <ThumbsUp className="mr-2 h-4 w-4" />
+          {isLiked(video.id) ? 'Remove from Liked Videos' : 'Add to Liked Videos'}
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={(e) => {
           e.stopPropagation()
           onShare()

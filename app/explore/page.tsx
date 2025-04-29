@@ -14,17 +14,48 @@ import { FeedbackDialog } from "@/components/feedback-dialog"
 import { VideoOptionsDropdown } from "./components/VideoOptionsDropdown"
 import { Skeleton } from '@/components/ui/skeleton'
 import VideoCard from '@/app/components/VideoCard'
-import { videos as fallbackVideos } from '@/data' // Import local fallback data
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
 interface Video {
-  id: string
+  id: string | number
   title: string
   thumbnail: string
   channelTitle: string
   publishedAt: string
   viewCount: string
   duration: string
+  description: string
+  views: string
+  uploader: string
+  uploadDate: string
+  url: string
+  likes: string
+  comments: string
+  platform: string
+  category: string
 }
+
+const CATEGORIES = [
+  { id: 'music', name: 'Music' },
+  { id: 'gaming', name: 'Gaming' },
+  { id: 'news', name: 'News' },
+  { id: 'education', name: 'Education' },
+  { id: 'entertainment', name: 'Entertainment' },
+  { id: 'sports', name: 'Sports' },
+  { id: 'technology', name: 'Technology' },
+  { id: 'travel', name: 'Travel' },
+  { id: 'food', name: 'Food' },
+  { id: 'fashion', name: 'Fashion' }
+]
+
+const CACHE_DURATION = 1 * 60 * 60 * 1000; // 1 hour in milliseconds
+
+// --- Dynamic Cache Key Functions ---
+const getVideoCacheKey = (category: string) => `explore_videos_cache_${category || 'all'}`;
+const getTimestampCacheKey = (category: string) => `explore_timestamp_cache_${category || 'all'}`;
+// Keep New To You global as it's category independent
+const CACHE_KEY_NEW_TO_YOU = 'explore_new_to_you_cache'; 
+const CACHE_KEY_NEW_TO_YOU_TIMESTAMP = 'explore_new_to_you_timestamp_cache'; 
 
 export default function ExplorePage() {
   const router = useRouter()
@@ -49,125 +80,185 @@ export default function ExplorePage() {
   } | null>(null)
   const [newToYouVideos, setNewToYouVideos] = useState<Video[]>([])
   const [loadingNewToYou, setLoadingNewToYou] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: false
   })
 
-  // Function to build API URL
-  const buildApiUrl = (token: string | null, queryIndex: number) => {
-    const params = new URLSearchParams()
-    if (token) {
-      params.append('pageToken', token)
-    }
-    params.append('queryIndex', String(queryIndex))
-    return `/api/youtube/home?${params.toString()}`
-  }
-
-  // Function to check API status
-  const checkApiStatus = async () => {
+  // --- Helper: Get data from localStorage ---
+  const getCachedData = <T,>(key: string): T | null => {
+    if (typeof window === 'undefined') return null;
     try {
-      const response = await fetch('/api/youtube/status')
-      if (response.ok) {
-        const data = await response.json()
-        if (data && data.keyStatus) {
-          setApiStatus({
-            activeKeys: data.keyStatus.activeKeys,
-            totalKeys: data.keyStatus.totalKeys,
-            quotaReset: data.quotaResetInfo
-          })
-          
-          console.log("API Status:", data.keyStatus)
-          
-          // If no active keys, automatically use fallback
-          if (data.keyStatus.activeKeys === 0) {
-            useFallbackData('All YouTube API keys have reached their quota limits. Using cached videos instead.')
-            return false
-          }
-        }
-        return true
+      const item = localStorage.getItem(key);
+      return item ? (JSON.parse(item) as T) : null;
+    } catch (e) {
+      console.error(`Error reading cache key ${key}:`, e);
+      localStorage.removeItem(key); // Remove potentially corrupted item
+      return null;
+    }
+  };
+
+  // --- Helper: Set data to localStorage ---
+  const setCachedData = (key: string, data: any) => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+      console.error(`Error setting cache key ${key}:`, e);
+      // Optionally handle quota exceeded errors here
+    }
+  };
+  
+  // --- Fetch New To You Videos (with cache check) ---
+  const fetchNewToYouVideosWithCache = async (): Promise<Video[]> => {
+    setLoadingNewToYou(true);
+    const timestampKey = CACHE_KEY_NEW_TO_YOU_TIMESTAMP;
+    const dataKey = CACHE_KEY_NEW_TO_YOU;
+
+    // Check cache first
+    const cachedTimestamp = getCachedData<number>(timestampKey);
+    if (cachedTimestamp && (Date.now() - cachedTimestamp < CACHE_DURATION)) {
+      const cachedData = getCachedData<Video[]>(dataKey);
+      if (cachedData && Array.isArray(cachedData)) {
+        console.log('Loading New To You videos from cache.');
+        setLoadingNewToYou(false);
+        return cachedData;
       }
-    } catch (err) {
-      console.error("Error checking API status:", err)
     }
-    return true // Default to trying the API if status check fails
-  }
 
-  // Fetch random videos from different categories for 'New to You' section
-  const fetchNewToYouVideos = async () => {
+    // Fetch fresh data if cache miss or stale
+    console.log('Fetching New To You videos from API...');
     try {
-      setLoadingNewToYou(true)
+      const categories = ['music', 'gaming', 'news', 'movies', 'education'];
+      const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+      const response = await fetch(`/api/youtube/search?q=${randomCategory}&maxResults=5`);
+      if (!response.ok) throw new Error('Failed to fetch new videos');
       
-      // Get random categories (e.g., music, gaming, news, etc.)
-      const categories = ['music', 'gaming', 'news', 'movies', 'education']
-      const randomCategory = categories[Math.floor(Math.random() * categories.length)]
+      const data = await response.json();
+      const validVideos = (data.videos || []).filter((video: Video) => 
+        video && typeof video === 'object' && video.id && video.title
+      );
       
-      // Fetch videos from the random category
-      const response = await fetch(`/api/youtube/search?q=${randomCategory}&maxResults=5`)
-      if (!response.ok) throw new Error('Failed to fetch new videos')
+      // Update cache
+      setCachedData(dataKey, validVideos);
+      setCachedData(timestampKey, Date.now());
+      console.log('Updated New To You cache.');
       
-      const data = await response.json()
-      setNewToYouVideos(data.videos || [])
+      return validVideos;
     } catch (err) {
-      console.error('Error fetching new to you videos:', err)
-      // Use fallback data if API fails
-      const fallbackVideos = localVideos
-        .filter(v => v.category === randomCategory)
-        .slice(0, 5)
-      setNewToYouVideos(fallbackVideos)
+      console.error('Error fetching new to you videos:', err);
+      return []; // Return empty on error, don't update cache
     } finally {
-      setLoadingNewToYou(false)
+      setLoadingNewToYou(false);
     }
   }
 
+  // --- Fetch Main Grid Videos (API call only) ---
+  // Removed setLoading(true) from here, handled by caller
+  const fetchVideos = async (category: string): Promise<Video[]> => {
+    try {
+      setError(null); 
+      console.log(`Fetching videos for category '${category}' from API...`);
+      const response = await fetch(`/api/youtube/explore?category=${category}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch videos for category ${category}`);
+      }
+      const data = await response.json();
+      if (!data.videos || data.videos.length === 0) {
+        console.warn('No videos found for category:', category);
+        return []; 
+      }
+      const validVideos = data.videos.filter((video: Video) => 
+        video && typeof video === 'object' && video.id && video.title
+      );
+      return validVideos;
+    } catch (error) {
+      console.error(`Error fetching videos for category ${category}:`, error);
+      // Avoid setting global error for category-specific fetch? Maybe just toast.
+      toast({
+        title: "Error",
+        description: `Failed to fetch videos for ${category}. Please try again later.`,
+        variant: "destructive",
+      });
+      return []; // Return empty on error
+    }
+  }
+
+  // --- Load Category Videos (Handles cache check & fetch for main grid) ---
+  const loadCategoryVideos = async (category: string) => {
+    setLoading(true); // Show loading indicator for the main grid
+    setError(null);
+    const timestampKey = getTimestampCacheKey(category);
+    const dataKey = getVideoCacheKey(category);
+
+    // Check cache
+    const cachedTimestamp = getCachedData<number>(timestampKey);
+    if (cachedTimestamp && (Date.now() - cachedTimestamp < CACHE_DURATION)) {
+      const cachedData = getCachedData<Video[]>(dataKey);
+      if (cachedData && Array.isArray(cachedData)) {
+        console.log(`Loading videos for category '${category}' from cache.`);
+        setVideos(cachedData);
+        setLoading(false);
+        return; // Exit early, use cached data
+      } else {
+         console.warn(`Invalid cache structure for category ${category}`);
+         localStorage.removeItem(dataKey); // Clean up bad cache
+         localStorage.removeItem(timestampKey);
+      }
+    }
+    
+    // Fetch fresh data if cache miss or stale
+    try {
+      const fetchedVideos = await fetchVideos(category);
+      setVideos(fetchedVideos);
+      
+      // Update cache
+      setCachedData(dataKey, fetchedVideos);
+      setCachedData(timestampKey, Date.now());
+      console.log(`Updated video cache for category '${category}'.`);
+      
+    } catch (err) {
+        // Error is already logged in fetchVideos, maybe set global error here?
+        setError(`Failed to load videos for ${category}.`);
+    } finally {
+        setLoading(false); // Stop loading indicator
+    }
+  };
+
+  // --- Fetch Initial Data (Runs once on mount) ---
   const fetchInitialVideos = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      
-      console.log('Fetching initial videos for explore page...')
-      
-      // Use fallback data immediately
-      useFallbackData('Displaying videos from local data.')
-      
-      // Also fetch initial 'New to You' videos
-      await fetchNewToYouVideos()
-      
-      setLoading(false)
-      setInitialFetch(false)
-    } catch (err) {
-      console.error('Failed to fetch videos:', err)
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load videos. Please try again later.'
-      
-      useFallbackData(errorMessage)
-    } finally {
-      setLoading(false)
-      setInitialFetch(false)
-    }
-  }
+    setInitialFetch(true); // Indicate initial load process
+    
+    // Load main videos for the initially selected category (respecting cache)
+    await loadCategoryVideos(selectedCategory); 
+    
+    // Load "New to You" videos (respecting its own cache)
+    const newToYou = await fetchNewToYouVideosWithCache();
+    setNewToYouVideos(newToYou); // Update state after fetch/cache check
 
-  // Helper function to use fallback data
-  const useFallbackData = (errorMessage = '') => {
-    // Use local fallback data when API fails
-    console.log('Using fallback video data')
-    const formattedFallbackVideos = fallbackVideos.slice(0, 20).map(video => ({
-      id: video.id,
-      title: video.title,
-      thumbnail: video.thumbnail,
-      channelTitle: video.channelTitle,
-      publishedAt: video.publishedAt,
-      viewCount: video.viewCount || '1K',
-      duration: video.duration || '3:45',
-    }));
+    setInitialFetch(false); // Mark initial load complete
+  };
+
+  // --- Handle Category Change ---
+  const handleCategoryChange = (category: string) => {
+    if (category === selectedCategory) return; // Do nothing if same category clicked
     
-    setVideos(formattedFallbackVideos)
-    setHasMore(false) // Don't attempt to load more with fallback data
-    
-    if (errorMessage) {
-      setError(errorMessage)
-    }
-  }
+    console.log(`Changing category to: ${category}`);
+    setSelectedCategory(category);
+    // Load videos for the new category (will check cache first)
+    loadCategoryVideos(category); 
+    // Reset load more state for the new category (assuming explore API doesn't paginate)
+    setHasMore(true); // Or false, depending on explore API behavior
+    setNextPageToken(null); 
+    setNextQueryIndex(0);
+  };
+
+  // --- Initial fetch on mount ---
+  useEffect(() => {
+    fetchInitialVideos();
+  }, []); // << ENSURE this dependency array is empty to run only once
 
   const loadMoreVideos = async () => {
     // Don't attempt to load more if we're already loading or there's nothing more to load
@@ -238,11 +329,6 @@ export default function ExplorePage() {
     }
   }
 
-  // Initial fetch on mount
-  useEffect(() => {
-    fetchInitialVideos()
-  }, [])
-
   // Load more when scrolled to bottom and inView becomes true
   useEffect(() => {
     if (inView && !initialFetch && !loading) {
@@ -264,6 +350,46 @@ export default function ExplorePage() {
     fetchInitialVideos()
   }
 
+  const handleVideoClick = (video: Video) => {
+    try {
+      // Validate video data
+      if (!video || typeof video !== 'object' || !video.id) {
+        console.error('Invalid video data:', video);
+        toast({
+          title: "Error",
+          description: "Invalid video data. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Store video data in sessionStorage for player page
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('currentVideo', JSON.stringify(video));
+      }
+
+      // Navigate to the video page with the correct ID
+      router.push(`/video/${String(video.id)}`);
+    } catch (error) {
+      console.error('Error handling video click:', error);
+      toast({
+        title: "Error",
+        description: "Could not play video. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleShare = (video: Video) => {
+    setSelectedVideo(video)
+    setIsShareOpen(true)
+  }
+
+  const handleReport = (video: Video) => {
+    setSelectedVideo(video)
+    setIsReportOpen(true)
+  }
+
   // Render loading skeletons while fetching initial data
   if (loading && initialFetch) {
     return (
@@ -282,141 +408,75 @@ export default function ExplorePage() {
     )
   }
 
-  const RegularVideoCard = ({ video, index }: { video: Video, index: number }) => (
-    <div 
-      className="group relative cursor-pointer rounded-xl overflow-hidden transition-all duration-200 hover:shadow-lg"
-      onClick={() => handleVideoClick(video)}
-    >
-      <div className="aspect-video relative overflow-hidden rounded-xl bg-muted">
-        <Image
-          src={video.thumbnail}
-          alt={video.title}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = '/placeholder-video.jpg';
-          }}
-        />
-        <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1 py-0.5 text-xs text-white">
-          {video.duration}
+  const RegularVideoCard = ({ video, index }: { video: Video, index: number }) => {
+    // Validate video data before rendering
+    if (!video || typeof video !== 'object') {
+      console.warn('Invalid video data received:', video);
+      return null;
+    }
+
+    return (
+      <div 
+        className="group relative cursor-pointer rounded-xl overflow-hidden transition-all duration-200 hover:shadow-lg"
+        onClick={() => handleVideoClick(video)}
+      >
+        <div className="aspect-video relative overflow-hidden rounded-xl bg-muted">
+          <Image
+            src={video.thumbnail || '/placeholder-video.jpg'}
+            alt={video.title || 'Video thumbnail'}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = '/placeholder-video.jpg';
+            }}
+          />
+          <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1 py-0.5 text-xs text-white">
+            {video.duration || '0:00'}
+          </div>
         </div>
-      </div>
-      
-      <div className="p-2">
-        <div className="flex gap-2 items-start">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-medium line-clamp-2 text-base group-hover:text-primary">
-              {video.title}
-            </h3>
-            <div className="flex flex-col text-sm text-muted-foreground mt-1">
-              <span className="truncate">{video.channelTitle}</span>
-              <div className="flex items-center gap-1">
-                <span>{video.viewCount} views</span>
-                <span>•</span>
-                <span>{formatDate(video.publishedAt)}</span>
+        
+        <div className="p-2">
+          <div className="flex gap-2 items-start">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-medium line-clamp-2 text-base group-hover:text-primary">
+                {video.title || 'Untitled Video'}
+              </h3>
+              <div className="flex flex-col text-sm text-muted-foreground mt-1">
+                <span className="truncate">{video.channelTitle || video.uploader || 'Unknown Channel'}</span>
+                <div className="flex items-center gap-1">
+                  <span>{video.viewCount || video.views || '0'} views</span>
+                  <span>•</span>
+                  <span>{formatDate(video.publishedAt || video.uploadDate)}</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="pt-1">
-            <VideoOptionsDropdown 
-              video={video} 
-              onShare={() => {
-                setSelectedVideo(video)
-                setIsShareOpen(true)
-              }}
-              onFeedback={() => {
-                setSelectedVideo(video)
-                setIsFeedbackOpen(true)
-              }}
-              onReport={() => {
-                setSelectedVideo(video)
-                setIsReportOpen(true)
-              }}
-            />
+            <div className="pt-1">
+              <VideoOptionsDropdown 
+                video={video} 
+                onShare={() => {
+                  setSelectedVideo(video)
+                  setIsShareOpen(true)
+                }}
+                onFeedback={() => {
+                  setSelectedVideo(video)
+                  setIsFeedbackOpen(true)
+                }}
+                onReport={() => {
+                  setSelectedVideo(video)
+                  setIsReportOpen(true)
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
-  const handleVideoClick = (video: Video) => {
-    try {
-      // Clean the video ID in case it has any URL parameters
-      const cleanId = video.id.split('?')[0];
-      
-      // Navigate to the video page
-      router.push(`/player?v=${cleanId}`)
-        .catch(err => {
-          console.error('Navigation error:', err);
-          // Fallback to direct navigation if router fails
-          window.location.href = `/player?v=${cleanId}`;
-        });
-    } catch (error) {
-      console.error('Error handling video click:', error);
-      toast({
-        title: "Error",
-        description: "Could not play this video. Please try again.",
-      });
-    }
-  }
-
-  // Add a fallback component to display when YouTube API fails
-  const FallbackExploreContent = () => {
-    // Determine if the error is quota-related
-    const isQuotaError = error?.toLowerCase().includes('quota') || error?.toLowerCase().includes('exceeded')
-    
-    return (
-      <div className="flex flex-col gap-6 pb-10 container mx-auto px-4 md:px-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold mt-6">Explore</h1>
-        </div>
-        
-        <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mb-6">
-          <h3 className="text-lg font-medium text-yellow-800 mb-2">
-            {isQuotaError ? 'YouTube API Quota Limit' : 'YouTube API Issues'}
-          </h3>
-          <p className="text-yellow-700">
-            {error || "We're experiencing issues with the YouTube API. Please try again later."}
-          </p>
-          <p className="text-yellow-700 mt-2">
-            Showing fallback videos from our local database.
-          </p>
-          {isQuotaError && (
-            <p className="text-yellow-700 mt-2 text-sm">
-              <strong>Note:</strong> YouTube API has strict daily limits that reset after 24 hours.
-              {apiStatus && (
-                <span className="block mt-1">
-                  API Status: {apiStatus.activeKeys} of {apiStatus.totalKeys} keys available.
-                  {apiStatus.quotaReset && ` Quotas typically reset ${apiStatus.quotaReset}.`}
-                </span>
-              )}
-            </p>
-          )}
-          <Button 
-            className="mt-4" 
-            variant="outline"
-            onClick={handleRetry}
-            disabled={apiStatus?.activeKeys === 0}
-          >
-            {apiStatus?.activeKeys === 0 ? 'API Quota Exceeded' : 'Retry with YouTube'}
-          </Button>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {videos.map((video, index) => (
-            <RegularVideoCard key={video.id} video={video} index={index} />
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  // Render error state with retry button and fallback content
-  if (error && videos.length > 0) {
-    return <FallbackExploreContent />
-  } else if (error) {
+  // Render error state with retry button
+  if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] p-6 text-center">
         <h2 className="text-2xl font-semibold mb-4">Something went wrong</h2>
@@ -429,49 +489,30 @@ export default function ExplorePage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 pb-20 container mx-auto px-4 md:px-6">
+    <div className="flex flex-col gap-6 pb-20 container max-w-full xl:max-w-[90%] 2xl:max-w-[95%] mx-auto px-4 md:px-6">
       <div className="mt-6">
         <h1 className="text-3xl font-bold">Explore</h1>
         <p className="text-muted-foreground mt-1">Discover new videos from India</p>
       </div>
 
-      {/* New to You Section */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">New to You</h2>
-          <button 
-            onClick={fetchNewToYouVideos}
-            className="text-sm text-blue-500 hover:text-blue-700"
-            disabled={loadingNewToYou}
-          >
-            {loadingNewToYou ? 'Refreshing...' : 'Refresh'}
-          </button>
-        </div>
-        
-        {loadingNewToYou ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {Array(5).fill(0).map((_, i) => (
-              <Skeleton key={i} className="aspect-video rounded-lg" />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {newToYouVideos.map(video => (
-              <VideoCard 
-                key={video.id}
-                video={video}
-                onClick={() => router.push(`/watch?v=${video.id}`)}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Main Video Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {videos.map((video, index) => (
-          <RegularVideoCard key={video.id} video={video} index={index} />
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
+        {videos.map((video: Video, idx) => {
+          // Validate video data before rendering (including ID)
+          if (!video || typeof video !== 'object' || !video.id) {
+            console.warn('Skipping render for invalid video data in grid:', video);
+            return <div key={`invalid-${idx}`} />;
+          }
+          // Add log to see what's being rendered
+          // console.log('Rendering VideoCard for:', video.id, video.title);
+          return (
+            <VideoCard
+              key={`${video.id}-${idx}`} // Key is safe now because we checked video.id
+              video={video}
+              onClick={() => handleVideoClick(video)}
+            />
+          );
+        })}
       </div>
 
       {/* Load More / Loading Indicator */}
@@ -500,8 +541,29 @@ export default function ExplorePage() {
         title={selectedVideo?.title || 'Check out this video'}
       />
       
-      <ReportDialog isOpen={isReportOpen} onClose={() => setIsReportOpen(false)} />
-      <FeedbackDialog isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
+      <ReportDialog 
+        isOpen={isReportOpen} 
+        onClose={() => setIsReportOpen(false)}
+        onSubmit={() => {
+          setIsReportOpen(false)
+          toast({
+            title: "Report submitted",
+            description: "Thank you for your feedback.",
+          })
+        }}
+      />
+      
+      <FeedbackDialog 
+        isOpen={isFeedbackOpen} 
+        onClose={() => setIsFeedbackOpen(false)}
+        onSubmit={() => {
+          setIsFeedbackOpen(false)
+          toast({
+            title: "Feedback submitted",
+            description: "Thank you for your feedback.",
+          })
+        }}
+      />
     </div>
   )
 }

@@ -389,8 +389,9 @@ export default function GamingPage() {
 
       {isShareOpen && selectedVideo && (
         <SharePopup
-          videoId={selectedVideo.id}
-          videoTitle={selectedVideo.title}
+          isOpen={isShareOpen}
+          url={`${typeof window !== 'undefined' ? window.location.origin : ''}/video/${selectedVideo.id}`}
+          title={selectedVideo.title}
           onClose={() => {
             setIsShareOpen(false)
             setSelectedVideo(null)

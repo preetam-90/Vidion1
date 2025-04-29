@@ -4,6 +4,7 @@ import { useCallback, useState } from "react"
 import { ThumbsUp, MessageSquare, Share, Clock, Flag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useWatchLater } from "@/contexts/watch-later-context"
+import { useLikedVideos } from "@/contexts/liked-videos-context"
 import { useToast } from "@/components/ui/use-toast"
 import SharePopup from "@/components/share-popup"
 
@@ -24,6 +25,7 @@ export default function VideoInfo({ video }: VideoInfoProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [isShareOpen, setIsShareOpen] = useState(false)
   const { addToWatchLater, removeFromWatchLater, isInWatchLater } = useWatchLater()
+  const { addToLiked, removeFromLiked, isLiked } = useLikedVideos()
   const { toast } = useToast()
 
   const toggleDescription = useCallback(() => {
@@ -61,6 +63,35 @@ export default function VideoInfo({ video }: VideoInfoProps) {
     }
   }, [video, addToWatchLater, removeFromWatchLater, isInWatchLater, toast])
 
+  const handleLike = useCallback(() => {
+    if (isLiked(video.id.toString())) {
+      removeFromLiked(video.id.toString())
+      toast({
+        description: "Removed from Liked Videos",
+        duration: 2000,
+      })
+    } else {
+      addToLiked({
+        id: video.id.toString(),
+        title: video.title,
+        uploader: video.uploader,
+        views: typeof video.views === 'string' ? parseInt(video.views.replace(/[^0-9]/g, '')) : video.views,
+        likes: typeof video.likes === 'string' ? parseInt(video.likes.replace(/[^0-9]/g, '')) : video.likes,
+        comments: typeof video.comments === 'string' ? parseInt(video.comments.replace(/[^0-9]/g, '')) : video.comments,
+        uploadDate: video.uploadDate,
+        description: video.description,
+        thumbnail: "",
+        url: "",
+        platform: "youtube",
+        category: "video",
+      })
+      toast({
+        description: "Added to Liked Videos",
+        duration: 2000,
+      })
+    }
+  }, [video, addToLiked, removeFromLiked, isLiked, toast])
+
   const formatNumber = (num: number | string): string => {
     const parsedNum = typeof num === 'string' ? parseInt(num.replace(/[^0-9]/g, '')) : num
     
@@ -88,11 +119,16 @@ export default function VideoInfo({ video }: VideoInfoProps) {
         </div>
         
         <div className="flex items-center gap-2 flex-wrap">
-          <Button variant="outline" size="sm" className="gap-1">
+          <Button
+            variant="outline"
+            size="sm"
+            className={`gap-1 ${isLiked(video.id.toString()) ? 'text-red-500' : ''}`}
+            onClick={handleLike}
+          >
             <ThumbsUp className="h-4 w-4" />
-            {formatNumber(video.likes)}
+            {isLiked(video.id.toString()) ? "Liked" : "Like"}
           </Button>
-          
+
           <Button
             variant="outline"
             size="sm"
