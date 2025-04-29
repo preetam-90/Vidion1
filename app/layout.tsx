@@ -3,6 +3,8 @@ import "./globals.css"
 import { Inter } from "next/font/google"
 import ClientLayout from "./client-layout"
 import { Providers } from "./providers"
+import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration"
+import { ReactNode } from "react"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,12 +25,13 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
+          <ServiceWorkerRegistration />
           <ClientLayout>{children}</ClientLayout>
         </Providers>
       </body>
