@@ -8,8 +8,8 @@ export interface Video {
   description: string;
   platform: string;
   category: string;
-  likes: string;
-  comments: string;
+  likes: string | number;
+  comments: string | number;
   url: string;
   duration: string;
 }
