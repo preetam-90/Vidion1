@@ -13,7 +13,7 @@ import { ReportDialog } from "@/components/report-dialog"
 import { FeedbackDialog } from "@/components/feedback-dialog"
 import { VideoOptionsDropdown } from "./components/VideoOptionsDropdown"
 import { Skeleton } from '@/components/ui/skeleton'
-import VideoCard from '@/app/components/VideoCard'
+import VideoCard from '@/components/VideoCard'
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
 interface Video {
