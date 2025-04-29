@@ -9,8 +9,34 @@ import { ReactNode } from "react"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: 'Vidiony',
-  description: 'Video streaming platform',
+  title: 'Vidiony - Video Streaming Platform',
+  description: 'Watch movies, TV shows, shorts, and music videos on Vidiony. Stream your favorite content anytime, anywhere.',
+  keywords: 'video streaming, movies, TV shows, shorts, music videos, online streaming',
+  authors: [{ name: 'Vidiony' }],
+  creator: 'Vidiony',
+  publisher: 'Vidiony',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://vidion.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Vidiony - Video Streaming Platform',
+    description: 'Watch movies, TV shows, shorts, and music videos on Vidiony. Stream your favorite content anytime, anywhere.',
+    url: 'https://vidion.vercel.app',
+    siteName: 'Vidiony',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Vidiony - Video Streaming Platform',
+    description: 'Watch movies, TV shows, shorts, and music videos on Vidiony. Stream your favorite content anytime, anywhere.',
+  },
   verification: {
     google: 'ABCg9GS2lVnsrDFDj22yTT_Mc6ya9-fMXl09o3OIQ9I',
   },
