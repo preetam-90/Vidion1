@@ -16,10 +16,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import SharePopup from "@/components/share-popup"
 import { Loader2 } from "lucide-react"
-import type { Video as AppVideo } from '@/types/data'; // Use the main Video type
-
-// Use the main Video type for consistency
-interface Video extends AppVideo {}
+import type { Video } from '@/types/data';
 
 // Mock Data for Gaming Videos (fallback)
 const MOCK_GAMING_VIDEOS: Video[] = [
