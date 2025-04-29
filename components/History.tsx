@@ -1,8 +1,11 @@
+import { useState } from "react"
 import { ReportDialog } from "./report-dialog"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function History() {
   const [isReportOpen, setIsReportOpen] = useState(false)
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null)
+  const { toast } = useToast()
 
   const handleReport = (reason: string) => {
     if (selectedVideoId) {
