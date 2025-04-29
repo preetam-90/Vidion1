@@ -1,39 +1,17 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { videos as localVideos, Video } from "@/data";
 import VideoCard from "@/components/VideoCard";
 import { useRouter } from "next/navigation";
-import { useInView } from 'react-intersection-observer';
 import CategoryBar from "@/components/CategoryBar";
-import VideoCardSkeleton from "@/components/VideoCardSkeleton";
-import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   const router = useRouter();
-  
-  // Lazy loading for category sections
-  const [categorySectionsLoaded, setCategorySectionsLoaded] = useState(false);
-  const { ref: categorySectionRef, inView: categorySectionInView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-    rootMargin: '200px'
-  });
   
   // When a user clicks a video card, navigate to the video player page
   const handleVideoClick = (video: Video) => {
     router.push(`/video/${video.id}`);
   };
-
-  // Load category sections when scrolled into view
-  useEffect(() => {
-    if (categorySectionInView) {
-      // Add a small delay to simulate loading and prevent flickering
-      const timer = setTimeout(() => {
-        setCategorySectionsLoaded(true);
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [categorySectionInView]);
 
   // Group videos by category to create sections
   const getVideosByCategory = () => {
@@ -60,7 +38,7 @@ export default function HomePage() {
   const gridClass = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4";
 
   return (
-    <>
+    <React.Fragment>
       <div className="sticky top-0 left-0 right-0 z-40">
         <CategoryBar />
       </div>
@@ -69,52 +47,33 @@ export default function HomePage() {
         <h1 className="sr-only">Vidiony - Your Ultimate Video Streaming Platform</h1>
         
         {/* Category sections with improved alignment */}
-        <div ref={categorySectionRef} className="mt-8 w-full">
-          {categorySectionsLoaded ? (
-            <div className="space-y-10 w-full">
-              {categorizedVideos.map((categoryGroup, idx) => (
-                <div key={idx} className="space-y-4 w-full">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-semibold">{categoryGroup.category}</h2>
-                    <button 
-                      onClick={() => router.push(`/category/${categoryGroup.category?.toLowerCase()}`)}
-                      className="text-sm text-primary hover:underline"
-                    >
-                      View all
-                    </button>
-                  </div>
-                  <div className={gridClass}>
-                    {categoryGroup.videos.map((video: Video, idx) => (
-                      <VideoCard
-                        key={`${video.id}-cat-${idx}`}
-                        video={video}
-                        onClick={() => handleVideoClick(video)}
-                      />
-                    ))}
-                  </div>
+        <div className="mt-8 w-full">
+          <div className="space-y-10 w-full">
+            {categorizedVideos.map((categoryGroup, idx) => (
+              <div key={idx} className="space-y-4 w-full">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-semibold">{categoryGroup.category}</h2>
+                  <button 
+                    onClick={() => router.push(`/category/${categoryGroup.category?.toLowerCase()}`)}
+                    className="text-sm text-primary hover:underline"
+                  >
+                    View all
+                  </button>
                 </div>
-              ))}
-            </div>
-          ) : (
-            // Improved skeleton loading state for categories
-            <div className="space-y-10 w-full">
-              {[1, 2].map((_, catIdx) => (
-                <div key={`cat-skeleton-${catIdx}`} className="space-y-4 w-full">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="h-8 bg-muted/60 animate-pulse rounded-md w-48"></div>
-                    <div className="h-6 bg-muted/60 animate-pulse rounded-md w-16"></div>
-                  </div>
-                  <div className={gridClass}>
-                    {Array(6).fill(0).map((_, idx) => (
-                      <VideoCardSkeleton key={`cat-card-skeleton-${catIdx}-${idx}`} />
-                    ))}
-                  </div>
+                <div className={gridClass}>
+                  {categoryGroup.videos.map((video: Video, idx) => (
+                    <VideoCard
+                      key={`${video.id}-cat-${idx}`}
+                      video={video}
+                      onClick={() => handleVideoClick(video)}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </>
+    </React.Fragment>
   );
 }
