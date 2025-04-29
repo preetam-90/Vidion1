@@ -6,9 +6,10 @@
     "dev": "node run-dev.js",
     "dev:force": "node run-dev.js",
     "dev:clean": "node run-dev.js clean",
-    "build": "next build",
+    "build": "npm run generate-pwa-assets && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-pwa-assets": "node scripts/generate-pwa-assets.js"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.18.0",
