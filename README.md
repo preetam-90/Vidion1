@@ -2,9 +2,11 @@
 
 A modern video streaming platform built with Next.js, offering a rich set of features for video content consumption and management.
 
+🌐 **Live Website**: [https://vidion.vercel.app/](https://vidion.vercel.app/)
+
 ## Description
 
-Vidion is a feature-rich video streaming platform that provides users with a seamless experience for watching, organizing, and discovering video content. The platform includes support for movies, shorts, music videos, and immersive content.
+Vidion is a comprehensive educational video streaming platform that provides users with a seamless experience for watching programming tutorials, algorithm explanations, and technical content. The platform includes extensive coverage of programming concepts, data structures, algorithms, and computer science fundamentals.
 
 ## Features
 
@@ -14,10 +16,35 @@ Vidion is a feature-rich video streaming platform that provides users with a sea
 - 🎨 Modern UI with dark/light theme support
 - 📊 User dashboard with viewing history
 - ⭐ Favorites and watch later functionality
-- 🎵 Music video section
+- 🎯 Comprehensive programming tutorials
 - 🔄 Offline mode support
 - 📈 Trending content section
 - 🏷️ Category-based content organization
+
+## Content Categories
+
+- 💻 Programming Basics
+- 📊 Flowcharts & Algorithms
+- 🔢 Number Systems
+- 📝 Programming Patterns
+- 🧮 Math Problems
+- 🔍 Complexity Analysis
+- 📚 Data Structures
+  - Arrays
+  - Linked Lists
+  - Stacks
+  - Queues
+  - Trees
+- 🎯 Algorithm Topics
+  - Sorting Algorithms
+  - Searching Algorithms
+  - String Algorithms
+  - Matrix Algorithms
+- 🔧 Advanced Topics
+  - Bit Manipulation
+  - Pointers
+  - Recursion
+  - C++ Concepts
 
 ## Preview
 
@@ -123,7 +150,7 @@ pnpm dev
 1. Start the development server using `pnpm dev`
 2. Open [http://localhost:3000](http://localhost:3000) in your browser
 3. Sign in using the authentication system
-4. Browse and watch videos, create playlists, and manage your content
+4. Browse and watch educational programming content
 
 ## Environment Variables
 
