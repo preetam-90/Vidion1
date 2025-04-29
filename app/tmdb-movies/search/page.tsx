@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { searchMovies, getImageUrl, Movie } from '@/lib/tmdb-api';
 import { Search, ArrowLeft } from 'lucide-react';
 
-export default function TMDBSearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   
@@ -181,5 +181,26 @@ export default function TMDBSearchPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center mb-8">
+        <h1 className="text-3xl font-bold text-white">TMDB Movie Search</h1>
+      </div>
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+      </div>
+    </div>
+  );
+}
+
+export default function TMDBSearchPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <SearchContent />
+    </Suspense>
   );
 } 
