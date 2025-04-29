@@ -332,18 +332,20 @@ export default function ImmersiveShortsPlayer({
                 {/* Video Element */}
                 {video.platform !== 'youtube' && video.url ? (
                   <video
-                    ref={el => videoRefs.current[video.id] = el}
+                    ref={el => {
+                      videoRefs.current[video.id] = el;
+                    }}
                     src={video.url}
                     className="h-full w-full object-cover"
                     loop
                     playsInline
-                    onClick={togglePlay}
+                    autoPlay
                     muted={isMuted}
                   />
                 ) : (
                   <div className="relative h-full w-full">
                     <iframe
-                      src={`https://www.youtube.com/embed/${video.id}?autoplay=1&controls=0&loop=1&playlist=${video.id}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&fs=0&color=white&disablekb=1&mute=${isMuted ? 1 : 0}&playsinline=1&enablejsapi=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}&widgetid=1`}
+                      src={`https://www.youtube.com/embed/${video.id}?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=${video.id}`}
                       className="absolute inset-0 h-full w-full"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
