@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect } from "react"
-import type { Video } from "@/data"
+import type { Video } from "@/types/data"
 
 interface WatchLaterContextType {
   watchLaterVideos: Video[]
