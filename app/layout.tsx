@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
+import type { PropsWithChildren } from "react"
 import "./globals.css"
 import { Inter } from "next/font/google"
 import ClientLayout from "./client-layout"
 import { Providers } from "./providers"
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration"
-import { ReactNode } from "react"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -39,7 +39,9 @@ export const metadata: Metadata = {
   },
   verification: {
     google: 'ABCg9GS2lVnsrDFDj22yTT_Mc6ya9-fMXl09o3OIQ9I',
-    bing: '64FD345A7FD651E59AAAB61644D157FE',
+    other: {
+      'msvalidate.01': '64FD345A7FD651E59AAAB61644D157FE'
+    }
   },
   robots: {
     index: true,
@@ -47,11 +49,7 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-    },
-    bingbot: {
-      index: true,
-      follow: true,
-    },
+    }
   },
   icons: {
     icon: [
@@ -64,11 +62,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode
-}) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
