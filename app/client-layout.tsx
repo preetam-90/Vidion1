@@ -53,8 +53,18 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     }
   }, [isWatchPage])
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen)
-  const closeMobileMenu = () => setIsMobileMenuOpen(false)
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(prev => !prev)
+  }
+  
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false)
+  }
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    closeMobileMenu()
+  }, [pathname])
 
   return (
     <div className="flex flex-col min-h-screen">

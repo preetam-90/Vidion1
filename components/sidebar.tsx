@@ -532,27 +532,34 @@ export default function Sidebar({
   if (isMobile) {
     return (
       <>
-        {isMobileMenuOpen && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-40" 
-            onClick={closeMobileMenu}
-            aria-hidden="true"
-          />
-        )}
         <aside
           ref={sidebarRef}
           className={cn(
-            "fixed top-16 bottom-0 left-0 z-50 w-64 bg-background border-r transition-transform duration-300 ease-in-out",
-            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+            "fixed bottom-0 left-0 right-0 z-50 bg-background border-t transition-transform duration-300 ease-in-out",
+            "md:hidden" // Ensure it's only visible on mobile
           )}
-          aria-hidden={!isMobileMenuOpen}
         >
-          <div className="flex flex-col h-full">
-            <div className="flex-1 overflow-y-auto py-4">
-              <SidebarContent />
-            </div>
-            {/* Don't render UserProfile when in movies page (shouldOverlay=true) */}
-            {!shouldOverlay && <UserProfile />}
+          <div className="flex items-center justify-around h-16 px-2">
+            {mainItems.slice(0, 5).map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "flex flex-col items-center justify-center w-full h-full",
+                    "text-sm font-medium",
+                    isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <item.icon className={cn(
+                    "h-5 w-5 mb-1",
+                    item.highlight && "text-primary"
+                  )} />
+                  <span className="text-xs">{item.label}</span>
+                </Link>
+              );
+            })}
           </div>
         </aside>
       </>

@@ -51,32 +51,12 @@ export default function Navbar({ isMobileMenuOpen, toggleMobileMenu }: NavbarPro
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="h-14 flex items-center justify-between px-4">
         <div className="flex items-center gap-6 flex-1 justify-between">
-          {isMobile && (
-            <Button variant="ghost" size="icon" className="mr-2" onClick={toggleMobileMenu}>
-              {isMobileMenuOpen ? <X /> : <Menu />}
-            </Button>
-          )}
-
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <div className="block md:hidden">
-              <Image 
-                src="/image.png"
-                alt="Vidiony Mobile Logo" 
-                width={40} 
-                height={40} 
-                className="w-[70px] h-[70px] object-contain"
-                priority 
-              />
-            </div>
-            <div className="hidden md:block">
-              <Image 
-                src="/image-removebg-preview.png" 
-                alt="Vidiony Logo" 
-                width={200} 
-                height={40} 
-                className="w-[100px] sm:w-[100px] md:w-[120px] lg:w-[120px] h-auto object-contain"
-                priority 
-              />
+          <Link href="/" className="flex items-center group relative">
+            <div className="relative overflow-hidden">
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient-x">
+                Vidiony
+              </span>
+              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 group-hover:w-full transition-all duration-300 ease-in-out" />
             </div>
           </Link>
 
