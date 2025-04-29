@@ -24,31 +24,31 @@ Vidion is a feature-rich video streaming platform that provides users with a sea
 Here are some screenshots showcasing the main features of Vidion:
 
 ### Home Page
-![Home Page](/public/previews/home.png)
+![Home Page](./public/previews/home.png)
 *The main landing page with featured content and navigation*
 
 ### Explore Section
-![Explore Section](/public/previews/explore.png)
+![Explore Section](./public/previews/explore.png)
 *Discover new content and trending videos*
 
 ### Movies Section
-![Movies Section](/public/previews/movies.png)
+![Movies Section](./public/previews/movies.png)
 *Browse and watch movies with detailed information*
 
 ### Music Section
-![Music Section](/public/previews/music.png)
+![Music Section](./public/previews/music.png)
 *Enjoy music videos and playlists*
 
 ### Gaming Content
-![Gaming Section](/public/previews/gaming.png)
+![Gaming Section](./public/previews/gaming.png)
 *Dedicated section for gaming-related content*
 
 ### History & Trending
-![History and Trending](/public/previews/history.png)
+![History and Trending](./public/previews/history.png)
 *Track your viewing history and discover trending content*
 
 ### TMDB Movies Integration
-![TMDB Movies](/public/previews/tmdb%20movies.png)
+![TMDB Movies](./public/previews/tmdb%20movies.png)
 *Seamless integration with TMDB for movie information*
 
 ## Tech Stack
