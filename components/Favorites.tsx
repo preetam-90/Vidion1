@@ -108,7 +108,7 @@ const truncateUrl = (url: string) => {
 // Add color extraction function
 function getDominantColor(imageSrc: string): Promise<string> {
   return new Promise((resolve) => {
-    const img: HTMLImageElement = new Image();
+    const img = document.createElement('img');
     img.crossOrigin = "Anonymous";
     
     img.onload = () => {
