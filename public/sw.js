@@ -1,8 +1,5 @@
 const CACHE_NAME = 'offline-cache-v1';
-const OFFLINE_URL = '/offline';
-
 const CACHED_RESOURCES = [
-  OFFLINE_URL,
   '/',
   '/styles/globals.css',
   '/favicon.ico',
@@ -34,7 +31,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request)
         .catch(() => {
-          return caches.match(OFFLINE_URL);
+          return caches.match('/');
         })
     );
   } else {
