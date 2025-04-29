@@ -2,8 +2,9 @@
 
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { ReactNode } from "react";
+import { ReactNode, Fragment } from "react";
 import { CacheProvider } from "@/contexts/CacheContext";
+import { PreloadProvider } from "@/contexts/PreloadContext";
 
 interface Props {
   children: ReactNode;
@@ -11,12 +12,14 @@ interface Props {
 
 export function Providers({ children }: Props) {
   return (
-    <CacheProvider>
-      <div>
-        {children}
-        <Analytics />
-        <SpeedInsights />
-      </div>
-    </CacheProvider>
+    <Fragment>
+      <PreloadProvider>
+        <CacheProvider>
+          {children}
+          <Analytics />
+          <SpeedInsights />
+        </CacheProvider>
+      </PreloadProvider>
+    </Fragment>
   );
 } 

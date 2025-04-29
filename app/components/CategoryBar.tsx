@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Fragment } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { usePreload } from "@/contexts/PreloadContext";
 
 // Main navigation pages 
 const mainPages = [
@@ -41,6 +42,7 @@ export default function CategoryBar() {
   const [showRightArrow, setShowRightArrow] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const { isPagePreloaded } = usePreload();
 
   // Determine active category based on current path
   const getActiveItem = () => {
@@ -119,58 +121,62 @@ export default function CategoryBar() {
   }, [activeItem]);
 
   return (
-    <div className="relative w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center py-1 -mt-1">
-      {showLeftArrow && (
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 rounded-full bg-background/80 shadow-sm h-8 w-8" 
-          onClick={() => scroll('left')}
+    <Fragment>
+      <div className="relative w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center py-1 -mt-1">
+        {showLeftArrow && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 rounded-full bg-background/80 shadow-sm h-8 w-8" 
+            onClick={() => scroll('left')}
+          >
+            <ChevronLeft className="h-3 w-3" />
+          </Button>
+        )}
+        
+        <div 
+          ref={scrollContainerRef}
+          className="flex items-center overflow-x-auto scrollbar-hide px-4 md:px-6 gap-2 max-w-full h-full"
         >
-          <ChevronLeft className="h-3 w-3" />
-        </Button>
-      )}
-      
-      <div 
-        ref={scrollContainerRef}
-        className="flex items-center overflow-x-auto scrollbar-hide px-4 md:px-6 gap-2 max-w-full h-full"
-      >
-        {allLinks.map((item, index) => {          
-          // Check if current item is active
-          const isActive = item.name === activeItem;
-          
-          return (
-            <Link 
-              href={item.path} 
-              key={index}
-              data-item={item.name}
-            >
-              <Button 
-                variant={isActive ? "default" : "secondary"} 
-                size="sm" 
-                className={`whitespace-nowrap text-xs font-medium px-3 py-1 h-8 rounded-lg hover:bg-gray-700 ${
-                  isActive 
-                    ? 'bg-black text-white' 
-                    : 'bg-gray-100/10 text-gray-200'
-                }`}
+          {allLinks.map((item, index) => {          
+            const isActive = item.name === activeItem;
+            const isPreloaded = isPagePreloaded(item.path);
+            
+            return (
+              <Link 
+                href={item.path} 
+                key={index}
+                data-item={item.name}
               >
-                {item.name}
-              </Button>
-            </Link>
-          );
-        })}
+                <Button 
+                  variant={isActive ? "default" : "secondary"} 
+                  size="sm" 
+                  className={`whitespace-nowrap text-xs font-medium px-3 py-1 h-8 rounded-lg hover:bg-gray-700 ${
+                    isActive 
+                      ? 'bg-black text-white' 
+                      : 'bg-gray-100/10 text-gray-200'
+                  } ${
+                    isPreloaded ? 'after:content-["✓"] after:ml-1 after:text-green-500 after:text-xs' : ''
+                  }`}
+                >
+                  {item.name}
+                </Button>
+              </Link>
+            );
+          })}
+        </div>
+        
+        {showRightArrow && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 rounded-full bg-background/80 shadow-sm h-8 w-8" 
+            onClick={() => scroll('right')}
+          >
+            <ChevronRight className="h-3 w-3" />
+          </Button>
+        )}
       </div>
-      
-      {showRightArrow && (
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 rounded-full bg-background/80 shadow-sm h-8 w-8" 
-          onClick={() => scroll('right')}
-        >
-          <ChevronRight className="h-3 w-3" />
-        </Button>
-      )}
-    </div>
+    </Fragment>
   );
 } 
