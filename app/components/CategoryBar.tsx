@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,9 +43,9 @@ const allLinks: LinkItem[] = [...mainPages, ...categories.filter(c => c !== 'Mus
 }))];
 
 export default function CategoryBar() {
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(true);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = React.useState(false);
+  const [showRightArrow, setShowRightArrow] = React.useState(true);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { isPagePreloaded } = usePreload();
 
@@ -94,7 +94,7 @@ export default function CategoryBar() {
   };
 
   // Add scroll event listener
-  useEffect(() => {
+  React.useEffect(() => {
     const container = scrollContainerRef.current;
     if (container) {
       container.addEventListener('scroll', checkScroll);
@@ -107,7 +107,7 @@ export default function CategoryBar() {
 
   return (
     <div className="relative w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center py-1 -mt-1">
-      {showLeftArrow ? (
+      {showLeftArrow && (
         <Button 
           variant="ghost" 
           size="icon" 
@@ -116,20 +116,20 @@ export default function CategoryBar() {
         >
           <ChevronLeft className="h-3 w-3" />
         </Button>
-      ) : null}
+      )}
       
       <div 
         ref={scrollContainerRef}
         className="flex items-center overflow-x-auto scrollbar-hide px-4 md:px-6 gap-2 max-w-full h-full"
       >
-        {allLinks.map((item, index) => {          
+        {allLinks.map((item, index) => {
           const isActive = item.name === activeItem;
           const isPreloaded = isPagePreloaded(item.path);
           
           return (
             <Link 
-              href={item.path} 
               key={index}
+              href={item.path}
               data-item={item.name}
             >
               <Button 
@@ -150,7 +150,7 @@ export default function CategoryBar() {
         })}
       </div>
       
-      {showRightArrow ? (
+      {showRightArrow && (
         <Button 
           variant="ghost" 
           size="icon" 
@@ -159,7 +159,7 @@ export default function CategoryBar() {
         >
           <ChevronRight className="h-3 w-3" />
         </Button>
-      ) : null}
+      )}
     </div>
   );
 } 
