@@ -11,6 +11,9 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: 'Vidiony',
   description: 'Video streaming platform',
+  verification: {
+    google: 'google9d7e73b235c2bf50',
+  },
   icons: {
     icon: [
       {
