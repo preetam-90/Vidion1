@@ -39,6 +39,19 @@ export const metadata: Metadata = {
   },
   verification: {
     google: 'ABCg9GS2lVnsrDFDj22yTT_Mc6ya9-fMXl09o3OIQ9I',
+    bing: '64FD345A7FD651E59AAAB61644D157FE',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+    bingbot: {
+      index: true,
+      follow: true,
+    },
   },
   icons: {
     icon: [
