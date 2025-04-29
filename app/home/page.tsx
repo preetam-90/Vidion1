@@ -46,6 +46,7 @@ export default function HomePage() {
       </div>
       
       <div className="flex flex-col gap-6 pb-20 container max-w-full xl:max-w-[90%] 2xl:max-w-[95%] mx-auto px-4 md:px-6">
+        <h1 className="sr-only">Vidiony - Your Ultimate Video Streaming Platform</h1>
         <div className="mt-4">
           <p className="text-muted-foreground">Featured Videos</p>
         </div>
