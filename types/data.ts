@@ -11,7 +11,7 @@ export interface Video {
   likes: string | number;
   comments: string | number;
   url: string;
-  duration: string;
+  duration?: string;
 }
 
 export interface MovieCategory {
