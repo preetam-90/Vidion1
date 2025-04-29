@@ -8,14 +8,14 @@ interface DynamicImportOptions {
   loading?: ComponentType;
 }
 
-export function lazyLoad<T = any>(
+export function lazyLoad<T extends object = any>(
   importFunc: () => Promise<{ default: ComponentType<T> }>,
   options: DynamicImportOptions = { ssr: false }
 ) {
   const { ssr = false, loading: LoadingComponent } = options;
   
   const LazyComponent = dynamic(importFunc, {
-    loading: LoadingComponent,
+    loading: LoadingComponent ? () => <LoadingComponent /> : undefined,
     ssr,
   });
 
