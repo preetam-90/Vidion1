@@ -3,9 +3,18 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { Menu, Home, TrendingUp, Music, Clock, History } from "lucide-react" // Added icons
+import { Menu, Home, TrendingUp, Music, Clock, History } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { useSidebar } from "@/hooks/use-sidebar"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
+import { useMobile } from "@/hooks/use-mobile"
+import { SidebarContent } from "@/components/ui/sidebar-content"
+import { SidebarMenu } from "@/components/ui/sidebar-menu"
+import { SidebarMenuItem } from "@/components/ui/sidebar-menu-item"
+import { SidebarMenuButton } from "@/components/ui/sidebar-menu-button"
 
-// ... (keep all the existing imports and context code)
+const SIDEBAR_WIDTH_MOBILE = "100%"
 
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
@@ -26,16 +35,13 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <Menu /> {/* Changed from PanelLeft to Menu (hamburger icon) */}
+      <Menu />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
 })
 SidebarTrigger.displayName = "SidebarTrigger"
 
-// ... (keep all the existing component code until SidebarContent)
-
-// Create a simplified sidebar content component
 const SimplifiedSidebarContent = () => {
   const categories = [
     { id: "home", name: "Home", icon: Home },
@@ -64,7 +70,6 @@ const SimplifiedSidebarContent = () => {
   )
 }
 
-// Modify the main Sidebar component to use our simplified content
 const Sidebar = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
@@ -84,7 +89,8 @@ const Sidebar = React.forwardRef<
     },
     ref
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const { state, openMobile, setOpenMobile } = useSidebar()
+    const isMobile = useMobile()
 
     if (collapsible === "none") {
       return (
@@ -115,9 +121,7 @@ const Sidebar = React.forwardRef<
             }
             side={side}
           >
-            <div className="flex h-full w-full flex-col">
-              <SimplifiedSidebarContent />
-            </div>
+            <SimplifiedSidebarContent />
           </SheetContent>
         </Sheet>
       )
@@ -132,7 +136,6 @@ const Sidebar = React.forwardRef<
         data-variant={variant}
         data-side={side}
       >
-        {/* This is what handles the sidebar gap on desktop */}
         <div
           className={cn(
             "duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear",
@@ -168,4 +171,6 @@ const Sidebar = React.forwardRef<
   }
 )
 
-// ... (keep all the existing exports)
+Sidebar.displayName = "Sidebar"
+
+export { Sidebar, SidebarTrigger }
