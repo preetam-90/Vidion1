@@ -1,8 +1,14 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { WifiOff } from "lucide-react";
 import { ReactNode } from "react";
 
 export default function OfflinePage() {
+  const handleRetry = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md">
@@ -12,7 +18,7 @@ export default function OfflinePage() {
           It seems you've lost your internet connection. Please check your network settings and try again.
         </p>
         <Button
-          onClick={() => window.location.reload()}
+          onClick={handleRetry}
           className="bg-blue-600 hover:bg-blue-700 text-white"
         >
           Try Again
