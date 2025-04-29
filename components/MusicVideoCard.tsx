@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { MusicVideoOptionsDropdown } from '@/app/music/components/MusicVideoOptionsDropdown';
+import { MusicVideoOptionsDropdown } from '../app/music/components/MusicVideoOptionsDropdown';
 import SharePopup from '@/components/share-popup';
 import { ReportDialog } from '@/components/report-dialog';
 import { FeedbackDialog } from '@/components/feedback-dialog';
