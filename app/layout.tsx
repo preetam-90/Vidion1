@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: 'Vidiony',
   description: 'Video streaming platform',
   verification: {
-    google: 'google9d7e73b235c2bf50',
+    google: 'ABCg9GS2lVnsrDFDj22yTT_Mc6ya9-fMXl09o3OIQ9I',
   },
   icons: {
     icon: [
