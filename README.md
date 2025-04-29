@@ -3,7 +3,7 @@
 A modern video streaming platform built with Next.js, offering a rich set of features for video content consumption and management.
 
 🌐 **Live Website**: [https://vidion.vercel.app/](https://vidion.vercel.app/)
-<iframe src="https://vidion.vercel.app" width="100%" height="600px"></iframe>
+
 
 ## Description
 
