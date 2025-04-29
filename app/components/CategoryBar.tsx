@@ -6,16 +6,35 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
+// Main navigation pages 
+const mainPages = [
+  { name: 'All', path: '/' },
+  { name: 'Trending', path: '/trending' },
+  { name: 'Explore', path: '/explore' },
+  { name: 'Music', path: '/music' },
+  { name: 'Movies', path: '/tmdb-movies' },
+  { name: 'Shorts', path: '/shorts' },
+  { name: 'Favorites', path: '/favorites' },
+  { name: 'History', path: '/history' },
+  { name: 'Watch Later', path: '/watch-later' },
+];
+
 // Video categories extracted from data
 const categories = [
-  'All', 'Music', 'Gaming', 'Movies', 'Flowcharts', 'Programming Patterns', 
-  'Sorting Algorithms', 'Number Systems', 'Math Problems', 'News', 'Bit Manipulation', 
-  'Complexity Analysis', 'Arrays',  'Array Algorithms', 'Matrix Algorithms',
-  'Large Numbers', 'Sorting & Searching', 'Data Structures', 'Search Algorithms',
+  'Music', 'Gaming', 'Movies', 'Flowcharts', 'Programming Patterns', 
+  'Number Systems', 'Math Problems', 'News', 'Bit Manipulation', 
+  'Complexity Analysis', 'Arrays', 'Array Algorithms', 'Matrix Algorithms',
+  'Large Numbers', 'Data Structures', 'Search Algorithms',
   'Algorithm Problems', 'Strings', 'String Algorithms', 'String Conversion',
   'Pointers', 'Recursion', 'C++ Concepts', 'Linked Lists', 'Stacks', 'Stack Problems',
   'Education'
 ];
+
+// Combine main pages and category pages
+const allLinks = [...mainPages, ...categories.filter(c => c !== 'Music' && c !== 'Movies').map(c => ({
+  name: c,
+  path: `/category/${c.toLowerCase()}`
+}))];
 
 export default function CategoryBar() {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -24,11 +43,10 @@ export default function CategoryBar() {
   const pathname = usePathname();
 
   // Determine active category based on current path
-  const getActiveCategory = () => {
-    if (pathname === '/') return 'All';
-    if (pathname.startsWith('/music')) return 'Music';
-    if (pathname.startsWith('/gaming')) return 'Gaming';
-    if (pathname.startsWith('/movies')) return 'Movies';
+  const getActiveItem = () => {
+    // Check for exact path match first
+    const mainPageMatch = mainPages.find(page => page.path === pathname);
+    if (mainPageMatch) return mainPageMatch.name;
     
     // For category pages like /category/[category]
     const match = pathname.match(/\/category\/([^/]+)/);
@@ -44,7 +62,7 @@ export default function CategoryBar() {
     return null;
   };
   
-  const activeCategory = getActiveCategory();
+  const activeItem = getActiveItem();
 
   // Check if arrows should be displayed
   const checkScroll = () => {
@@ -80,11 +98,11 @@ export default function CategoryBar() {
     }
   }, []);
 
-  // Scroll to active category when component mounts or active category changes
+  // Scroll to active item when component mounts or active item changes
   useEffect(() => {
-    if (activeCategory && scrollContainerRef.current) {
+    if (activeItem && scrollContainerRef.current) {
       const container = scrollContainerRef.current;
-      const activeElement = container.querySelector(`[data-category="${activeCategory}"]`);
+      const activeElement = container.querySelector(`[data-item="${activeItem}"]`);
       
       if (activeElement) {
         // Scroll active element into view with some offset
@@ -98,7 +116,7 @@ export default function CategoryBar() {
         });
       }
     }
-  }, [activeCategory]);
+  }, [activeItem]);
 
   return (
     <div className="relative w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center py-1 -mt-1">
@@ -117,33 +135,15 @@ export default function CategoryBar() {
         ref={scrollContainerRef}
         className="flex items-center overflow-x-auto scrollbar-hide px-4 md:px-6 gap-2 max-w-full h-full"
       >
-        {categories.map((category, index) => {
-          // Define special categories that should redirect to dedicated pages
-          const specialCategories = ['Music', 'Gaming', 'Movies', 'News'];
-          const isSpecialCategory = specialCategories.includes(category);
-          
-          // Check if current category is active
-          const isActive = category === activeCategory;
-          
-          // Define the href based on category type
-          let href;
-          if (category === 'All') {
-            href = '/'; // Redirect to homepage for "All" category
-          } else if (isSpecialCategory) {
-            if (category === 'News') {
-              href = '/category/news'; // Use relative URL for News
-            } else {
-              href = `/${category.toLowerCase()}`; // For Music, Gaming, Movies
-            }
-          } else {
-            href = `/category/${category.toLowerCase()}`;
-          }
+        {allLinks.map((item, index) => {          
+          // Check if current item is active
+          const isActive = item.name === activeItem;
           
           return (
             <Link 
-              href={href} 
+              href={item.path} 
               key={index}
-              data-category={category}
+              data-item={item.name}
             >
               <Button 
                 variant={isActive ? "default" : "secondary"} 
@@ -154,7 +154,7 @@ export default function CategoryBar() {
                     : 'bg-gray-100/10 text-gray-200'
                 }`}
               >
-                {category}
+                {item.name}
               </Button>
             </Link>
           );

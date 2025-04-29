@@ -69,6 +69,7 @@ const MoviePoster = ({ movie, genreId, setHovered, setHoverPos }: {
 }) => {
   const posterRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
   
   // Handle click to navigate to movie detail page
@@ -79,19 +80,34 @@ const MoviePoster = ({ movie, genreId, setHovered, setHoverPos }: {
   
   const handleMouseEnter = () => {
     setIsHovering(true);
-    if (posterRef.current) {
-      const rect = posterRef.current.getBoundingClientRect();
-      // Set hover immediately to improve reliability
-      setHovered({ genreId, movieId: movie.id });
-      setHoverPos({
-        left: rect.left + rect.width / 2,
-        top: rect.top,
-      });
+    
+    // Clear any existing timeout to prevent multiple triggers
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
     }
+    
+    // Set a delay before showing the popup
+    hoverTimeoutRef.current = setTimeout(() => {
+      if (posterRef.current) {
+        const rect = posterRef.current.getBoundingClientRect();
+        setHovered({ genreId, movieId: movie.id });
+        setHoverPos({
+          left: rect.left + rect.width / 2,
+          top: rect.top,
+        });
+      }
+    }, 400); // 400ms delay before showing the popup
   };
   
   const handleMouseLeave = () => {
     setIsHovering(false);
+    
+    // Clear the timeout if mouse leaves before it triggers
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    
     // Use a very short delay before hiding to prevent flickering
     setTimeout(() => {
       if (!isHovering) {
@@ -100,6 +116,15 @@ const MoviePoster = ({ movie, genreId, setHovered, setHoverPos }: {
       }
     }, 50);
   };
+  
+  // Clean up timeouts when component unmounts
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
   
   return (
     <div 
@@ -507,10 +532,15 @@ const MoviesPage = () => {
       <AnimatePresence>
         {hoveredMovie && hoverPos && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+            transition={{ 
+              duration: 0.4,
+              type: "spring",
+              stiffness: 100,
+              damping: 15
+            }}
             className="fixed z-50 bg-gray-900 rounded-lg shadow-xl w-96 overflow-hidden movie-popup"
             style={{
               left: `${Math.min(hoverPos.left, window.innerWidth - 400)}px`,
