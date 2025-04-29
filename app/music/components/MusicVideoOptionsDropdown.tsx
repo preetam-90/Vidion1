@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useWatchLater } from "@/contexts/watch-later-context"
 import { useToast } from "@/components/ui/use-toast"
+import type { Video } from "@/data"
 
 interface MusicVideoOptionsDropdownProps {
   video: {
@@ -18,6 +19,12 @@ interface MusicVideoOptionsDropdownProps {
     artist?: string
     views: string
     uploadDate?: string
+    description?: string
+    platform?: string
+    category?: string
+    likes?: string
+    comments?: string
+    url?: string
   }
   onShare: () => void
   onFeedback: () => void
@@ -56,14 +63,21 @@ export function MusicVideoOptionsDropdown({ video, onShare, onFeedback, onReport
               duration: 3000,
             })
           } else {
-            addToWatchLater({
+            const videoToAdd: Video = {
               id: video.id,
               title: video.title,
               thumbnail: video.thumbnail,
               uploader: video.uploader || video.artist || "",
               views: typeof video.views === 'string' ? parseInt(video.views.replace(/[^0-9]/g, '')) || 0 : video.views,
-              uploadDate: video.uploadDate || new Date().toISOString()
-            })
+              uploadDate: video.uploadDate || new Date().toISOString(),
+              description: video.description || "",
+              platform: video.platform || "music",
+              category: video.category || "music",
+              likes: video.likes || "0",
+              comments: video.comments || "0",
+              url: video.url || ""
+            }
+            addToWatchLater(videoToAdd)
             toast({
               description: "Added to Watch Later",
               duration: 3000,
