@@ -6,7 +6,7 @@
     "dev": "node run-dev.js",
     "dev:force": "node run-dev.js",
     "dev:clean": "node run-dev.js clean",
-    "build": "npm run generate-pwa-assets && next build",
+    "build": "pnpm approve-builds sharp --force && npm run generate-pwa-assets && next build",
     "start": "next start",
     "lint": "next lint",
     "generate-pwa-assets": "node scripts/generate-pwa-assets.js"
