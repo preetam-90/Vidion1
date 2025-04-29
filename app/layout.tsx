@@ -8,6 +8,7 @@ import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistratio
 
 const inter = Inter({ subsets: ["latin"] })
 
+// Updated metadata configuration for Vercel deployment
 export const metadata: Metadata = {
   title: 'Vidiony - Video Streaming Platform',
   description: 'Watch movies, TV shows, shorts, and music videos on Vidiony. Stream your favorite content anytime, anywhere.',
