@@ -82,6 +82,29 @@ body {
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+  
+  /* Media query for mobile devices - Pitch black dark theme */
+  @media (max-width: 767px) {
+    .dark {
+      --background: 0 0% 0%;
+      --foreground: 0 0% 100%;
+      --card: 0 0% 0%;
+      --card-foreground: 0 0% 100%;
+      --popover: 0 0% 0%;
+      --popover-foreground: 0 0% 100%;
+      --secondary: 0 0% 10%;
+      --secondary-foreground: 0 0% 100%;
+      --muted: 0 0% 10%;
+      --muted-foreground: 0 0% 70%;
+      --accent: 0 0% 10%;
+      --accent-foreground: 0 0% 100%;
+      --border: 0 0% 15%;
+      --input: 0 0% 15%;
+      --sidebar-background: 0 0% 0%;
+      --sidebar-accent: 0 0% 10%;
+      --sidebar-border: 0 0% 15%;
+    }
+  }
 }
 
 @layer base {
