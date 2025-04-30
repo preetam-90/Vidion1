@@ -1,4 +1,7 @@
 "use client";
+
+// Updated Home page with focus outline bug fixes and improved UI elements
+
 import React, { useState, useEffect } from "react";
 import { videos as localVideos, Video } from "@/data";
 import { useRouter } from "next/navigation";
