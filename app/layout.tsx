@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import type { PropsWithChildren } from "react"
 import "./globals.css"
 import { Inter } from "next/font/google"
@@ -13,6 +13,16 @@ const inter = Inter({
   display: 'swap',
   preload: true,
 })
+
+// Export viewport configuration separately
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#000000',
+}
 
 // Updated metadata configuration for Vercel deployment
 export const metadata: Metadata = {
@@ -32,14 +42,6 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   manifest: '/manifest.json',
-  themeColor: '#000000',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover',
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
