@@ -1,6 +1,6 @@
 "use client"
 
-// Updated Explore page with UI improvements and focus outline bug fixes
+// Updated Explore page with UI improvements and focus outline bug fixes - Latest version
 
 import React, { useEffect, useState, useCallback, useRef } from "react"
 import { Loader2, ChevronLeft, ChevronRight, Eye, Clock } from "lucide-react"
