@@ -552,14 +552,6 @@ export default function Sidebar({
               const isActive = pathname === item.href;
               // Handle TMDB Movies display on mobile - show "TMDB" on extra small screens, full name on larger
               let displayLabel = item.label;
-              if (item.href === "/tmdb-movies") {
-                displayLabel = (
-                  <>
-                    <span className="block xs:hidden">TMDB</span>
-                    <span className="hidden xs:block">TMDB Movies</span>
-                  </>
-                );
-              }
               
               return (
                 <Link
@@ -575,7 +567,14 @@ export default function Sidebar({
                     "h-5 w-5 mb-1",
                     item.highlight && "text-primary"
                   )} />
-                  <span className="text-xs">{displayLabel}</span>
+                  {item.href === "/tmdb-movies" ? (
+                    <>
+                      <span className="text-xs block xs:hidden">TMDB</span>
+                      <span className="text-xs hidden xs:block">TMDB Movies</span>
+                    </>
+                  ) : (
+                    <span className="text-xs">{displayLabel}</span>
+                  )}
                 </Link>
               );
             })}
