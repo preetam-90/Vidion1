@@ -1,12 +1,53 @@
 import { NextResponse } from "next/server"
 import { searchVideos } from "@/lib/youtube-api"
 
+// Cache duration in seconds
+const CACHE_DURATION = 3600; // 1 hour
+
+// Cache for storing video results
+const videoCache = new Map<string, {
+  data: any[];
+  timestamp: number;
+}>();
+
+// Helper function to get cached data
+const getCachedData = (key: string) => {
+  const cached = videoCache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION * 1000) {
+    return cached.data;
+  }
+  return null;
+};
+
+// Helper function to set cached data
+const setCachedData = (key: string, data: any[]) => {
+  videoCache.set(key, {
+    data,
+    timestamp: Date.now()
+  });
+};
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category') || 'all'
     const regionCode = searchParams.get('region') || 'IN'
     const maxResults = 20
+
+    // Check cache first
+    const cacheKey = `${category}_${regionCode}`;
+    const cachedVideos = getCachedData(cacheKey);
+    if (cachedVideos) {
+      return NextResponse.json(
+        { videos: cachedVideos },
+        {
+          headers: {
+            'Cache-Control': `public, max-age=${CACHE_DURATION}, stale-while-revalidate=86400`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+    }
 
     // Define search queries based on category
     const categoryQueries: Record<string, string[]> = {
@@ -55,7 +96,16 @@ export async function GET(request: Request) {
       platform: 'youtube'
     }))
 
-    return NextResponse.json({ videos })
+    // Cache the results
+    setCachedData(cacheKey, videos);
+
+    // Set cache headers
+    const headers = new Headers({
+      'Cache-Control': `public, max-age=${CACHE_DURATION}, stale-while-revalidate=86400`,
+      'Content-Type': 'application/json'
+    });
+
+    return NextResponse.json({ videos }, { headers })
   } catch (error) {
     console.error('Error in explore API:', error)
     return NextResponse.json(

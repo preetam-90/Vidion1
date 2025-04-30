@@ -28,7 +28,12 @@ const convertTMDBMovieToVideo = (movie: any): Video => ({
   duration: movie.release_date ? new Date(movie.release_date).getFullYear().toString() : 'N/A'
 })
 
-const ModernSearchBar = () => {
+// Add closeSearchBar prop
+interface ModernSearchBarProps {
+  closeSearchBar?: () => void;
+}
+
+const ModernSearchBar = ({ closeSearchBar }: ModernSearchBarProps) => {
   const router = useRouter()
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -105,6 +110,10 @@ const ModernSearchBar = () => {
     if (query.trim()) {
       router.push(`/search?q=${encodeURIComponent(query.trim())}`)
       setIsFocused(false)
+      // Call closeSearchBar prop if provided
+      if (closeSearchBar) {
+        closeSearchBar()
+      }
     }
   }
 
@@ -112,6 +121,28 @@ const ModernSearchBar = () => {
     setQuery("")
     setSuggestions([])
     inputRef.current?.focus()
+  }
+
+  // Handle suggestion click
+  const handleSuggestionClick = (video: Video) => {
+    // Route to different pages based on result type
+    if (String(video.id).startsWith('tmdb-')) {
+      const tmdbId = String(video.id).replace('tmdb-', '');
+      router.push(`/tmdb-movies/${tmdbId}`);
+    } else if (String(video.id).startsWith('local-')) {
+      const videoId = String(video.id).replace('local-', '');
+      router.push(`/video/${videoId}`);
+    } else {
+      // YouTube videos
+      const videoId = video.id;
+      router.push(`/video/${videoId}`);
+    }
+    setIsFocused(false)
+    
+    // Call closeSearchBar prop if provided
+    if (closeSearchBar) {
+      closeSearchBar()
+    }
   }
 
   // Keyboard navigation
@@ -132,19 +163,7 @@ const ModernSearchBar = () => {
           if (selectedIndex >= 0 && suggestions[selectedIndex]) {
             const video = suggestions[selectedIndex]
             setQuery(video.title)
-            // Route to different pages based on result type
-            if (String(video.id).startsWith('tmdb-')) {
-              const tmdbId = String(video.id).replace('tmdb-', '');
-              router.push(`/tmdb-movies/${tmdbId}`);
-            } else if (String(video.id).startsWith('local-')) {
-              const videoId = String(video.id).replace('local-', '');
-              router.push(`/video/${videoId}`);
-            } else {
-              // YouTube videos
-              const videoId = video.id;
-              router.push(`/video/${videoId}`);
-            }
-            setIsFocused(false)
+            handleSuggestionClick(video)
           }
           break
         case 'Escape':
@@ -269,19 +288,7 @@ const ModernSearchBar = () => {
                       }`}
                       onClick={() => {
                         setQuery(item.title)
-                        // Route to different pages based on result type
-                        if (String(item.id).startsWith('tmdb-')) {
-                          const tmdbId = String(item.id).replace('tmdb-', '');
-                          router.push(`/tmdb-movies/${tmdbId}`);
-                        } else if (String(item.id).startsWith('local-')) {
-                          const videoId = String(item.id).replace('local-', '');
-                          router.push(`/video/${videoId}`);
-                        } else {
-                          // YouTube videos
-                          const videoId = item.id;
-                          router.push(`/video/${videoId}`);
-                        }
-                        setIsFocused(false)
+                        handleSuggestionClick(item)
                       }}
                       onMouseEnter={() => setSelectedIndex(index)}
                     >

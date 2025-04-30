@@ -111,7 +111,7 @@ export default function CategoryBar() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 rounded-full bg-background/80 shadow-sm h-8 w-8" 
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 rounded-full bg-background/80 shadow-sm h-7 w-7 sm:h-8 sm:w-8" 
           onClick={() => scroll('left')}
         >
           <ChevronLeft className="h-3 w-3" />
@@ -120,7 +120,7 @@ export default function CategoryBar() {
       
       <div 
         ref={scrollContainerRef}
-        className="flex items-center overflow-x-auto scrollbar-hide px-4 md:px-6 gap-2 max-w-full h-full"
+        className="flex items-center overflow-x-auto scrollbar-hide px-2 sm:px-4 md:px-6 gap-1.5 sm:gap-2 max-w-full h-full"
       >
         {allLinks.map((item, index) => {
           const isActive = item.name === activeItem;
@@ -135,12 +135,12 @@ export default function CategoryBar() {
               <Button 
                 variant={isActive ? "default" : "secondary"} 
                 size="sm" 
-                className={`whitespace-nowrap text-xs font-medium px-3 py-1 h-8 rounded-lg hover:bg-gray-700 ${
+                className={`whitespace-nowrap text-[11px] sm:text-xs font-medium px-2 sm:px-3 py-1 h-7 sm:h-8 rounded-lg hover:bg-gray-700 ${
                   isActive 
                     ? 'bg-black text-white' 
                     : 'bg-gray-100/10 text-gray-200'
                 } ${
-                  isPreloaded ? 'after:content-["✓"] after:ml-1 after:text-green-500 after:text-xs' : ''
+                  isPreloaded ? 'after:content-["✓"] after:ml-1 after:text-green-500 after:text-[10px] sm:after:text-xs' : ''
                 }`}
               >
                 {item.name}
@@ -154,7 +154,7 @@ export default function CategoryBar() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 rounded-full bg-background/80 shadow-sm h-8 w-8" 
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 rounded-full bg-background/80 shadow-sm h-7 w-7 sm:h-8 sm:w-8" 
           onClick={() => scroll('right')}
         >
           <ChevronRight className="h-3 w-3" />

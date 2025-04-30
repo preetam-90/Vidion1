@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import LatestMoviesCarousel from './components/LatestMoviesCarousel';
 import LatestMoviesRow from './components/LatestMoviesRow';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const TMDB_GENRES = [
   { id: 18, name: 'Drama' },
@@ -86,17 +87,20 @@ const MoviePoster = ({ movie, genreId, setHovered, setHoverPos }: {
       clearTimeout(hoverTimeoutRef.current);
     }
     
-    // Set a delay before showing the popup
-    hoverTimeoutRef.current = setTimeout(() => {
-      if (posterRef.current) {
-        const rect = posterRef.current.getBoundingClientRect();
-        setHovered({ genreId, movieId: movie.id });
-        setHoverPos({
-          left: rect.left + rect.width / 2,
-          top: rect.top,
-        });
-      }
-    }, 400); // 400ms delay before showing the popup
+    // Only show hover popups on desktop
+    if (window.innerWidth >= 1024) {
+      // Set a delay before showing the popup
+      hoverTimeoutRef.current = setTimeout(() => {
+        if (posterRef.current) {
+          const rect = posterRef.current.getBoundingClientRect();
+          setHovered({ genreId, movieId: movie.id });
+          setHoverPos({
+            left: rect.left + rect.width / 2,
+            top: rect.top,
+          });
+        }
+      }, 400); // 400ms delay before showing the popup
+    }
   };
   
   const handleMouseLeave = () => {
@@ -108,13 +112,16 @@ const MoviePoster = ({ movie, genreId, setHovered, setHoverPos }: {
       hoverTimeoutRef.current = null;
     }
     
-    // Use a very short delay before hiding to prevent flickering
-    setTimeout(() => {
-      if (!isHovering) {
-        setHovered(null);
-        setHoverPos(null);
-      }
-    }, 50);
+    // Only manage hover popups on desktop
+    if (window.innerWidth >= 1024) {
+      // Use a very short delay before hiding to prevent flickering
+      setTimeout(() => {
+        if (!isHovering) {
+          setHovered(null);
+          setHoverPos(null);
+        }
+      }, 50);
+    }
   };
   
   // Clean up timeouts when component unmounts
@@ -138,10 +145,10 @@ const MoviePoster = ({ movie, genreId, setHovered, setHoverPos }: {
         className="cursor-pointer"
       >
         <motion.div 
-          className="w-[180px] h-[270px] rounded-lg overflow-hidden bg-gray-800 transition-shadow duration-300"
+          className="w-[100px] h-[150px] sm:w-[130px] sm:h-[195px] md:w-[150px] md:h-[225px] lg:w-[180px] lg:h-[270px] rounded-lg overflow-hidden bg-gray-800 transition-shadow duration-300"
           initial={{ scale: 1, zIndex: 10 }}
           animate={{ 
-            scale: isHovering ? 1.1 : 1,
+            scale: isHovering ? 1.05 : 1,
             zIndex: isHovering ? 20 : 10,
             boxShadow: isHovering ? '0 10px 25px rgba(0, 0, 0, 0.5)' : '0 4px 6px rgba(0, 0, 0, 0.1)'
           }}
@@ -198,17 +205,25 @@ const GenreRow = ({
   // Function to scroll left
   const scrollLeft = () => {
     if (rowRef.current) {
-      rowRef.current.scrollBy({ left: -800, behavior: 'smooth' });
+      // Calculate scroll amount based on screen width
+      const scrollAmount = window.innerWidth < 640 ? 300 : 
+                         window.innerWidth < 768 ? 500 :
+                         window.innerWidth < 1024 ? 600 : 800;
+      rowRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     }
   };
   
   // Function to scroll right
   const scrollRight = () => {
     if (rowRef.current) {
-      rowRef.current.scrollBy({ left: 800, behavior: 'smooth' });
+      // Calculate scroll amount based on screen width
+      const scrollAmount = window.innerWidth < 640 ? 300 : 
+                         window.innerWidth < 768 ? 500 :
+                         window.innerWidth < 1024 ? 600 : 800;
+      rowRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
       // Load more if we're scrolling right and near the end
       const row = rowRef.current;
-      if (row.scrollLeft + row.clientWidth >= row.scrollWidth - 800) {
+      if (row.scrollLeft + row.clientWidth >= row.scrollWidth - scrollAmount) {
         loadMore();
       }
     }
@@ -242,54 +257,18 @@ const GenreRow = ({
   
   return (
     <div 
-      className="mb-10 relative"
+      className="mb-6 sm:mb-8 md:mb-10 relative"
       onMouseEnter={() => setIsHoveringRow(true)}
       onMouseLeave={() => setIsHoveringRow(false)}
     >
-      <h2 className="text-xl font-bold text-white mb-4">{genre.name}</h2>
+      <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">{genre.name}</h2>
       
-      {/* Left arrow */}
-      <AnimatePresence>
-        {showLeftArrow && (
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute left-0 top-1/2 transform -translate-y-8 z-30 bg-black/70 hover:bg-black/90 rounded-full p-2 text-white"
-            onClick={scrollLeft}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </motion.button>
-        )}
-      </AnimatePresence>
-      
-      {/* Right arrow */}
-      <AnimatePresence>
-        {showRightArrow && (
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute right-0 top-1/2 transform -translate-y-8 z-30 bg-black/70 hover:bg-black/90 rounded-full p-2 text-white"
-            onClick={scrollRight}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </motion.button>
-        )}
-      </AnimatePresence>
-      
-      <div
-        className="flex overflow-x-auto gap-4 pb-2 scrollbar-hide"
+      <div 
+        className="flex overflow-x-auto gap-2 sm:gap-3 md:gap-4 scrollbar-hide pb-1 relative"
         ref={rowRef}
-        style={{ scrollBehavior: 'smooth' }}
         onScroll={handleScroll}
-        onMouseEnter={handleScroll}
       >
-        {uniqueMovies.map((movie) => (
+        {uniqueMovies.map(movie => (
           <MoviePoster 
             key={movie.id} 
             movie={movie} 
@@ -299,11 +278,41 @@ const GenreRow = ({
           />
         ))}
         {isLoading && (
-          <div className="flex items-center justify-center w-[180px] h-[270px]">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+          <div className="flex items-center justify-center w-[100px] h-[150px] sm:w-[130px] sm:h-[195px] md:w-[150px] md:h-[225px] lg:w-[180px] lg:h-[270px]">
+            <div className="animate-spin rounded-full h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 border-t-2 border-b-2 border-white"></div>
           </div>
         )}
       </div>
+      
+      {/* Left scroll arrow */}
+      <AnimatePresence>
+        {showLeftArrow && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute left-0 top-1/2 transform -translate-y-4 md:-translate-y-8 z-20 bg-black/70 hover:bg-black/90 rounded-full p-1 sm:p-1.5 md:p-2 text-white"
+            onClick={scrollLeft}
+          >
+            <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+      
+      {/* Right scroll arrow */}
+      <AnimatePresence>
+        {showRightArrow && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute right-0 top-1/2 transform -translate-y-4 md:-translate-y-8 z-20 bg-black/70 hover:bg-black/90 rounded-full p-1 sm:p-1.5 md:p-2 text-white"
+            onClick={scrollRight}
+          >
+            <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -489,21 +498,21 @@ const MoviesPage = () => {
 
   return (
     <div className="w-full min-h-screen bg-black text-white pb-10">
-      <div className="w-full px-2 pt-6">
+      <div className="w-full px-2 sm:px-4 md:px-6 pt-4 sm:pt-6">
         {/* Latest Released Movies Carousel */}
         <LatestMoviesCarousel />
         {/* Latest Movies Row */}
         <LatestMoviesRow />
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white"></div>
+          <div className="flex justify-center py-10 sm:py-15 md:py-20">
+            <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 md:h-16 md:w-16 border-t-2 border-b-2 border-white"></div>
           </div>
         ) : error ? (
-          <div className="text-center py-20">
-            <p className="text-xl text-red-500">{error}</p>
+          <div className="text-center py-10 sm:py-15 md:py-20">
+            <p className="text-base sm:text-lg md:text-xl text-red-500">{error}</p>
             <button 
               onClick={() => window.location.reload()} 
-              className="mt-4 px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
+              className="mt-4 px-4 py-1.5 sm:px-5 sm:py-2 md:px-6 md:py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm sm:text-base"
             >
               Try Again
             </button>
@@ -528,9 +537,9 @@ const MoviesPage = () => {
           </>
         )}
       </div>
-      {/* Movie detail hover card */}
+      {/* Movie detail hover card - only shown on desktop */}
       <AnimatePresence>
-        {hoveredMovie && hoverPos && (
+        {hoveredMovie && hoverPos && window.innerWidth >= 1024 && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -541,15 +550,15 @@ const MoviesPage = () => {
               stiffness: 100,
               damping: 15
             }}
-            className="fixed z-50 bg-gray-900 rounded-lg shadow-xl w-96 overflow-hidden movie-popup"
+            className="fixed z-50 bg-gray-900 rounded-lg shadow-xl w-80 lg:w-96 overflow-hidden movie-popup"
             style={{
-              left: `${Math.min(hoverPos.left, window.innerWidth - 400)}px`,
+              left: `${Math.min(hoverPos.left, window.innerWidth - 350)}px`,
               top: `${hoverPos.top + 30}px`,
             }}
           >
             {hoveredDetails ? (
               <>
-                <div className="relative h-48 w-full">
+                <div className="relative h-36 sm:h-40 md:h-48 w-full">
                   <Image 
                     src={getImageUrl(hoveredDetails.backdrop_path, 'w780')} 
                     alt={hoveredDetails.title}
@@ -558,25 +567,25 @@ const MoviesPage = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
                 </div>
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold">{hoveredDetails.title}</h3>
-                  <div className="flex items-center mt-2 text-sm text-gray-400">
+                <div className="p-3 sm:p-4">
+                  <h3 className="text-lg sm:text-xl font-semibold">{hoveredDetails.title}</h3>
+                  <div className="flex items-center mt-1 sm:mt-2 text-xs sm:text-sm text-gray-400">
                     <span>{new Date(hoveredDetails.release_date).getFullYear()}</span>
                     <span className="mx-2">•</span>
                     <span>{hoveredDetails.vote_average.toFixed(1)} ⭐</span>
                   </div>
-                  <p className="mt-3 text-sm line-clamp-3 text-gray-300">{hoveredDetails.overview}</p>
+                  <p className="mt-2 sm:mt-3 text-xs sm:text-sm line-clamp-2 sm:line-clamp-3 text-gray-300">{hoveredDetails.overview}</p>
                   <button 
                     onClick={() => navigateToMovie(hoveredDetails.id)}
-                    className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md w-full transition-colors"
+                    className="mt-3 sm:mt-4 px-3 sm:px-4 py-1.5 sm:py-2 bg-red-600 hover:bg-red-700 text-white rounded-md w-full transition-colors text-xs sm:text-sm"
                   >
                     View Details
                   </button>
                 </div>
               </>
             ) : (
-              <div className="h-80 w-full flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+              <div className="h-60 sm:h-72 md:h-80 w-full flex items-center justify-center">
+                <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-t-2 border-b-2 border-white"></div>
               </div>
             )}
           </motion.div>

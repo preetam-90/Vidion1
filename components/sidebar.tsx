@@ -182,6 +182,14 @@ export default function Sidebar({
     const isActive = pathname === item.href
     const isPinned = pinned.some(pinnedItem => pinnedItem.href === item.href)
     
+    // Special handling for TMDB Movies on small screens
+    const displayLabel = item.href === "/tmdb-movies" 
+      ? <span className="flex">
+          <span className="xs:hidden">TMDB</span>
+          <span className="hidden xs:inline">TMDB Movies</span>
+        </span>
+      : item.label;
+    
     const linkContent = (
       <>
         <item.icon className={cn(
@@ -191,7 +199,7 @@ export default function Sidebar({
         )} />
         {!isCollapsed && (
           <div className="flex flex-1 items-center justify-between">
-            <span className={item.highlight ? "font-medium text-primary" : ""}>{item.label}</span>
+            <span className={item.highlight ? "font-medium text-primary" : ""}>{displayLabel}</span>
             {item.badge && (
               <Badge variant="outline" className="ml-2">
                 {item.badge}
@@ -542,6 +550,17 @@ export default function Sidebar({
           <div className="flex items-center justify-around h-16 px-2">
             {mainItems.slice(0, 5).map((item) => {
               const isActive = pathname === item.href;
+              // Handle TMDB Movies display on mobile - show "TMDB" on extra small screens, full name on larger
+              let displayLabel = item.label;
+              if (item.href === "/tmdb-movies") {
+                displayLabel = (
+                  <>
+                    <span className="block xs:hidden">TMDB</span>
+                    <span className="hidden xs:block">TMDB Movies</span>
+                  </>
+                );
+              }
+              
               return (
                 <Link
                   key={item.href}
@@ -556,7 +575,7 @@ export default function Sidebar({
                     "h-5 w-5 mb-1",
                     item.highlight && "text-primary"
                   )} />
-                  <span className="text-xs">{item.label}</span>
+                  <span className="text-xs">{displayLabel}</span>
                 </Link>
               );
             })}

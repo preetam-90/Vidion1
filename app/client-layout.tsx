@@ -37,7 +37,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
   // Prefetch common routes
   useEffect(() => {
-    const commonRoutes = ['/home', '/trending', '/explore', '/shorts']
+    const commonRoutes = ['/home', '/trending', '/explore', '/shorts', '/explore?category=all']
     commonRoutes.forEach(route => {
       router.prefetch(route)
     })

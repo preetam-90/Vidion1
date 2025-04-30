@@ -178,9 +178,9 @@ export default function TrendingPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Trending in India</h1>
+    <div className="container mx-auto px-0 sm:px-4 py-4 sm:py-8">
+      <div className="flex items-center justify-between mb-4 sm:mb-6 px-2 sm:px-0">
+        <h1 className="text-xl sm:text-2xl font-bold">Trending in India</h1>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <span className="flex items-center gap-1">
             <Flag className="w-4 h-4" />
@@ -189,12 +189,12 @@ export default function TrendingPage() {
         </div>
       </div>
       {videos.length > 0 ? (
-        <div className="space-y-6">
+        <div className="space-y-2 sm:space-y-6">
           {videos.map((video, index) => (
             <div 
               key={video.id} 
               ref={index === videos.length - 1 ? lastVideoRef : null}
-              className="flex flex-col sm:flex-row space-x-0 sm:space-x-4 group cursor-pointer hover:bg-muted/50 rounded-xl p-4 relative"
+              className="flex flex-col sm:flex-row space-x-0 sm:space-x-4 group cursor-pointer hover:bg-muted/50 rounded-xl p-2 sm:p-4 relative"
               onClick={() => handleVideoClick(video)}
             >
               <div className="relative w-full sm:w-[360px] aspect-video mb-2 sm:mb-0 flex-shrink-0">
@@ -213,9 +213,9 @@ export default function TrendingPage() {
                 )}
               </div>
 
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 px-2 sm:px-0">
                 <div className="flex justify-between items-start">
-                  <h3 className="text-lg font-semibold line-clamp-2 mb-2 group-hover:text-foreground/90 pr-8">
+                  <h3 className="text-base sm:text-lg font-semibold line-clamp-2 mb-1 sm:mb-2 group-hover:text-foreground/90 pr-8">
                     {video.title || 'Untitled Video'}
                   </h3>
                   <DropdownMenu>
@@ -223,9 +223,9 @@ export default function TrendingPage() {
                       <Button 
                         variant="ghost" 
                         size="icon"
-                        className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute right-2 sm:right-4 top-2 sm:top-4 opacity-0 group-hover:opacity-100 transition-opacity"
                       >
-                        <MoreVertical className="h-5 w-5" />
+                        <MoreVertical className="h-4 w-4 sm:h-5 sm:w-5" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
@@ -242,45 +242,44 @@ export default function TrendingPage() {
                   </DropdownMenu>
                 </div>
                 {video.uploader && (
-                  <p className="text-sm text-muted-foreground mb-1">
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                     {video.uploader}
                   </p>
                 )}
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                   {video.views && (
-                    <>
-                      <span>{video.views}</span>
-                      <span>•</span>
-                    </>
+                    <span className="flex items-center gap-1">
+                      <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                      {video.views}
+                    </span>
                   )}
                   {video.uploadDate && (
-                    <span>{formatPublishedDate(video.uploadDate)}</span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                      {formatPublishedDate(video.uploadDate)}
+                    </span>
                   )}
                 </div>
               </div>
             </div>
           ))}
+          {loadingMore && (
+            <div className="flex justify-center py-4">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          )}
         </div>
       ) : (
-        <div className="text-center py-12 text-muted-foreground">
-          No trending videos available
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">No trending videos found</p>
         </div>
       )}
-
-      {loadingMore && (
-        <div className="flex justify-center items-center py-6">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-        </div>
-      )}
-
-      {isShareOpen && selectedVideo && (
-        <SharePopup
-          isOpen={isShareOpen}
-          url={selectedVideo.url}
-          title={selectedVideo.title}
-          onClose={() => setIsShareOpen(false)}
-        />
-      )}
+      <SharePopup
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        url={selectedVideo ? `${typeof window !== 'undefined' ? window.location.origin : ''}/video/${selectedVideo.id}` : ''}
+        title={selectedVideo?.title || 'Check out this video'}
+      />
     </div>
   )
 }

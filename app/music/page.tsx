@@ -86,12 +86,18 @@ const MOCK_MUSIC_VIDEOS: Video[] = [
   }
 ];
 
+// Add localStorage caching
 // Maximum number of videos to load
 const MAX_VIDEOS = 70;
-// Initial batch size
-const INITIAL_BATCH_SIZE = 15;
+// Initial batch size - reduce to load faster
+const INITIAL_BATCH_SIZE = 10; // Changed from 15 to 10
 // Subsequent batch size for loading videos when scrolling
 const SCROLL_BATCH_SIZE = 4;
+// Cache duration in milliseconds
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+// Cache keys
+const MUSIC_VIDEOS_CACHE_KEY = 'vidiony_music_videos_cache';
+const MUSIC_TIMESTAMP_CACHE_KEY = 'vidiony_music_timestamp_cache';
 
 // Removed unused MusicVideo interface and musicVideos array
 
@@ -120,9 +126,47 @@ export default function MusicPage() {
     router.push(`/video/${video.id}`);
   }, [router]);
 
+  // Add functions for cache management
+  const getCachedData = <T,>(key: string): T | null => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const item = localStorage.getItem(key);
+      return item ? (JSON.parse(item) as T) : null;
+    } catch (e) {
+      console.error(`Error reading cache key ${key}:`, e);
+      localStorage.removeItem(key); // Remove potentially corrupted item
+      return null;
+    }
+  };
+
+  const setCachedData = (key: string, data: any) => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+      console.error(`Error setting cache key ${key}:`, e);
+      // Optionally handle quota exceeded errors here
+    }
+  };
+
   const fetchVideos = useCallback(async (nextPageToken?: string) => {
     if (!nextPageToken) {
       setIsLoading(true);
+      
+      // Check cache first on initial load
+      if (!nextPageToken) {
+        const cachedTimestamp = getCachedData<number>(MUSIC_TIMESTAMP_CACHE_KEY);
+        if (cachedTimestamp && (Date.now() - cachedTimestamp < CACHE_DURATION)) {
+          const cachedVideos = getCachedData<Video[]>(MUSIC_VIDEOS_CACHE_KEY);
+          if (cachedVideos && Array.isArray(cachedVideos) && cachedVideos.length > 0) {
+            console.log(`Loading ${cachedVideos.length} music videos from cache.`);
+            setVideos(cachedVideos);
+            setTotalVideosLoaded(cachedVideos.length);
+            setIsLoading(false);
+            return;
+          }
+        }
+      }
     } else {
       console.log("Loading more videos with token:", nextPageToken);
     }
@@ -172,17 +216,38 @@ export default function MusicPage() {
         );
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
+          let errorData = {};
+          try {
+            // Use clone to avoid "body already used" errors
+            const errorClone = response.clone();
+            errorData = await errorClone.json().catch(() => ({}));
+          } catch (parseError) {
+            console.error('Failed to parse error response:', parseError);
+            errorData = { parseError: 'Failed to parse response body' };
+          }
+          
           console.error('YouTube API Error:', {
             status: response.status,
             statusText: response.statusText,
-            error: errorData,
+            error: errorData || 'No error details available',
             url: response.url.replace(/key=([^&]+)/, 'key=REDACTED') // Log URL without exposing API key
           });
+          
+          // Check for quota exceeded
+          if (response.status === 403 && JSON.stringify(errorData).toLowerCase().includes('quota')) {
+            throw new Error('YouTube API quota exceeded');
+          }
+          
           throw new Error(`Failed to fetch videos (status: ${response.status})`);
         }
 
-        const jsonData = await response.json();
+        let jsonData;
+        try {
+          jsonData = await response.json();
+        } catch (parseError) {
+          console.error('Failed to parse API response:', parseError);
+          throw new Error('Failed to parse API response');
+        }
         return jsonData;
       }, 100);
 
@@ -239,6 +304,13 @@ export default function MusicPage() {
       // Set isInitialLoad to false after first fetch
       if (isInitialLoad) {
         setIsInitialLoad(false);
+      }
+      
+      // After successful fetch, update cache for initial load
+      if (!nextPageToken && data?.items?.length) {
+        setCachedData(MUSIC_VIDEOS_CACHE_KEY, newVideos);
+        setCachedData(MUSIC_TIMESTAMP_CACHE_KEY, Date.now());
+        console.log('Updated music videos cache');
       }
       
     } catch (error) {
@@ -412,15 +484,14 @@ export default function MusicPage() {
     }
   }, [videos, hasMore, isLoading]); // Added hasMore and isLoading as dependencies
 
-  // Initial fetch
+  // Optimize initial fetch for faster loading
   useEffect(() => {
-    if (videos.length === 0) { // Only fetch initially if videos are empty
-        console.log("Initial fetch triggered.");
-        fetchVideos();
+    if (videos.length === 0) {
+      console.log("Initial fetch triggered.");
+      fetchVideos();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchVideos]); // Depend on fetchVideos only - Disabled eslint warning for deps
-
+  }, []); // Empty dependency array to prevent refetching
 
   // Component for rendering a single video card (regular video)
   const VideoCard = ({ video, isLast }: { video: Video, isLast: boolean }) => {
@@ -428,16 +499,15 @@ export default function MusicPage() {
     const cardRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-      // Only set up visibility observer for non-last elements
-      // Last element already has the lastVideoRef for infinite scrolling
+      // Load images only when they are close to viewport
       if (!isLast) {
         const observer = new IntersectionObserver(
           ([entry]) => {
             setIsVisible(entry.isIntersecting);
           },
           {
-            rootMargin: '200px',
-            threshold: 0.1
+            rootMargin: '400px', // Increased from 200px to pre-load earlier
+            threshold: 0.01 // Lower threshold to trigger faster
           }
         );
 
@@ -451,8 +521,7 @@ export default function MusicPage() {
           }
         };
       } else {
-        // If this is the last element, make it visible by default 
-        // This ensures it's visible for the infinite scroll observer
+        // If this is the last element, make it visible by default
         setIsVisible(true);
       }
     }, [isLast]);
@@ -473,7 +542,7 @@ export default function MusicPage() {
         data-is-last={isLast ? "true" : "false"}
       >
         <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-800">
-          {/* Only render image if the card is visible or has been visible before */}
+          {/* Optimize image loading */}
           {isVisible && (
             <Image
               src={video.thumbnail}
@@ -482,13 +551,12 @@ export default function MusicPage() {
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               loading="lazy"
+              priority={false} // Only prioritize critical images
             />
           )}
           {!isVisible && (
-            <div className="absolute inset-0 bg-gray-700 animate-pulse">
-              <div className="h-full w-full flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-gray-600 border-t-gray-400 rounded-full animate-spin"></div>
-              </div>
+            <div className="absolute inset-0 bg-gray-700">
+              {/* Simplified placeholder */}
             </div>
           )}
           
