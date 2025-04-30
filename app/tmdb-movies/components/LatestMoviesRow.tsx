@@ -174,7 +174,7 @@ export default function LatestMoviesRow(): React.ReactElement {
         {movies.map((movie) => (
           <div 
             key={movie.id}
-            className="flex-shrink-0 relative movie-poster cursor-pointer"
+            className="flex-shrink-0 relative movie-poster cursor-pointer focus:outline-none"
             onClick={() => handleMovieClick(movie.id)}
           >
             <motion.div 
@@ -208,32 +208,36 @@ export default function LatestMoviesRow(): React.ReactElement {
         ))}
       </div>
       
-      {/* Left arrow */}
+      {/* Left scroll arrow */}
       <AnimatePresence>
         {showLeftArrow && (
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute left-0 top-1/2 transform -translate-y-4 sm:-translate-y-6 md:-translate-y-8 z-30 bg-black/70 hover:bg-black/90 rounded-full p-1 sm:p-2 text-white"
+            tabIndex={-1}
+            onFocus={(e) => e.target.blur()}
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 rounded-full p-1.5 text-white focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0"
             onClick={scrollLeft}
           >
-            <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+            <ChevronLeft className="h-5 w-5" />
           </motion.button>
         )}
       </AnimatePresence>
       
-      {/* Right arrow */}
+      {/* Right scroll arrow */}
       <AnimatePresence>
         {showRightArrow && (
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute right-0 top-1/2 transform -translate-y-4 sm:-translate-y-6 md:-translate-y-8 z-30 bg-black/70 hover:bg-black/90 rounded-full p-1 sm:p-2 text-white"
+            tabIndex={-1}
+            onFocus={(e) => e.target.blur()}
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 rounded-full p-1.5 text-white focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0"
             onClick={scrollRight}
           >
-            <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+            <ChevronRight className="h-5 w-5" />
           </motion.button>
         )}
       </AnimatePresence>

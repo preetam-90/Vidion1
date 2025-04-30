@@ -48,6 +48,26 @@
     --ring: 224.3 76.3% 48%;
   }
 
+  /* Media query for mobile devices - Pitch black dark theme */
+  @media (max-width: 767px) {
+    .dark {
+      --background: 0 0% 0%;
+      --foreground: 0 0% 100%;
+      --card: 0 0% 0%;
+      --card-foreground: 0 0% 100%;
+      --popover: 0 0% 0%;
+      --popover-foreground: 0 0% 100%;
+      --secondary: 0 0% 10%;
+      --secondary-foreground: 0 0% 100%;
+      --muted: 0 0% 10%;
+      --muted-foreground: 0 0% 70%;
+      --accent: 0 0% 10%;
+      --accent-foreground: 0 0% 100%;
+      --border: 0 0% 15%;
+      --input: 0 0% 15%;
+    }
+  }
+
   /* Purple theme */
   .purple {
     --background: 280 20% 97%;
@@ -237,6 +257,61 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Remove focus outlines from TMDB page elements */
+.tmdb-element:focus,
+.tmdb-element *:focus,
+[class*="carousel"] button:focus,
+[class*="carousel"] [role="button"]:focus,
+[class*="carousel"] .navigation-dot:focus,
+[data-carousel-dot]:focus,
+[data-carousel-nav]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Stronger focus override for TMDB pages */
+.tmdb-element button,
+.tmdb-element [role="button"],
+.tmdb-element a,
+.tmdb-element input,
+.tmdb-element *[tabindex],
+button[data-carousel-dot],
+button[data-carousel-nav] {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+.tmdb-element button:focus-visible,
+.tmdb-element [role="button"]:focus-visible,
+.tmdb-element a:focus-visible,
+.tmdb-element *:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Extreme focus override - last resort solution */
+.tmdb-element * {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Reset any browser default focus styling */
+.tmdb-element *:focus,
+.tmdb-element *:focus-visible,
+.tmdb-element *:focus-within,
+.tmdb-element *:-moz-focusring,
+.tmdb-element *::-moz-focus-inner {
+  outline: 0 !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  border-color: transparent !important;
 }
 
 /* Full width video player styles */

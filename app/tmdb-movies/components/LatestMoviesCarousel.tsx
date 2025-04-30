@@ -203,8 +203,11 @@ export default function LatestMoviesCarousel(): React.ReactElement {
           {movies.map((_, index) => (
             <button
               key={index}
+              data-carousel-dot="true"
+              tabIndex={-1}
+              onFocus={(e) => e.target.blur()}
               onClick={() => { setDirection(index > currentIndex ? 1 : -1); setCurrentIndex(index); }}
-              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all ${
+              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0 ${
                 index === currentIndex ? 'bg-white w-3 sm:w-4' : 'bg-white/50'
               }`}
               aria-label={`Go to slide ${index + 1}`}
@@ -214,14 +217,20 @@ export default function LatestMoviesCarousel(): React.ReactElement {
         {/* Previous/Next buttons */}
         <button
           onClick={goToPrevious}
-          className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/60 rounded-full p-1 sm:p-2 text-white transition-opacity"
+          data-carousel-nav="prev"
+          tabIndex={-1}
+          onFocus={(e) => e.target.blur()}
+          className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/60 rounded-full p-1 sm:p-2 text-white transition-opacity focus:outline-none focus-visible:outline-none focus-visible:ring-0"
           aria-label="Previous slide"
         >
           <ChevronLeft className="h-4 w-4 sm:h-6 sm:w-6" />
         </button>
         <button
           onClick={goToNext}
-          className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/60 rounded-full p-1 sm:p-2 text-white transition-opacity"
+          data-carousel-nav="next"
+          tabIndex={-1}
+          onFocus={(e) => e.target.blur()}
+          className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/60 rounded-full p-1 sm:p-2 text-white transition-opacity focus:outline-none focus-visible:outline-none focus-visible:ring-0"
           aria-label="Next slide"
         >
           <ChevronRight className="h-4 w-4 sm:h-6 sm:w-6" />

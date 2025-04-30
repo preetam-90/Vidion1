@@ -496,8 +496,26 @@ const MoviesPage = () => {
     router.push(`/tmdb-movies/${movieId}`);
   };
 
+  // Effect to remove focus outlines
+  useEffect(() => {
+    // Simple function to remove focus from any element
+    const removeFocus = () => {
+      if (document.activeElement && document.activeElement !== document.body) {
+        (document.activeElement as HTMLElement).blur();
+      }
+    };
+    
+    // Run immediately and periodically
+    removeFocus();
+    const focusRemover = setInterval(removeFocus, 500);
+    
+    return () => {
+      clearInterval(focusRemover);
+    };
+  }, []);
+
   return (
-    <div className="w-full min-h-screen bg-black text-white pb-10">
+    <div className="w-full min-h-screen bg-black text-white pb-10 tmdb-element" tabIndex={-1} style={{outline: 'none'}}>
       <div className="w-full px-2 sm:px-4 md:px-6 pt-4 sm:pt-6">
         {/* Latest Released Movies Carousel */}
         <LatestMoviesCarousel />
