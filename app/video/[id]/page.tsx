@@ -134,6 +134,11 @@ export default function VideoPage() {
 
   // Format the date for structured data
   const formattedDate = new Date(video.uploadDate || new Date()).toISOString();
+  
+  // Safely handle duration calculations
+  const durationInSeconds = typeof video.duration === 'number' ? video.duration : 60;
+  const minutes = Math.floor(durationInSeconds / 60);
+  const seconds = durationInSeconds % 60;
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -150,7 +155,7 @@ export default function VideoPage() {
               "uploadDate": "${formattedDate}",
               "contentUrl": "https://vidion.vercel.app/video/${video.id}",
               "embedUrl": "https://vidion.vercel.app/video/${video.id}",
-              "duration": "PT${Math.floor((video.duration || 60) / 60)}M${(video.duration || 60) % 60}S"
+              "duration": "PT${minutes}M${seconds}S"
             }
           `}
         </Script>
