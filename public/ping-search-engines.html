@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ping Search Engines</title>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <h1>Pinging Search Engines</h1>
+  <div id="results"></div>
+
+  <script>
+    const sitemapUrl = 'https://vidion.vercel.app/sitemap.xml';
+    const pingUrls = [
+      `https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
+      `https://www.bing.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
+      `https://webmaster.yandex.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
+      `https://blogs.yandex.ru/pings/?status=success&url=${encodeURIComponent(sitemapUrl)}`
+    ];
+    
+    const resultsDiv = document.getElementById('results');
+    
+    pingUrls.forEach(url => {
+      const p = document.createElement('p');
+      p.textContent = `Pinging: ${url}`;
+      resultsDiv.appendChild(p);
+      
+      fetch(url)
+        .then(response => {
+          p.textContent += ` - Status: ${response.status} ${response.statusText}`;
+        })
+        .catch(error => {
+          p.textContent += ` - Error: ${error.message}`;
+        });
+    });
+  </script>
+</body>
+</html> 
