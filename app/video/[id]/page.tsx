@@ -132,8 +132,19 @@ export default function VideoPage() {
     return notFound()
   }
 
-  // Format the date for structured data
-  const formattedDate = new Date(video.uploadDate || new Date()).toISOString();
+  // Format the date for structured data - ensure it's a valid date
+  let formattedDate = new Date().toISOString();
+  try {
+    if (video.uploadDate) {
+      // Check if uploadDate is a valid date
+      const dateObj = new Date(video.uploadDate);
+      if (!isNaN(dateObj.getTime())) {
+        formattedDate = dateObj.toISOString();
+      }
+    }
+  } catch (e) {
+    console.error("Error formatting date:", e);
+  }
   
   // Safely handle duration calculations
   const durationInSeconds = typeof video.duration === 'number' ? video.duration : 60;
