@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://vidion.vercel.app/</loc>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/logo.png</image:loc>
+      <image:title>Vidiony Logo</image:title>
+      <image:caption>Vidiony - Video Streaming Platform</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/placeholder.jpg</image:loc>
+      <image:title>Vidiony Platform</image:title>
+      <image:caption>Watch videos on Vidiony</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/trending</loc>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/trending.png</image:loc>
+      <image:title>Trending Videos on Vidiony</image:title>
+      <image:caption>Discover popular trending videos on Vidiony</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/movies</loc>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/movies.png</image:loc>
+      <image:title>Movies on Vidiony</image:title>
+      <image:caption>Watch the latest movies on Vidiony</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/music</loc>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/music.png</image:loc>
+      <image:title>Music Videos on Vidiony</image:title>
+      <image:caption>Watch music videos from your favorite artists on Vidiony</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/youtube-music-icon.png</image:loc>
+      <image:title>Vidiony Music</image:title>
+      <image:caption>Stream music videos on Vidiony</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/gaming</loc>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/gaming.png</image:loc>
+      <image:title>Gaming Videos on Vidiony</image:title>
+      <image:caption>Watch gaming videos and gameplay on Vidiony</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/tmdb-movies</loc>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/tmdb movies.png</image:loc>
+      <image:title>TMDB Movies on Vidiony</image:title>
+      <image:caption>Browse and watch TMDB movies on Vidiony</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/explore</loc>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/explore.png</image:loc>
+      <image:title>Explore Videos on Vidiony</image:title>
+      <image:caption>Discover and explore videos on Vidiony</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/history</loc>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/history.png</image:loc>
+      <image:title>Watch History on Vidiony</image:title>
+      <image:caption>View your watch history on Vidiony</image:caption>
+    </image:image>
+  </url>
+</urlset> 
