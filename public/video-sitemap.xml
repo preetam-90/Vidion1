@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <url>
+    <loc>https://vidion.vercel.app/</loc>
+    <video:video>
+      <video:thumbnail_loc>https://vidion.vercel.app/placeholder-thumbnail.jpg</video:thumbnail_loc>
+      <video:title>Welcome to Vidiony - Video Streaming Platform</video:title>
+      <video:description>Watch movies, TV shows, shorts, and music videos on Vidiony. Stream your favorite content anytime, anywhere.</video:description>
+      <video:content_loc>https://vidion.vercel.app/video/1</video:content_loc>
+      <video:player_loc>https://vidion.vercel.app/video/1</video:player_loc>
+      <video:duration>120</video:duration>
+      <video:publication_date>2024-06-27T12:00:00+00:00</video:publication_date>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:tag>vidiony</video:tag>
+      <video:tag>streaming</video:tag>
+      <video:tag>videos</video:tag>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/trending</loc>
+    <video:video>
+      <video:thumbnail_loc>https://vidion.vercel.app/previews/trending.png</video:thumbnail_loc>
+      <video:title>Trending Videos on Vidiony</video:title>
+      <video:description>Watch the most popular and trending videos on Vidiony.</video:description>
+      <video:content_loc>https://vidion.vercel.app/video/2</video:content_loc>
+      <video:player_loc>https://vidion.vercel.app/video/2</video:player_loc>
+      <video:duration>180</video:duration>
+      <video:publication_date>2024-06-27T12:00:00+00:00</video:publication_date>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:tag>trending</video:tag>
+      <video:tag>popular</video:tag>
+      <video:tag>videos</video:tag>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/movies</loc>
+    <video:video>
+      <video:thumbnail_loc>https://vidion.vercel.app/previews/movies.png</video:thumbnail_loc>
+      <video:title>Movies on Vidiony</video:title>
+      <video:description>Watch the latest and greatest movies on Vidiony.</video:description>
+      <video:content_loc>https://vidion.vercel.app/video/3</video:content_loc>
+      <video:player_loc>https://vidion.vercel.app/video/3</video:player_loc>
+      <video:duration>240</video:duration>
+      <video:publication_date>2024-06-27T12:00:00+00:00</video:publication_date>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:tag>movies</video:tag>
+      <video:tag>films</video:tag>
+      <video:tag>cinema</video:tag>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/music</loc>
+    <video:video>
+      <video:thumbnail_loc>https://vidion.vercel.app/previews/music.png</video:thumbnail_loc>
+      <video:title>Music Videos on Vidiony</video:title>
+      <video:description>Watch the latest music videos from your favorite artists on Vidiony.</video:description>
+      <video:content_loc>https://vidion.vercel.app/video/4</video:content_loc>
+      <video:player_loc>https://vidion.vercel.app/video/4</video:player_loc>
+      <video:duration>200</video:duration>
+      <video:publication_date>2024-06-27T12:00:00+00:00</video:publication_date>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:tag>music</video:tag>
+      <video:tag>songs</video:tag>
+      <video:tag>artists</video:tag>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://vidion.vercel.app/gaming</loc>
+    <video:video>
+      <video:thumbnail_loc>https://vidion.vercel.app/previews/gaming.png</video:thumbnail_loc>
+      <video:title>Gaming Videos on Vidiony</video:title>
+      <video:description>Watch gaming videos, walkthroughs, and gameplay on Vidiony.</video:description>
+      <video:content_loc>https://vidion.vercel.app/video/5</video:content_loc>
+      <video:player_loc>https://vidion.vercel.app/video/5</video:player_loc>
+      <video:duration>300</video:duration>
+      <video:publication_date>2024-06-27T12:00:00+00:00</video:publication_date>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:tag>gaming</video:tag>
+      <video:tag>gameplay</video:tag>
+      <video:tag>videogames</video:tag>
+    </video:video>
+  </url>
+</urlset> 

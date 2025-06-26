@@ -29,7 +29,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: 'Vidiony - Video Streaming Platform',
   description: 'Watch movies, TV shows, shorts, and music videos on Vidiony. Stream your favorite content anytime, anywhere.',
-  keywords: 'video streaming, movies, TV shows, shorts, music videos, online streaming',
+  keywords: 'vidiony, vidion, video streaming, movies, TV shows, shorts, music videos, online streaming, free videos, watch videos online',
   authors: [{ name: 'Vidiony' }],
   creator: 'Vidiony',
   publisher: 'Vidiony',
@@ -61,6 +61,18 @@ export const metadata: Metadata = {
         width: 800,
         height: 600,
         alt: 'Vidiony Logo',
+      },
+      {
+        url: 'https://vidion.vercel.app/placeholder.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Vidiony - Video Streaming Platform',
+      },
+      {
+        url: 'https://vidion.vercel.app/placeholder-thumbnail.jpg',
+        width: 1280,
+        height: 720,
+        alt: 'Watch videos on Vidiony',
       }
     ],
   },
@@ -68,7 +80,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Vidiony - Video Streaming Platform',
     description: 'Watch movies, TV shows, shorts, and music videos on Vidiony. Stream your favorite content anytime, anywhere.',
-    images: ['https://vidion.vercel.app/logo.png'],
+    images: [
+      'https://vidion.vercel.app/logo.png',
+      'https://vidion.vercel.app/placeholder.jpg'
+    ],
   },
   verification: {
     google: 'ABCg9GS2lVnsrDFDj22yTT_Mc6ya9-fMXl09o3OIQ9I',
@@ -82,6 +97,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
     }
   },
   icons: {
@@ -122,6 +140,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "Vidiony",
+              "alternateName": "Vidion",
               "url": "https://vidion.vercel.app",
               "description": "Watch movies, TV shows, shorts, and music videos on Vidiony. Stream your favorite content anytime, anywhere.",
               "potentialAction": {
@@ -138,6 +157,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "Vidiony",
+              "alternateName": "Vidion",
               "url": "https://vidion.vercel.app",
               "logo": "https://vidion.vercel.app/logo.png"
             }
