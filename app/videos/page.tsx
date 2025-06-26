@@ -13,6 +13,19 @@ export default function VideosGalleryPage() {
   // Get first 12 videos for display
   const displayVideos = videos.slice(0, 12);
   
+  // Format date safely
+  const formatDate = (date: any): string => {
+    try {
+      if (!date) return new Date().toISOString();
+      const dateObj = new Date(date);
+      if (isNaN(dateObj.getTime())) return new Date().toISOString();
+      return dateObj.toISOString();
+    } catch (e) {
+      console.error("Error formatting date:", e);
+      return new Date().toISOString();
+    }
+  };
+  
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Structured data for video gallery */}
@@ -31,7 +44,7 @@ export default function VideosGalleryPage() {
                     "name": "${video.title}",
                     "description": "${video.description || 'Watch this video on Vidiony'}",
                     "thumbnailUrl": "${video.thumbnail}",
-                    "uploadDate": "${new Date(video.uploadDate || new Date()).toISOString()}",
+                    "uploadDate": "${formatDate(video.uploadDate)}",
                     "contentUrl": "https://vidion.vercel.app/video/${video.id}"
                   }
                 }
