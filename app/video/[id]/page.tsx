@@ -11,6 +11,7 @@ import RecommendedVideos from "@/components/recommended-videos"
 import { getVideoDetails, getRelatedVideos, convertYouTubeVideoToVideo } from "@/lib/youtube-api"
 import type { Video } from "@/data"
 import { usePageTitle } from "@/hooks/usePageTitle"
+import Script from "next/script"
 
 export default function VideoPage() {
   const params = useParams()
@@ -131,8 +132,30 @@ export default function VideoPage() {
     return notFound()
   }
 
+  // Format the date for structured data
+  const formattedDate = new Date(video.uploadDate || new Date()).toISOString();
+
   return (
     <div className="container mx-auto px-4 py-6">
+      {/* Video structured data */}
+      {video && (
+        <Script id="video-schema" type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "VideoObject",
+              "name": "${video.title}",
+              "description": "${video.description || 'Watch this video on Vidiony'}",
+              "thumbnailUrl": "${video.thumbnail}",
+              "uploadDate": "${formattedDate}",
+              "contentUrl": "https://vidion.vercel.app/video/${video.id}",
+              "embedUrl": "https://vidion.vercel.app/video/${video.id}",
+              "duration": "PT${Math.floor((video.duration || 60) / 60)}M${(video.duration || 60) % 60}S"
+            }
+          `}
+        </Script>
+      )}
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <VideoPlayer video={video} />

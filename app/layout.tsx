@@ -7,6 +7,7 @@ import { Providers } from "./providers"
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration"
 import { Fragment } from "react"
 import { Analytics } from "@vercel/analytics/react"
+import Script from "next/script"
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -54,11 +55,20 @@ export const metadata: Metadata = {
     siteName: 'Vidiony',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: 'https://vidion.vercel.app/logo.png',
+        width: 800,
+        height: 600,
+        alt: 'Vidiony Logo',
+      }
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Vidiony - Video Streaming Platform',
     description: 'Watch movies, TV shows, shorts, and music videos on Vidiony. Stream your favorite content anytime, anywhere.',
+    images: ['https://vidion.vercel.app/logo.png'],
   },
   verification: {
     google: 'ABCg9GS2lVnsrDFDj22yTT_Mc6ya9-fMXl09o3OIQ9I',
@@ -105,6 +115,35 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script id="schema-website" type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Vidiony",
+              "url": "https://vidion.vercel.app",
+              "description": "Watch movies, TV shows, shorts, and music videos on Vidiony. Stream your favorite content anytime, anywhere.",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://vidion.vercel.app/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            }
+          `}
+        </Script>
+        <Script id="schema-organization" type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Vidiony",
+              "url": "https://vidion.vercel.app",
+              "logo": "https://vidion.vercel.app/logo.png"
+            }
+          `}
+        </Script>
+      </head>
       <body className={inter.className}>
         <Providers>
           <ServiceWorkerRegistration />
