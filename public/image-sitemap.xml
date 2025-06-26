@@ -1,78 +1,1143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- YouTube Thumbnails -->
+  <url>
+    <loc>https://vidion.vercel.app/video/1262</loc>
+    <image:image>
+      <image:loc>https://i.ytimg.com/vi/WQoB2z67hvY/hqdefault.jpg</image:loc>
+      <image:title>Lecture 1: Intro to Programming &amp; Flowcharts</image:title>
+      <image:caption>Learn the basics of arrays, including declaration, initialization, and common operations</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Pattern and Flowchart Images -->
+  <url>
+    <loc>https://vidion.vercel.app/video/1</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/FFgwJSsS/ol-Ra6n-XPv-Qy-G5w4-T-generated-image.jpg</image:loc>
+      <image:title>Let's solve some Patterns</image:title>
+      <image:caption>Programming patterns and problem-solving techniques</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/2</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/SxtBxpQt/06-image.jpg</image:loc>
+      <image:title>Week-1 Connect</image:title>
+      <image:caption>Understanding QuickSort and MergeSort algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/3</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/vTMjNYXD/ilh-kljikj-kj-gv-07-Flowcharts-Q1.jpg</image:loc>
+      <image:title>Flowcharts Q1</image:title>
+      <image:caption>Master the Knapsack problem using dynamic programming</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/4</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/25sgnFZQ/08-Flowcharts-Q2.jpg</image:loc>
+      <image:title>Flowcharts Q2</image:title>
+      <image:caption>Explore BFS and DFS algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/5</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/W4FQDfhp/09-Flowcharts-Q3.jpg</image:loc>
+      <image:title>Flowcharts Q3</image:title>
+      <image:caption>Learn about binary trees and tree traversals</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/6</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/rm53j01v/10.jpg</image:loc>
+      <image:title>Flowcharts Q4</image:title>
+      <image:caption>Understanding hashing and hash tables</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/7</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/j2X9Vpkc/Flowcharts-Q5.jpg</image:loc>
+      <image:title>Flowcharts Q5</image:title>
+      <image:caption>Dive into AVL trees and self-balancing trees</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/8</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/QC4bJhy2/Kp31ha3-Nfr4-LYQni-generated-image-1.jpg</image:loc>
+      <image:title>Flowcharts Q6</image:title>
+      <image:caption>Master recursion and backtracking techniques</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/9</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/YqPR42gg/t-N8-CRb5om-ZPKspi-J-generated-image-1.jpg</image:loc>
+      <image:title>Flowcharts Q7</image:title>
+      <image:caption>Learn about greedy algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Programming Pattern Images -->
+  <url>
+    <loc>https://vidion.vercel.app/video/10</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/5tVwvXtH/image.png</image:loc>
+      <image:title>Flowcharts Q8</image:title>
+      <image:caption>Understand divide and conquer approach</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/11</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/wjKJ81LW/image.png</image:loc>
+      <image:title>Flowcharts Q9</image:title>
+      <image:caption>Learn about heap data structures</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/12</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/0NHPFHB7/image.png</image:loc>
+      <image:title>Patterns Q1</image:title>
+      <image:caption>Explore graph traversal algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/13</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/5ySyFSsy/image.png</image:loc>
+      <image:title>Patterns Q2</image:title>
+      <image:caption>Matrix Chain Multiplication using dynamic programming</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/14</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/wTBgVzv0/image.png</image:loc>
+      <image:title>Patterns Q3</image:title>
+      <image:caption>Understand backtracking with N-Queens problem</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/15</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/15b2q1Ng/image.png</image:loc>
+      <image:title>Patterns Q4</image:title>
+      <image:caption>Learn about segment trees</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Additional Pattern Images -->
+  <url>
+    <loc>https://vidion.vercel.app/video/16</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/qRmZBPTv/image.png</image:loc>
+      <image:title>Pattern continues</image:title>
+      <image:caption>Understanding Trie data structure</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/17</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/5t8SkZ0R/image.png</image:loc>
+      <image:title>Operators, Loops &amp; Conditionals</image:title>
+      <image:caption>Learn about Disjoint Set Union</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/18</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/3xkZTkLV/image.png</image:loc>
+      <image:title>Functions &amp; Problem Statements</image:title>
+      <image:caption>Advanced graph algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/19</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/c488dPy1/image.png</image:loc>
+      <image:title>Number System - Binary &amp; Decimal</image:title>
+      <image:caption>Matrix Chain Multiplication</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/20</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/JnkGRBv6/image.png</image:loc>
+      <image:title>Numeric Hollow Half Pyramid</image:title>
+      <image:caption>Advanced sorting algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Static Assets and Logos -->
   <url>
     <loc>https://vidion.vercel.app/</loc>
     <image:image>
       <image:loc>https://vidion.vercel.app/logo.png</image:loc>
-      <image:title>Vidiony Logo</image:title>
-      <image:caption>Vidiony - Video Streaming Platform</image:caption>
+      <image:title>Vidion Logo</image:title>
+      <image:caption>Official logo of Vidion platform</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://vidion.vercel.app/placeholder.jpg</image:loc>
-      <image:title>Vidiony Platform</image:title>
-      <image:caption>Watch videos on Vidiony</image:caption>
+      <image:loc>https://vidion.vercel.app/mobile-logo.png</image:loc>
+      <image:title>Vidion Mobile Logo</image:title>
+      <image:caption>Mobile version of Vidion logo</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/placeholder-logo.png</image:loc>
+      <image:title>Placeholder Logo</image:title>
+      <image:caption>Default placeholder logo</image:caption>
     </image:image>
   </url>
+
+  <!-- Placeholder Images -->
   <url>
-    <loc>https://vidion.vercel.app/trending</loc>
+    <loc>https://vidion.vercel.app/images/</loc>
     <image:image>
-      <image:loc>https://vidion.vercel.app/previews/trending.png</image:loc>
-      <image:title>Trending Videos on Vidiony</image:title>
-      <image:caption>Discover popular trending videos on Vidiony</image:caption>
+      <image:loc>https://vidion.vercel.app/images/placeholder-poster.jpg</image:loc>
+      <image:title>Placeholder Poster</image:title>
+      <image:caption>Default poster image</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/placeholder-thumbnail.jpg</image:loc>
+      <image:title>Placeholder Thumbnail</image:title>
+      <image:caption>Default thumbnail image</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/placeholder-user.jpg</image:loc>
+      <image:title>Placeholder User</image:title>
+      <image:caption>Default user profile image</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/placeholder-video.jpg</image:loc>
+      <image:title>Placeholder Video</image:title>
+      <image:caption>Default video thumbnail</image:caption>
     </image:image>
   </url>
+
+  <!-- Preview Images -->
   <url>
-    <loc>https://vidion.vercel.app/movies</loc>
-    <image:image>
-      <image:loc>https://vidion.vercel.app/previews/movies.png</image:loc>
-      <image:title>Movies on Vidiony</image:title>
-      <image:caption>Watch the latest movies on Vidiony</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://vidion.vercel.app/music</loc>
-    <image:image>
-      <image:loc>https://vidion.vercel.app/previews/music.png</image:loc>
-      <image:title>Music Videos on Vidiony</image:title>
-      <image:caption>Watch music videos from your favorite artists on Vidiony</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://vidion.vercel.app/youtube-music-icon.png</image:loc>
-      <image:title>Vidiony Music</image:title>
-      <image:caption>Stream music videos on Vidiony</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://vidion.vercel.app/gaming</loc>
-    <image:image>
-      <image:loc>https://vidion.vercel.app/previews/gaming.png</image:loc>
-      <image:title>Gaming Videos on Vidiony</image:title>
-      <image:caption>Watch gaming videos and gameplay on Vidiony</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://vidion.vercel.app/tmdb-movies</loc>
-    <image:image>
-      <image:loc>https://vidion.vercel.app/previews/tmdb movies.png</image:loc>
-      <image:title>TMDB Movies on Vidiony</image:title>
-      <image:caption>Browse and watch TMDB movies on Vidiony</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://vidion.vercel.app/explore</loc>
+    <loc>https://vidion.vercel.app/previews/</loc>
     <image:image>
       <image:loc>https://vidion.vercel.app/previews/explore.png</image:loc>
-      <image:title>Explore Videos on Vidiony</image:title>
-      <image:caption>Discover and explore videos on Vidiony</image:caption>
+      <image:title>Explore Page Preview</image:title>
+      <image:caption>Preview of the explore page interface</image:caption>
     </image:image>
-  </url>
-  <url>
-    <loc>https://vidion.vercel.app/history</loc>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/gaming.png</image:loc>
+      <image:title>Gaming Page Preview</image:title>
+      <image:caption>Preview of the gaming page interface</image:caption>
+    </image:image>
     <image:image>
       <image:loc>https://vidion.vercel.app/previews/history.png</image:loc>
-      <image:title>Watch History on Vidiony</image:title>
-      <image:caption>View your watch history on Vidiony</image:caption>
+      <image:title>History Page Preview</image:title>
+      <image:caption>Preview of the history page interface</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/home.png</image:loc>
+      <image:title>Home Page Preview</image:title>
+      <image:caption>Preview of the home page interface</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/movies.png</image:loc>
+      <image:title>Movies Page Preview</image:title>
+      <image:caption>Preview of the movies page interface</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/music.png</image:loc>
+      <image:title>Music Page Preview</image:title>
+      <image:caption>Preview of the music page interface</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/previews/trending.png</image:loc>
+      <image:title>Trending Page Preview</image:title>
+      <image:caption>Preview of the trending page interface</image:caption>
     </image:image>
   </url>
+
+  <!-- Social Media Icons -->
+  <url>
+    <loc>https://vidion.vercel.app/social/</loc>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/social/facebook.svg</image:loc>
+      <image:title>Facebook Icon</image:title>
+      <image:caption>Facebook social media icon</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/social/instagram.svg</image:loc>
+      <image:title>Instagram Icon</image:title>
+      <image:caption>Instagram social media icon</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/social/linkedin.svg</image:loc>
+      <image:title>LinkedIn Icon</image:title>
+      <image:caption>LinkedIn social media icon</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/social/telegram.svg</image:loc>
+      <image:title>Telegram Icon</image:title>
+      <image:caption>Telegram social media icon</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/social/whatsapp.svg</image:loc>
+      <image:title>WhatsApp Icon</image:title>
+      <image:caption>WhatsApp social media icon</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://vidion.vercel.app/social/x.svg</image:loc>
+      <image:title>X (Twitter) Icon</image:title>
+      <image:caption>X (formerly Twitter) social media icon</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Additional Math and Algorithm Videos -->
+  <url>
+    <loc>https://vidion.vercel.app/video/34</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/KYTwVNsj/image.png</image:loc>
+      <image:title>Print All Prime From 1 to N</image:title>
+      <image:caption>Learn about Suffix Trees and pattern matching</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/35</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/rsT9mGJh/image.png</image:loc>
+      <image:title>Reverse Integer</image:title>
+      <image:caption>Solve the 0/1 Knapsack problem using dynamic programming</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/36</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/R0Md4LgX/image.png</image:loc>
+      <image:title>Set the Kth Bit</image:title>
+      <image:caption>Understand Eulerian and Hamiltonian paths in graphs</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/37</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/L5Mwk1H7/image.png</image:loc>
+      <image:title>Convert the Temperature</image:title>
+      <image:caption>Learn about Segment Trees and range queries</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/38</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/Wpw2qjV9/image.png</image:loc>
+      <image:title>Introduction to Time &amp; Space Complexity</image:title>
+      <image:caption>Solve the Rod Cutting problem using dynamic programming</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/39</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/2jWMtxyg/image.png</image:loc>
+      <image:title>Arrays - Class 1</image:title>
+      <image:caption>Explore Network Flow algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/40</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/fTXm4VQH/image.png</image:loc>
+      <image:title>Arrays - Class 2</image:title>
+      <image:caption>Learn about Treaps and binary search trees</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/41</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/MT2JF373/image.png</image:loc>
+      <image:title>Arrays - Class 3</image:title>
+      <image:caption>Advanced array operations and algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/42</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/bJmfLxTs/image.png</image:loc>
+      <image:title>Sort Colors</image:title>
+      <image:caption>Color sorting algorithms and implementations</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/43</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/6qrGQs7G/image.png</image:loc>
+      <image:title>Move All Negative Numbers</image:title>
+      <image:caption>Array manipulation and reorganization techniques</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/44</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/tC3pB3nk/image.png</image:loc>
+      <image:title>Find Duplicate Number</image:title>
+      <image:caption>Algorithms for finding duplicates in arrays</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/45</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/xCrX4WS7/image.png</image:loc>
+      <image:title>Missing Elements From An Array With Duplicates</image:title>
+      <image:caption>Finding missing elements in arrays with duplicates</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/46</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/PJTPtYJQ/image.png</image:loc>
+      <image:title>Find First Repeating Element</image:title>
+      <image:caption>Algorithms for finding repeating elements</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/47</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/fLwNyK7y/image.png</image:loc>
+      <image:title>Common Elements In 3 Sorted Arrays</image:title>
+      <image:caption>Finding common elements in multiple sorted arrays</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/48</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/MKhJVx0h/image.png</image:loc>
+      <image:title>Wave Print A Matrix</image:title>
+      <image:caption>Matrix traversal in wave pattern</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/49</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/J7s1kTVH/image.png</image:loc>
+      <image:title>Spiral Print A Matrix</image:title>
+      <image:caption>Matrix traversal in spiral pattern</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/50</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/YCzkHZgZ/image.png</image:loc>
+      <image:title>Factorial Of A Large Number</image:title>
+      <image:caption>Computing factorials of large numbers</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Additional Algorithm and Problem Solving Videos -->
+  <url>
+    <loc>https://vidion.vercel.app/video/51</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/QNK3tH1p/image.png</image:loc>
+      <image:title>Searching and Sorting Class - I</image:title>
+      <image:caption>Introduction to searching and sorting algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/52</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/HnQtVwTZ/image.png</image:loc>
+      <image:title>Searching and Sorting Class - II</image:title>
+      <image:caption>Advanced searching and sorting techniques</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/53</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/MK3YXpw8/image.png</image:loc>
+      <image:title>Searching and Sorting Class - III</image:title>
+      <image:caption>Complex sorting algorithms and applications</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/54</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/vZSRbV3F/5c-DEMx-NJu9-Kh8hlm-generated-image-1.jpg</image:loc>
+      <image:title>Week-4 Connect</image:title>
+      <image:caption>Data structures and their implementations</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/55</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/d0TfFShr/image.png</image:loc>
+      <image:title>K-Diff Pairs In An Array</image:title>
+      <image:caption>Finding pairs with given difference in arrays</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/56</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/vHcLCxg6/image.png</image:loc>
+      <image:title>Find K-Closest Element</image:title>
+      <image:caption>Finding closest elements in sorted arrays</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/57</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/mDFk4R4R/3bub-LIUirb-Hr-Eq-CX-generated-image.jpg</image:loc>
+      <image:title>Exponential Search &amp; Unbounded Binary Search</image:title>
+      <image:caption>Advanced search algorithms for unbounded arrays</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/58</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/fbwZ5956/8r-Ih-Lbw-G3-Jt-Vy-N8-T-generated-image.jpg</image:loc>
+      <image:title>Book Allocation Problem</image:title>
+      <image:caption>Solving the book allocation algorithm problem</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/59</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/43yYxqtL/Eux-Hhs-Dw-HFTzxf-DC-generated-image.jpg</image:loc>
+      <image:title>Painters Partition Problem</image:title>
+      <image:caption>Solving the painters partition algorithm problem</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/60</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/QMjLNRy2/wiiiqj-Op0-YUJrz-Hv-generated-image.jpg</image:loc>
+      <image:title>Aggressive Cows</image:title>
+      <image:caption>Solving the aggressive cows algorithm problem</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/61</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/J7cs1dQj/nm-Oad-Nn-Fa7h-VTt-Xd-generated-image.jpg</image:loc>
+      <image:title>EKO SPOJ</image:title>
+      <image:caption>Solving the EKO problem from SPOJ</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/62</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/bwFS2Cdd/l-DQb-ZEvo-O0-Utsc-Ad-generated-image.jpg</image:loc>
+      <image:title>PRATA SPOJ</image:title>
+      <image:caption>Solving the PRATA problem from SPOJ</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/63</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/ZnfFKXsH/E7u-Gkr-Kh-VZn-K6-JMG-generated-image.jpg</image:loc>
+      <image:title>Char Arrays &amp; Strings - Class I</image:title>
+      <image:caption>Introduction to character arrays and strings</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/64</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/3Rm5D5sK/GSqdq-D5a6-B8-T0uta-generated-image.jpg</image:loc>
+      <image:title>Char Arrays &amp; Strings - Class II</image:title>
+      <image:caption>Advanced string manipulation techniques</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/65</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/nczqJyq3/gz-CFcd9-Hhtrdxre-T-generated-image-1.jpg</image:loc>
+      <image:title>Week-5 Connect</image:title>
+      <image:caption>Weekly programming concepts and connections</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/66</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/9MC2v3cg/PDwno-W1wvx-O9-Tw-Zr-generated-image.jpg</image:loc>
+      <image:title>Valid Anagram</image:title>
+      <image:caption>Solving the valid anagram string problem</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/67</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/52YyPn1K/VWspsl9t5xz-NJr-SD-generated-image.jpg</image:loc>
+      <image:title>Reverse Only Letters</image:title>
+      <image:caption>String manipulation with letter reversal</image:caption>
+    </image:image>
+  </url>
+
+  <!-- String Algorithms and Advanced Topics -->
+  <url>
+    <loc>https://vidion.vercel.app/video/68</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/qq6vvxwZ/ZAt5of-J4-Zi0-WFX53-generated-image.jpg</image:loc>
+      <image:title>Longest Common Prefix</image:title>
+      <image:caption>Finding the longest common prefix in strings</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/69</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/fLJ9YX5Y/GMly51-Kh-SPqt-Qf-Ul-generated-image.jpg</image:loc>
+      <image:title>Reverse Vowels Of A String</image:title>
+      <image:caption>String manipulation with vowel reversal</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/70</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/1zgmHHhR/K4n-H4-MLPo-TXlz-RCO-generated-image-1.jpg</image:loc>
+      <image:title>Isomorphic Strings</image:title>
+      <image:caption>Understanding and implementing isomorphic strings</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/71</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/FzGXmd5n/k-ZRSHm-XYYDfz-Gss-Y-generated-image.jpg</image:loc>
+      <image:title>Reorganise String</image:title>
+      <image:caption>String reorganization algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/72</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/J03Zh8PF/u-Qc-QEMBsbvfi-Px-Af-generated-image.jpg</image:loc>
+      <image:title>Group Anagrams</image:title>
+      <image:caption>Grouping and managing string anagrams</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/73</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/xTtNpt7L/ZI0-Cp-WQ9-Og-Sc-Gg-Br-generated-image.jpg</image:loc>
+      <image:title>Longest Palindromic Substring</image:title>
+      <image:caption>Finding the longest palindrome in strings</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/74</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/hj1tzGRV/Ga-OYTBBU22gcbk-KL-generated-image.jpg</image:loc>
+      <image:title>Find The Index Of First Occurence in a String</image:title>
+      <image:caption>String searching and pattern matching</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/75</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/pLjx5dDy/Ug-BMIIw-Ob-FEG5-Bl9-generated-image-1.jpg</image:loc>
+      <image:title>String To Integer (atoi)</image:title>
+      <image:caption>Converting strings to integers</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/76</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/3J4Qzwf9/TDyg7e0-Ga23-C64-EU-generated-image.jpg</image:loc>
+      <image:title>String Compression</image:title>
+      <image:caption>Implementing string compression algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/77</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/kX3d3Crm/4n9jpa692h55-Uy-UY-generated-image.jpg</image:loc>
+      <image:title>Integer To Romans</image:title>
+      <image:caption>Converting integers to Roman numerals</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/78</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/T1nFYy8X/n7-ORMb-W1g-F36-Y4-FH-generated-image.jpg</image:loc>
+      <image:title>Zig-Zag Conversion</image:title>
+      <image:caption>String conversion in zig-zag pattern</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/79</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/hGhYQZFs/69-Q3-V1r-Nr-QSBAli-N-generated-image.jpg</image:loc>
+      <image:title>Largest Number</image:title>
+      <image:caption>Finding and working with large numbers</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/80</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/yYMxbtjg/ea-T6wx0id-PIWr-QMQ-generated-image.jpg</image:loc>
+      <image:title>Pointers - Level 1</image:title>
+      <image:caption>Introduction to pointers in programming</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/81</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/1zHz4tQw/d-Wl-Ec-TCUAJGc-Aq-Nk-generated-image.jpg</image:loc>
+      <image:title>Pointers - Level 2</image:title>
+      <image:caption>Advanced pointer concepts and usage</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/82</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/pd2WNHFT/8-Mzvtl-Xhzgfx-YG0-U-generated-image.jpg</image:loc>
+      <image:title>Basic Mathematics For DSA</image:title>
+      <image:caption>Mathematical foundations for data structures</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/83</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/YCJbsrLc/IOMB6ff0-Tr-Mx69-Ky-generated-image.jpg</image:loc>
+      <image:title>Pointers - Level 3</image:title>
+      <image:caption>Expert-level pointer programming</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/84</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/6QtMd97B/Ei-Gy11-CSwix8ro-Qp-generated-image.jpg</image:loc>
+      <image:title>Optimising Sieve &amp; Segmented Sieve</image:title>
+      <image:caption>Advanced prime number algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/85</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/kX8Qgkj9/Jj-Rvz-Ssw-O3x6k7k-C-generated-image.jpg</image:loc>
+      <image:title>Let's Practice Pointers</image:title>
+      <image:caption>Practical exercises with pointers</image:caption>
+    </image:image>
+  </url>
+
+  <!-- C++ and Data Structures -->
+  <url>
+    <loc>https://vidion.vercel.app/video/104</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/3NGSW44B/KHpl8l-Mk-I9c-Eq63-Q-generated-image.jpg</image:loc>
+      <image:title>Virtual Constructor VS Virtual Destructor</image:title>
+      <image:caption>Understanding virtual constructors and destructors in C++</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/105</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/prdVHvmR/Sf-Bmfsr6guvn-TZpv-generated-image.jpg</image:loc>
+      <image:title>Memory Layout Of A Program</image:title>
+      <image:caption>Understanding program memory organization</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/106</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/nh36ymvj/6r-Thity-Tf5d-KBYGx-generated-image.jpg</image:loc>
+      <image:title>LL Class - 1</image:title>
+      <image:caption>Introduction to linked list data structures</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/107</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/9fvN2YzM/Apfd-Z1q-POq-Tlh-Efd-generated-image.jpg</image:loc>
+      <image:title>LL Class - 2</image:title>
+      <image:caption>Advanced linked list operations</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/108</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/YqqRJs8R/VYBecp-Ri-Qi-ZK2jn-L-generated-image.jpg</image:loc>
+      <image:title>LL Class - 3</image:title>
+      <image:caption>Complex linked list algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/109</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/PJfbnCbJ/3-Nr-CKns-Vx8-M5t-HIs-generated-image.jpg</image:loc>
+      <image:title>LL Class - 4</image:title>
+      <image:caption>Expert-level linked list concepts</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/110</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/DZ0c7DLr/Lsquz2-D7x-L8-Dm-Bfl-generated-image.jpg</image:loc>
+      <image:title>Print Nth Node From The End</image:title>
+      <image:caption>Linked list node traversal algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/111</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/Y2gd05TR/DALL-E-2025-03-20-09-46-22-A-professional-futuristic-You-Tube-thumbnail-for-a-coding-tutorial-titl.jpg</image:loc>
+      <image:title>Intersection Of 2 Link Lists</image:title>
+      <image:caption>Finding intersection points in linked lists</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/112</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/TYtg3Q2Q/4291e875-8329-44e6-9a81-04e121ee8800.webp</image:loc>
+      <image:title>Merge Two Sorted Lists</image:title>
+      <image:caption>Merging sorted linked lists</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/113</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/hjMTQ0bS/o157wv8-Veds-V16-Ma-generated-image.jpg</image:loc>
+      <image:title>Sort List Using Merge Sort</image:title>
+      <image:caption>Implementing merge sort for linked lists</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/114</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/SRs86zDc/29e0cd3f-2d73-40c2-b146-ef832b66895d.webp</image:loc>
+      <image:title>Flatten Linked List</image:title>
+      <image:caption>Flattening multi-level linked lists</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/115</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/NM0LSvmc/c759ec99-21bd-4c3b-91b1-94d486d71609.webp</image:loc>
+      <image:title>Copy List with Random Pointer</image:title>
+      <image:caption>Deep copying linked lists with random pointers</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/116</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/C5shxvjN/b29efcaf-a38e-4d0c-9b69-ba6bef5dff0d.webp</image:loc>
+      <image:title>Rotate List</image:title>
+      <image:caption>Rotating linked lists by k positions</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/117</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/YSYJ7vNN/1g-Xa-TROdq1-Kwr-G89-generated-image.jpg</image:loc>
+      <image:title>Delete N Nodes After M Nodes</image:title>
+      <image:caption>Node deletion patterns in linked lists</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/118</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/JhV2p1ws/7-Snccv-HRT3xo-Bb-PI-generated-image.jpg</image:loc>
+      <image:title>Find minmax number between critical points</image:title>
+      <image:caption>Finding critical points in linked lists</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/119</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/Dz6P1F7k/76539hzflbbc0-Y24-generated-image.jpg</image:loc>
+      <image:title>Merge Nodes In Between Zeros</image:title>
+      <image:caption>Node merging algorithms in linked lists</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/120</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/MpjNKH2G/37h-IW08-Jkfv-JZ33-K-generated-image.jpg</image:loc>
+      <image:title>Stack Class - 1</image:title>
+      <image:caption>Introduction to stack data structures</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/121</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/7L8cC4wn/13t8g-X0vd-JNdm-QEQ-generated-image.jpg</image:loc>
+      <image:title>Stack Class - 2</image:title>
+      <image:caption>Advanced stack operations and implementations</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Stack and Queue Data Structures -->
+  <url>
+    <loc>https://vidion.vercel.app/video/1991</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/Bb6wWQB4/fynpc-O6q-YWe-Cq1-FT-generated-image.jpg</image:loc>
+      <image:title>Stack Class - 3 and 4</image:title>
+      <image:caption>Advanced stack concepts and implementations</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/153</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/g0WSzKHM/zchf-QUf-GMq-U5g3s-E-generated-image.jpg</image:loc>
+      <image:title>Remove All Adjacent Strings</image:title>
+      <image:caption>String manipulation using stacks</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/154</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/GmhPqSzn/z-L0-Az2-Hpr-Yxs-Ynj-Z-generated-image.jpg</image:loc>
+      <image:title>Minimum Bracket Reversal</image:title>
+      <image:caption>Solving bracket reversal problems</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/155</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/FFVJ8VYr/o-Sj-Rme-Pk9-Mf1-DQGt-generated-image.jpg</image:loc>
+      <image:title>Next Greater Element In L.L</image:title>
+      <image:caption>Finding next greater elements in linked lists</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/156</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/RFsQr10b/s-Nj-IZCe-BNj4u-FEs4-generated-image.jpg</image:loc>
+      <image:title>Celebrity Problem</image:title>
+      <image:caption>Solving the celebrity problem algorithm</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/157</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/yxC9CfHj/C1-Fr-L660-Jqirn73j-generated-image.jpg</image:loc>
+      <image:title>N Stacks In An Array</image:title>
+      <image:caption>Implementing multiple stacks in a single array</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/158</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/D0RNh3zD/Sc-ROOqzz2k-O1-Vx-Dk-generated-image.jpg</image:loc>
+      <image:title>Online Stock Span</image:title>
+      <image:caption>Stock span calculation using stacks</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/159</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/Yq4pcQRG/0-Kee2u-XSOA2n38p-N-generated-image.jpg</image:loc>
+      <image:title>Simplify Path</image:title>
+      <image:caption>Path simplification algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/160</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/sgssMbyS/VVG7-Gc-X9dy-WKYGvc-generated-image.jpg</image:loc>
+      <image:title>Check If Word Is Valid After Substitutions</image:title>
+      <image:caption>Word validation with substitutions</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/161</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/9fbChb72/O5s6h-Idr7zz-Mg1l4-generated-image.jpg</image:loc>
+      <image:title>Decode String</image:title>
+      <image:caption>String decoding algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/162</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/g2PwsYFT/wq-Pp-YWxcg5-MHVRcn-generated-image.jpg</image:loc>
+      <image:title>Max Rectangle In Binary Matrix</image:title>
+      <image:caption>Finding maximum rectangle in binary matrix</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/163</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/CxQ1RDHk/Vsuz-Md-Btvpak-Ou-Wp-generated-image.jpg</image:loc>
+      <image:title>Car Fleet</image:title>
+      <image:caption>Car fleet problem solving</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/164</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/NFsYJfkQ/699xsn-MJJ4jw-DMn-I-generated-image.jpg</image:loc>
+      <image:title>Car Fleet-II</image:title>
+      <image:caption>Advanced car fleet algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/165</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/tTwRTH3b/Milt-FJs-Bxq-FMz-Kuf-generated-image.jpg</image:loc>
+      <image:title>Queue - Class 1</image:title>
+      <image:caption>Introduction to queue data structures</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/166</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/50vTBdcb/MJrp-Zz-Zc-AGcx-Vy64-generated-image.jpg</image:loc>
+      <image:title>Queue - Class 2</image:title>
+      <image:caption>Advanced queue operations</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/167</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/BQZ761vq/4-N19-Zog-Icw-DC0s-Rk-generated-image.jpg</image:loc>
+      <image:title>Queue - Class 3</image:title>
+      <image:caption>Complex queue implementations</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/168</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/0jtNsJVt/o-M3wfz-Ljns3sjahd-generated-image.jpg</image:loc>
+      <image:title>Stacks Using Queue</image:title>
+      <image:caption>Implementing stacks using queues</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Advanced Programming Topics -->
+  <url>
+    <loc>https://vidion.vercel.app/video/190</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/s21sWwCZ/AQMuqj8k-XVu-USEw6-F6u-TSd0o-ZM-OM7av-XS47e6-C-GB5-YYe-XT-j-S5yu-VJFNZ8-L0-HEJI9-BF3o-Qh-Jo-Luxm6-Dgow-IPXBnxzy6d-FTjh.jpg</image:loc>
+      <image:title>Hashmaps &amp; Tries - Class 2</image:title>
+      <image:caption>Advanced data structures and algorithms</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/191</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/QM2JYyH7/Promotional-Graphic-Featuring-Enthusiastic-Gamer-With-Bold-Text.png</image:loc>
+      <image:title>Hashmaps &amp; Tries - Class 3</image:title>
+      <image:caption>Complex data structure implementations</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://vidion.vercel.app/video/196</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/VLH1hxc5/5fc42894-a681-4fcb-a6d4-b1cf33177fe8.png</image:loc>
+      <image:title>Dynamic Programming 1 Class 4</image:title>
+      <image:caption>Advanced dynamic programming concepts</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Bonus Classes and Special Topics -->
+  <url>
+    <loc>https://vidion.vercel.app/video/209</loc>
+    <image:image>
+      <image:loc>https://i.postimg.cc/2SYXgwkL/Gen-2-3778139807-imagejpg-M-5-mp4.gif</image:loc>
+      <image:title>Bonus Class - Greedy Algorithm</image:title>
+      <image:caption>Introduction to greedy algorithms</image:caption>
+    </image:image>
+  </url>
+
 </urlset> 
