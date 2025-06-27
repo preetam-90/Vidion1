@@ -1,6 +1,8 @@
 import { getComprehensiveMovieVideos } from "@/lib/youtube-api"
 import { NextResponse } from "next/server"
 
+export const runtime = 'edge'
+
 interface YouTubeResponse {
   items: any[];
   nextPageToken?: string;

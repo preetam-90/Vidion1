@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { searchVideos } from "@/lib/youtube-api"
 
+export const runtime = 'edge'
+
 // Cache duration in seconds
 const CACHE_DURATION = 3600; // 1 hour
 

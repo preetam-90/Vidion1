@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const runtime = 'edge'
+
 // Use localStorage to store liked videos
 const STORAGE_KEY = 'liked_videos';
 

@@ -4,6 +4,8 @@ import { NextResponse } from 'next/server';
 // Assume you have database interaction functions
 // import { addLike, removeLike, getLikedVideos } from '@/lib/db'; 
 
+export const runtime = 'edge'
+
 // Placeholder for user type - replace with your actual user type
 interface User {
   id: string;

@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+export const runtime = 'edge'
+
 export default function MovieDetailsRedirect() {
   const params = useParams();
   const router = useRouter();

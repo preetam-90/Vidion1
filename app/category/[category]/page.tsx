@@ -7,6 +7,8 @@ import { useRouter, useParams } from "next/navigation";
 import { useInView } from 'react-intersection-observer';
 import CategoryBar from "@/components/CategoryBar";
 
+export const runtime = 'edge'
+
 export default function CategoryPage() {
   const router = useRouter();
   const params = useParams();

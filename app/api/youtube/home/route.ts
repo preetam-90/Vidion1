@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'edge'
+
 const API_KEYS = process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS?.split(',').map(key => key.trim()) || []
 let currentKeyIndex = 0
 
