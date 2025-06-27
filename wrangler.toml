@@ -6,9 +6,9 @@ compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
 
 # Configure routes
-[routes]
-include = ["/*"]
-exclude = []
+routes = [
+  { pattern = "/*", zone_name = "vidion.vercel.app" }
+]
 
 [build]
 command = "npm run build" 
