@@ -2,10 +2,13 @@ name = "vidion"
 compatibility_date = "2023-12-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Configure build output directory for Pages
+pages_build_output_dir = ".vercel/output/static"
+
 # Configure routes
 [routes]
 include = ["/*"]
 exclude = []
 
-[site]
-bucket = ".vercel/output/static" 
+[build]
+command = "npm run build" 
