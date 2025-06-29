@@ -7,7 +7,6 @@ import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Menu, X, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { useMobile } from "@/hooks/use-mobile"
 import { useWatchLater } from "@/contexts/watch-later-context"
 import SearchBar from "@/components/search-bar"
@@ -217,7 +216,6 @@ export default function Navbar({ isMobileMenuOpen, toggleMobileMenu }: NavbarPro
                 transition={{ duration: 0.2 }}
               >
                 <UserAuth />
-                <ThemeToggle />
               </motion.div>
             )}
           </AnimatePresence>
