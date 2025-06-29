@@ -86,19 +86,13 @@ interface SidebarProps {
   closeMobileMenu: () => void;
   toggleMobileMenu: () => void;
   shouldOverlay?: boolean;
-  userData?: {
-    name: string;
-    avatar?: string;
-    email?: string;
-  };
 }
 
 export default function Sidebar({ 
   isMobileMenuOpen, 
   closeMobileMenu, 
   toggleMobileMenu,
-  shouldOverlay = false,
-  userData = { name: "User", avatar: "" } 
+  shouldOverlay = false
 }: SidebarProps) {
   const pathname = usePathname()
   const isMobile = useMobile()
@@ -416,125 +410,7 @@ export default function Sidebar({
     )
   }
 
-  const UserProfile = () => (
-    <div className={cn(
-      "border-t pt-2 pb-3",
-      isCollapsed ? "px-2" : "px-3",
-    )}>
-      {isCollapsed ? (
-        <TooltipProvider delayDuration={300}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                    <Avatar className="h-9 w-9">
-                      {userData.avatar ? (
-                        <AvatarImage src={userData.avatar} alt={userData.name} />
-                      ) : (
-                        <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
-                      )}
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <div className="flex items-center justify-start gap-2 p-2">
-                    <Avatar className="h-8 w-8">
-                      {userData.avatar ? (
-                        <AvatarImage src={userData.avatar} alt={userData.name} />
-                      ) : (
-                        <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
-                      )}
-                    </Avatar>
-                    <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium">{userData.name}</p>
-                      {userData.email && (
-                        <p className="text-xs text-muted-foreground">{userData.email}</p>
-                      )}
-                    </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <HelpCircle className="mr-2 h-4 w-4" />
-                    <span>Help & Support</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>{userData.name}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ) : (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start font-normal"
-            >
-              <Avatar className="h-6 w-6 mr-2">
-                {userData.avatar ? (
-                  <AvatarImage src={userData.avatar} alt={userData.name} />
-                ) : (
-                  <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
-                )}
-              </Avatar>
-              <span className="truncate">{userData.name}</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <div className="flex items-center justify-start gap-2 p-2">
-              <Avatar className="h-8 w-8">
-                {userData.avatar ? (
-                  <AvatarImage src={userData.avatar} alt={userData.name} />
-                ) : (
-                  <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
-                )}
-              </Avatar>
-              <div className="flex flex-col space-y-1 leading-none">
-                <p className="font-medium">{userData.name}</p>
-                {userData.email && (
-                  <p className="text-xs text-muted-foreground">{userData.email}</p>
-                )}
-              </div>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <HelpCircle className="mr-2 h-4 w-4" />
-              <span>Help & Support</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-    </div>
-  )
+  // UserProfile component removed
 
   // Mobile sidebar
   if (isMobile) {
@@ -604,8 +480,6 @@ export default function Sidebar({
         <div className="flex-1 overflow-y-auto py-2">
           <SidebarContent />
         </div>
-        {/* Don't render UserProfile when in movies page (shouldOverlay=true) */}
-        {!shouldOverlay && <UserProfile />}
       </div>
     </aside>
   )

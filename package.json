@@ -12,6 +12,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "setup": "node scripts/setup-env.js",
     "generate-pwa-assets": "node scripts/generate-pwa-assets.js"
   },
   "dependencies": {

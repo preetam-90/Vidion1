@@ -12,6 +12,7 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useWatchLater } from "@/contexts/watch-later-context"
 import SearchBar from "@/components/search-bar"
 import { AnimatePresence, motion } from "framer-motion"
+import { UserAuth } from "@/components/UserAuth"
 
 // Define props interface
 interface NavbarProps {
@@ -206,15 +207,16 @@ export default function Navbar({ isMobileMenuOpen, toggleMobileMenu }: NavbarPro
             )}
           </div>
           
-          {/* Theme Toggle - hidden when search is expanded on mobile */}
+          {/* Theme Toggle and User Auth - hidden when search is expanded on mobile */}
           <AnimatePresence>
             {(!isMobile || !searchExpanded) && (
               <motion.div 
-                className="flex items-center"
+                className="flex items-center gap-2"
                 initial={{ opacity: 1, width: "auto" }}
                 exit={{ opacity: 0, width: 0 }}
                 transition={{ duration: 0.2 }}
               >
+                <UserAuth />
                 <ThemeToggle />
               </motion.div>
             )}

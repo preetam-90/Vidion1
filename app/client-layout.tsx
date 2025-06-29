@@ -8,6 +8,7 @@ import { useState, Suspense, useEffect } from "react"
 import { Toaster } from "@/components/ui/sonner"
 import { usePathname, useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
+import { LoginPopup } from "@/components/LoginPopup"
 
 // Dynamically import components with loading states
 const Navbar = dynamic(() => import("@/components/navbar"), {
@@ -111,6 +112,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
           </Suspense>
         </main>
       </div>
+      <LoginPopup />
     </div>
   )
 }

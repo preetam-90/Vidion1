@@ -135,10 +135,11 @@ pnpm install
 ```
 
 3. Set up environment variables:
-Create a `.env.local` file with the following variables:
-```
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
-CLERK_SECRET_KEY=your_clerk_secret
+   - Copy the `env.template` file to `.env.local`
+   - Update the values with your actual Clerk credentials
+
+```bash
+cp env.template .env.local
 ```
 
 4. Run the development server:
@@ -155,9 +156,34 @@ pnpm dev
 
 ## Environment Variables
 
-Required environment variables:
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: Clerk authentication public key
-- `CLERK_SECRET_KEY`: Clerk authentication secret key
+### Required Clerk Authentication Variables:
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key (starts with `pk_test_` or `pk_live_`)
+- `CLERK_SECRET_KEY`: Your Clerk secret key (starts with `sk_test_` or `sk_live_`)
+- `NEXT_PUBLIC_CLERK_FRONTEND_API`: Your Clerk frontend API URL
+- `CLERK_API_URL`: Clerk backend API URL (usually `https://api.clerk.com`)
+- `CLERK_JWKS_URL`: JWKS URL for JWT verification
+- `CLERK_JWKS_PUBLIC_KEY`: Public key for JWT verification
+
+### Optional Variables:
+- `NEXT_PUBLIC_YOUTUBE_API_KEYS`: Comma-separated YouTube API keys for video content
+
+### Example .env.local:
+```env
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_publishable_key
+CLERK_SECRET_KEY=sk_test_your_secret_key
+NEXT_PUBLIC_CLERK_FRONTEND_API=https://your-instance.clerk.accounts.dev
+CLERK_API_URL=https://api.clerk.com
+CLERK_JWKS_URL=https://your-instance.clerk.accounts.dev/.well-known/jwks.json
+CLERK_JWKS_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----..."
+
+# TMDB API
+NEXT_PUBLIC_TMDB_API_KEY=your_tmdb_api_key
+NEXT_PUBLIC_TMDB_API_READ_ACCESS_TOKEN=your_tmdb_access_token
+
+# YouTube API (optional)
+NEXT_PUBLIC_YOUTUBE_API_KEYS=key1,key2,key3
+```
 
 ## Development
 

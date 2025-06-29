@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ReactNode, Fragment } from "react";
 import { CacheProvider } from "@/contexts/CacheContext";
 import { PreloadProvider } from "@/contexts/PreloadContext";
+import { ClerkProvider } from "@clerk/nextjs";
 
 interface Props {
   children: ReactNode;
@@ -12,7 +13,7 @@ interface Props {
 
 export function Providers({ children }: Props) {
   return (
-    <Fragment>
+    <ClerkProvider>
       <PreloadProvider>
         <CacheProvider>
           {children}
@@ -20,6 +21,6 @@ export function Providers({ children }: Props) {
           <SpeedInsights />
         </CacheProvider>
       </PreloadProvider>
-    </Fragment>
+    </ClerkProvider>
   );
-} 
+}
