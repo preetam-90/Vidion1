@@ -15,7 +15,7 @@ export default function MoviesPage() {
 
   // Function to open donkey.to in a new tab
   const openInNewTab = () => {
-    window.open("https://donkey.to", "_blank")
+    window.open("https://bhaiflix.vercel.app", "_blank")
   }
 
   // Hide popup after a few seconds
