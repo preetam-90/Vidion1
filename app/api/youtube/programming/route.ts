@@ -5,16 +5,60 @@ export const runtime = 'edge'
 const API_KEYS = process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS?.split(',').map(key => key.trim()) || []
 let currentKeyIndex = 0
 
-const SEARCH_QUERIES = [
-  "India", 
-  "Bollywood", 
-  "Indian Music", 
-  "Cricket India", 
-  "South Asia Travel", 
-  "Indian Food", 
-  "Indian Comedy",
-  "India News"
+// Programming-related keywords as requested
+const PROGRAMMING_KEYWORDS = [
+  "Programming",
+  "Flowcharts",
+  "Patterns",
+  "Arrays",
+  "Sorting",
+  "Searching",
+  "Recursion",
+  "Pointers",
+  "Linked Lists",
+  "Stacks",
+  "Queues",
+  "Trees",
+  "Binary Search Trees",
+  "Heaps",
+  "Hashmaps",
+  "Tries",
+  "Dynamic Programming",
+  "Graphs",
+  "Greedy Algorithm",
+  "Bit Manipulation",
+  "Strings",
+  "Algorithms",
+  "Data Structures",
+  "Interview",
+  "Resume",
+  "Placement",
+  "Mathematics",
+  "Number Systems",
+  "Complexity Analysis",
+  "Matrix",
+  "Subarrays",
+  "Traversal",
+  "Palindrome",
+  "Zig-Zag",
+  "Binary Search",
+  "Prime Numbers",
+  "Factorial",
+  "Temperature Conversion",
+  "Stock Span",
+  "Celebrity Problem",
+  "K-Sum Paths",
+  "Vertical Order",
+  "Diagonal",
+  "Mirror Trees",
+  "Diameter",
+  "Balanced Trees",
+  "Substrings",
+  "Anagram",
+  "Wildcard Matching",
+  "Decode String"
 ];
+
 const VIDEOS_PER_PAGE = 12;
 
 async function fetchWithRotatingKeys(url: string) {
@@ -60,31 +104,12 @@ async function fetchWithRotatingKeys(url: string) {
   throw new Error(`All API keys failed or exhausted. ${quotaErrors} keys hit quota limits. ${otherErrors} keys had other errors.`)
 }
 
-// Fisher-Yates (aka Knuth) Shuffle algorithm
-function shuffleArray(array: any[]) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const pageToken = searchParams.get('pageToken') || undefined
-  const queryIndex = parseInt(searchParams.get('queryIndex') || '0', 10) % SEARCH_QUERIES.length;
-  const currentQuery = SEARCH_QUERIES[queryIndex];
-
-  // Detect if client specifically wants fallback data
-  const forceFallback = searchParams.get('fallback') === 'true';
-  if (forceFallback) {
-    console.log('Client requested fallback data, skipping API call');
-    return NextResponse.json({ 
-      videos: [], 
-      fromFallback: true,
-      message: 'Using fallback data as requested'
-    }, { status: 200 });
-  }
+  const queryIndex = parseInt(searchParams.get('queryIndex') || '0', 10) % PROGRAMMING_KEYWORDS.length;
+  const currentQuery = PROGRAMMING_KEYWORDS[queryIndex];
+  const regionCode = searchParams.get('regionCode') || 'IN'; // Default to India, but allow override
 
   try {
     // Check if we have any valid API keys
@@ -102,9 +127,10 @@ export async function GET(request: NextRequest) {
       q: currentQuery,
       type: 'video',
       maxResults: String(VIDEOS_PER_PAGE),
-      regionCode: 'IN',
+      regionCode: regionCode,
       videoDefinition: 'high',
       relevanceLanguage: 'en',
+      order: 'relevance', // Get most relevant results for programming topics
       videoDuration: 'medium', // Filter out short videos
       videoType: 'any'
     }
@@ -118,7 +144,7 @@ export async function GET(request: NextRequest) {
 
     if (!searchData.items || searchData.items.length === 0) {
       // If no results for current query, move to next query without a page token
-      return NextResponse.json({ videos: [], nextPageToken: null, nextQueryIndex: (queryIndex + 1) % SEARCH_QUERIES.length }, { status: 200 })
+      return NextResponse.json({ videos: [], nextPageToken: null, nextQueryIndex: (queryIndex + 1) % PROGRAMMING_KEYWORDS.length }, { status: 200 })
     }
 
     const videoIds = searchData.items
@@ -128,7 +154,7 @@ export async function GET(request: NextRequest) {
 
     if (!videoIds) {
       // No valid video IDs found, move to next query
-      return NextResponse.json({ videos: [], nextPageToken: searchData.nextPageToken || null, nextQueryIndex: (queryIndex + 1) % SEARCH_QUERIES.length }, { status: 200 })
+      return NextResponse.json({ videos: [], nextPageToken: searchData.nextPageToken || null, nextQueryIndex: (queryIndex + 1) % PROGRAMMING_KEYWORDS.length }, { status: 200 })
     }
 
     // Step 2: Fetch details for the found video IDs using videos.list
@@ -146,7 +172,7 @@ export async function GET(request: NextRequest) {
     } else {
         console.warn("No details found for video IDs:", videoIds);
         // Still return search results page token, but move query index
-        return NextResponse.json({ videos: [], nextPageToken: searchData.nextPageToken || null, nextQueryIndex: (queryIndex + 1) % SEARCH_QUERIES.length }, { status: 200 })
+        return NextResponse.json({ videos: [], nextPageToken: searchData.nextPageToken || null, nextQueryIndex: (queryIndex + 1) % PROGRAMMING_KEYWORDS.length }, { status: 200 })
     }
     
     // Step 3: Combine search snippet data with video details
@@ -201,13 +227,14 @@ export async function GET(request: NextRequest) {
           publishedAt: detailSnippet?.publishedAt || searchSnippet?.publishedAt || new Date().toISOString(),
           viewCount: detailStats?.viewCount || '0', // Return raw view count
           duration: formatDuration(durationStr),
+          category: 'programming', // Add programming category
         };
       })
       .filter((video: any): video is object => video !== null); // Filter out any null entries
 
     // Determine next query index. Only advance if there's no pageToken for the *current* query.
     const nextQueryIndex = !searchData.nextPageToken 
-        ? (queryIndex + 1) % SEARCH_QUERIES.length 
+        ? (queryIndex + 1) % PROGRAMMING_KEYWORDS.length 
         : queryIndex;
     // If there *is* a next page for the current query, use its token. Otherwise, use null (will trigger next query).
     const nextPageTokenForClient = searchData.nextPageToken || null; 
@@ -215,10 +242,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       videos,
       nextPageToken: nextPageTokenForClient,
-      nextQueryIndex
+      nextQueryIndex,
+      currentQuery // Return the current query for reference
     })
   } catch (error) {
-    console.error('Error in YouTube API home route:', error)
+    console.error('Error in YouTube API programming route:', error)
     
     // Check if error is related to API keys
     const errorMessage = error instanceof Error ? error.message : String(error)
@@ -265,4 +293,4 @@ function formatDuration(duration: string) {
   } else {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
-} 
+}

@@ -65,7 +65,7 @@ export async function GET(request: Request) {
     const pageToken = searchParams.get('pageToken') || undefined
     const customSearchQuery = searchParams.get('q') || undefined
     const regionCode = searchParams.get('region') || "IN"
-    const maxResults = parseInt(searchParams.get('maxResults') || '20', 10)
+    const maxResults = parseInt(searchParams.get('maxResults') || '12', 10)
 
     // Set a timeout for the API request
     const TIMEOUT_MS = 10000

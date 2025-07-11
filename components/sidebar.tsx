@@ -62,7 +62,7 @@ interface SidebarItem {
 
 const mainItems: SidebarItem[] = [
   { icon: Home, label: "Home", href: "/" },
-  { icon: Compass, label: "Explore", href: "/explore" },
+  { icon: Sparkles, label: "Featured", href: "/featured" },
   { icon: TrendingUp, label: "Trending", href: "/trending" },
   { icon: Music, label: "Music", href: "/music" },
   { icon: Film, label: "TMDB Movies", href: "/tmdb-movies", highlight: true },

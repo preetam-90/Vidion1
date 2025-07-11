@@ -18,7 +18,7 @@ const CACHE_DURATIONS = {
   VIDEO: 24 * 60 * 60, // 24 hours for video details
   CHANNEL: 7 * 24 * 60 * 60, // 7 days for channel details
   SEARCH: 60 * 60, // 1 hour for search results
-  TRENDING: 60 * 60, // 1 hour for trending videos
+  TRENDING: 0, // Disable caching for trending videos to ensure fresh results
   COMMENTS: 12 * 60 * 60, // 12 hours for comments
   CATEGORIES: 7 * 24 * 60 * 60, // 7 days for categories
 }
@@ -719,7 +719,7 @@ function getFallbackVideos(query: string, maxResults = 20) {
 }
 
 // Function to get trending videos with caching
-export async function getTrendingVideos(regionCode = "US", maxResults = 20, pageToken?: string, videoCategoryId?: string) {
+export async function getTrendingVideos(regionCode = "US", maxResults = 50, pageToken?: string, videoCategoryId?: string) {
   const keyManager = APIKeyManager.getInstance()
   const cacheKey = `trending:${regionCode}:${maxResults}:${pageToken || 'initial'}:${videoCategoryId || 'all'}`
   

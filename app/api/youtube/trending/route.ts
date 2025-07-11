@@ -25,7 +25,8 @@ export async function GET(request: Request) {
     const pageToken = searchParams.get('pageToken')
     const regionCode = searchParams.get('region') || "IN" // Default to India
     const videoCategoryId = searchParams.get('videoCategoryId')
-    const maxResults = 20
+    // Set default maxResults to 12 videos per batch
+    const maxResults = parseInt(searchParams.get('maxResults') || '12', 10)
 
     console.log(`Trending API: Fetching trending videos for region ${regionCode}${videoCategoryId ? `, category ${videoCategoryId}` : ''}, pageToken: ${pageToken || 'initial'}`);
 
@@ -42,6 +43,33 @@ export async function GET(request: Request) {
       .filter((video: any) => video && typeof video === 'object') // Filter out null/undefined items
       .map((video: any) => {
         try {
+          // Check thumbnail dimensions to detect shorts (portrait videos)
+          const highThumbnail = safeExtract(video, ['snippet', 'thumbnails', 'high'], null);
+          const mediumThumbnail = safeExtract(video, ['snippet', 'thumbnails', 'medium'], null);
+          const defaultThumbnail = safeExtract(video, ['snippet', 'thumbnails', 'default'], null);
+          
+          // Check if any thumbnail has portrait orientation (height > width)
+          const isPortrait = 
+            (highThumbnail && highThumbnail.height > highThumbnail.width) ||
+            (mediumThumbnail && mediumThumbnail.height > mediumThumbnail.width) ||
+            (defaultThumbnail && defaultThumbnail.height > defaultThumbnail.width);
+          
+          // If it's a portrait video, skip it
+          if (isPortrait) {
+            console.log(`Filtering out portrait video: ${video.id}`);
+            return null;
+          }
+          
+          // Check duration to filter out shorts
+          const duration = safeExtract(video, ['contentDetails', 'duration'], 'PT10M30S');
+          const durationSeconds = convertDurationToSeconds(duration);
+          
+          // If duration is less than 1 minute, consider it a short
+          if (durationSeconds < 60) {
+            console.log(`Filtering out short duration video: ${video.id}`);
+            return null;
+          }
+          
           return {
             id: safeExtract(video, ['id'], `fallback-${Math.random().toString(36).substring(2, 9)}`),
             snippet: safeExtract(video, ['snippet'], {}),
@@ -54,9 +82,9 @@ export async function GET(request: Request) {
             channelTitle: safeExtract(video, ['snippet', 'channelTitle'], 'Unknown Channel'),
             publishedAt: safeExtract(video, ['snippet', 'publishedAt'], new Date().toISOString()),
             viewCount: safeExtract(video, ['statistics', 'viewCount'], '0'),
-            duration: safeExtract(video, ['contentDetails', 'duration'], 'PT10M30S'),
-            isShort: safeExtract(video, ['contentDetails', 'duration'], false) ? 
-              convertDurationToSeconds(video.contentDetails.duration) <= 60 : false
+            duration: duration,
+            // We're already filtering out shorts, but keep this for compatibility
+            isShort: false
           };
         } catch (error) {
           console.error("Error processing video item:", error);

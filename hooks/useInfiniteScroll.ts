@@ -57,3 +57,100 @@ export function useInfiniteScroll<T>({
     visibleItemsCount: visibleItems.length
   };
 } 
+
+interface UseInfiniteAPIScrollOptions<T> {
+  fetchFunction: (pageToken?: string, queryIndex?: number) => Promise<{
+    items: T[];
+    nextPageToken?: string | null;
+    nextQueryIndex?: number;
+  }>;
+  batchSize?: number;
+  threshold?: number;
+  rootMargin?: string;
+  initialItems?: T[];
+}
+
+export function useInfiniteAPIScroll<T>({
+  fetchFunction,
+  batchSize = 12,
+  threshold = 0.1,
+  rootMargin = "0px",
+  initialItems = []
+}: UseInfiniteAPIScrollOptions<T>) {
+  const [items, setItems] = useState<T[]>(initialItems);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [nextPageToken, setNextPageToken] = useState<string | null>(null);
+  const [nextQueryIndex, setNextQueryIndex] = useState<number>(0);
+  const [hasMore, setHasMore] = useState(true);
+  
+  const [loaderRef, isIntersecting] = useIntersectionObserver<HTMLDivElement>({
+    rootMargin,
+    threshold
+  });
+
+  const loadMore = useCallback(async (initialLoad = false) => {
+    if (loading || (!hasMore && !initialLoad)) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetchFunction(nextPageToken || undefined, nextQueryIndex);
+      
+      const newItems = response.items;
+      const newNextPageToken = response.nextPageToken || null;
+      const newNextQueryIndex = response.nextQueryIndex !== undefined ? response.nextQueryIndex : nextQueryIndex;
+      
+      if (newItems && newItems.length > 0) {
+        setItems(prev => {
+          // Filter out duplicates (using id property if available)
+          const existingIds = new Set(prev.map((item: any) => item.id));
+          const uniqueNewItems = newItems.filter((item: any) => !existingIds.has(item.id));
+          return [...prev, ...uniqueNewItems];
+        });
+      }
+      
+      setNextPageToken(newNextPageToken);
+      setNextQueryIndex(newNextQueryIndex);
+      setHasMore(!!newNextPageToken || (newNextQueryIndex !== undefined && newNextQueryIndex !== nextQueryIndex));
+      
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError(typeof err === 'string' ? err : (err as Error).message || 'Failed to fetch data');
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchFunction, loading, nextPageToken, nextQueryIndex, hasMore]);
+  
+  // Initial load
+  useEffect(() => {
+    if (items.length === 0) {
+      loadMore(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Load more when the sentinel comes into view
+  useEffect(() => {
+    if (isIntersecting && hasMore && !loading) {
+      loadMore();
+    }
+  }, [isIntersecting, hasMore, loading, loadMore]);
+
+  return {
+    items,
+    loading,
+    error,
+    hasMore,
+    loaderRef,
+    refresh: () => {
+      setItems([]);
+      setNextPageToken(null);
+      setNextQueryIndex(0);
+      setHasMore(true);
+      loadMore(true);
+    }
+  };
+} 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
-import { MoreVertical, Share, Clock, Flag, Ban, Trash2, ThumbsUp } from "lucide-react"
+import { MoreVertical, Share, Clock, Flag, Ban, Trash2, ThumbsUp, Eye } from "lucide-react"
 import type { Video } from "@/data"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,6 +20,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useLikedVideos } from "@/contexts/liked-videos-context"
 import Image from "next/image"
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver"
+import { useRouter } from "next/navigation"
 
 interface VideoCardProps {
   video: Video
@@ -29,8 +30,10 @@ interface VideoCardProps {
   onClick?: () => void;
 }
 
-export default function VideoCard({ video, layout = "grid", context, onRemoveFromHistory }: VideoCardProps) {
+export default function VideoCard({ video, layout = "grid", context, onRemoveFromHistory, onClick }: VideoCardProps) {
+  const router = useRouter();
   const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
   const [isShareOpen, setIsShareOpen] = useState(false)
   const [isReportOpen, setIsReportOpen] = useState(false)
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
@@ -134,18 +137,27 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
     }
   };
 
-  // Format view count safely
-  const formatViews = (views: number | string | undefined) => {
-    if (!views) return "0"
-    const viewCount = typeof views === "string" ? Number.parseInt(views) : views
-
-    if (isNaN(viewCount)) return "0"
-    if (viewCount >= 1000000) {
-      return `${(viewCount / 1000000).toFixed(1)}M`
-    } else if (viewCount >= 1000) {
-      return `${(viewCount / 1000).toFixed(1)}K`
+  // Format view count with K, M, B suffixes
+  const formatViewCount = (viewCount?: string | number) => {
+    if (!viewCount) return '0 views'
+    
+    let numCount: number
+    if (typeof viewCount === 'string') {
+      numCount = parseInt(viewCount.replace(/[^0-9]/g, ''))
+      if (isNaN(numCount)) return '0 views'
+    } else {
+      numCount = viewCount
     }
-    return viewCount.toString()
+    
+    if (numCount >= 1000000000) {
+      return `${(numCount / 1000000000).toFixed(1).replace(/\.0$/, '')}B views`
+    } else if (numCount >= 1000000) {
+      return `${(numCount / 1000000).toFixed(1).replace(/\.0$/, '')}M views`
+    } else if (numCount >= 1000) {
+      return `${(numCount / 1000).toFixed(1).replace(/\.0$/, '')}K views`
+    } else {
+      return `${numCount} views`
+    }
   }
 
   // Format upload date safely
@@ -154,9 +166,13 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
     
     // Check if the date is in the format "X days ago"
     if (typeof dateString === 'string' && 
-       (dateString.includes("day") || 
+       (dateString.includes("ago") || 
+        dateString.includes("day") || 
         dateString.includes("month") || 
-        dateString.includes("year"))) {
+        dateString.includes("year") ||
+        dateString.includes("hour") ||
+        dateString.includes("minute") ||
+        dateString.includes("second"))) {
       return dateString
     }
 
@@ -169,6 +185,35 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
       return dateString || ""
     }
   }
+  
+  // Get video duration in formatted form
+  const formatDuration = () => {
+    if (!video.duration) return '';
+    
+    // If already formatted as HH:MM:SS, return as is
+    if (/^\d+:\d+(?::\d+)?$/.test(video.duration)) {
+      return video.duration;
+    }
+    
+    // Parse ISO 8601 duration format (PT1H30M15S)
+    try {
+      const match = video.duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+      if (!match) return '';
+      
+      const hours = match[1] ? parseInt(match[1]) : 0;
+      const minutes = match[2] ? parseInt(match[2]) : 0;
+      const seconds = match[3] ? parseInt(match[3]) : 0;
+      
+      if (hours > 0) {
+        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      } else {
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      }
+    } catch (err) {
+      console.error("Error formatting duration:", err);
+      return '';
+    }
+  };
 
   if (isReported && !isJustReported) return null
   if (isHidden && !isJustHidden) return null
@@ -217,30 +262,49 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
     return null;
   }
 
+  const videoCardContent = (
+    <div className={`group relative ${layout === "list" ? "" : "aspect-video"} rounded-t-lg overflow-hidden`}>
+      <Image
+        src={imageError ? "/placeholder.svg?height=240&width=400" : thumbnailUrl}
+        alt={video?.title || "Video thumbnail"}
+        fill
+        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+        style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+        onError={() => {
+          setImageError(true);
+        }}
+        onLoad={() => setImageLoaded(true)}
+      />
+      
+      {/* Duration badge */}
+      {formatDuration() && (
+        <div className="absolute bottom-2 right-2 bg-black/80 px-1.5 py-0.5 text-[10px] font-medium text-white rounded">
+          {formatDuration()}
+        </div>
+      )}
+    </div>
+  )
+
   return (
     <>
       {layout === "list" ? (
-        <div className="flex gap-4 hover:bg-accent/10 p-2 rounded-lg transition-colors">
-          <Link href={`/video/${videoId}`} className="aspect-video w-40 relative rounded-md overflow-hidden flex-shrink-0">
-            <Image
-              src={thumbnailUrl}
-              alt={video?.title || "Video thumbnail"}
-              fill
-              className="object-cover w-full h-full"
-              style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "/placeholder.svg?height=240&width=400";
-              }}
-            />
+        <div className="flex gap-4 hover:bg-accent/10 p-2 rounded-lg transition-colors cursor-pointer" onClick={() => onClick && onClick()}>
+          <Link href={`/video/${videoId}`} className="aspect-video w-40 relative rounded-md overflow-hidden flex-shrink-0" onClick={(e) => onClick && e.preventDefault()}>
+            {videoCardContent}
           </Link>
           <div className="flex-1 min-w-0">
             <h3 className="text-base font-medium line-clamp-2">{video?.title}</h3>
-            <p className="text-sm text-muted-foreground mt-1">{video?.uploader}</p>
-            <div className="flex items-center text-xs text-muted-foreground mt-1">
-              <span>{formatViews(video?.views)} views</span>
-              <span className="mx-1">•</span>
-              <span>{formatDate(video?.uploadDate)}</span>
+            <p className="text-sm font-medium text-foreground/80 mt-1">{video?.uploader}</p>
+            <div className="flex items-center text-xs text-muted-foreground mt-1 gap-2">
+              <div className="flex items-center gap-1">
+                <Eye className="h-3 w-3 text-muted-foreground/70" />
+                <span>{formatViewCount(video?.views)}</span>
+              </div>
+              <span className="text-muted-foreground/50">•</span>
+              <div className="flex items-center gap-1">
+                <Clock className="h-3 w-3 text-muted-foreground/70" />
+                <span>{formatDate(video?.uploadDate)}</span>
+              </div>
             </div>
             <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{video?.description}</p>
           </div>
@@ -248,91 +312,90 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent/50">
                 <MoreVertical className="h-4 w-4" />
+                <span className="sr-only">More</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsShareOpen(true)}>
-                <Share className="mr-2 h-4 w-4" />
-                Share
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleWatchLater}>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleWatchLater() }}>
                 <Clock className="mr-2 h-4 w-4" />
-                {isInWatchLater(video?.id) ? "Remove from Watch Later" : "Add to Watch Later"}
+                <span>{isInWatchLater(video.id) ? "Remove from Watch Later" : "Watch Later"}</span>
               </DropdownMenuItem>
-              {context === 'history' && video?.id ? (
-                <DropdownMenuItem onClick={() => onRemoveFromHistory?.(video.id)}>
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Remove from watch history
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem onClick={handleNotInterested}>
-                  <Ban className="mr-2 h-4 w-4" />
-                  Not Interested
-                </DropdownMenuItem>
-              )}
-              {context === 'favorites' && (
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    e.preventDefault()
-                    if (onRemoveFromHistory) {
-                      onRemoveFromHistory(video.id)
-                      toast({
-                        title: "Removed from favorites",
-                        description: "This video has been removed from your favorites.",
-                      })
-                    }
-                  }}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Remove from favorites
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem onClick={() => setIsReportOpen(true)}>
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setIsShareOpen(true) }}>
+                <Share className="mr-2 h-4 w-4" />
+                <span>Share</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleNotInterested() }}>
+                <Ban className="mr-2 h-4 w-4" />
+                <span>Not interested</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setIsReportOpen(true) }}>
                 <Flag className="mr-2 h-4 w-4" />
-                Report
+                <span>Report</span>
+              </DropdownMenuItem>
+              {context === 'history' && onRemoveFromHistory && (
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onRemoveFromHistory(video.id) }}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  <span>Remove from history</span>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleLikeClick(e) }}>
+                <ThumbsUp className="mr-2 h-4 w-4" />
+                <span>{isLiked(video.id) ? "Remove from favorites" : "Add to favorites"}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       ) : (
-        <div className="group relative aspect-video rounded-lg overflow-hidden">
-          <Link href={`/video/${videoId}`} className="block w-full h-full">
-            <Image
-              src={thumbnailUrl}
-              alt={video?.title || "Video thumbnail"}
-              fill
-              className="object-cover w-full h-full"
-              style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "/placeholder.svg?height=240&width=400";
-              }}
-            />
+        <div className="group w-full overflow-hidden rounded-lg border border-border/30 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer bg-card"
+          onClick={() => onClick ? onClick() : router.push(`/video/${videoId}`)}
+        >
+          <Link href={`/video/${videoId}`} onClick={(e) => onClick && e.preventDefault()}>
+            {videoCardContent}
           </Link>
+          <div className="p-2.5 sm:p-3">
+            <h3 className="line-clamp-2 text-sm sm:text-base font-medium leading-tight mb-1.5">
+              {video?.title}
+            </h3>
+            
+            <div className="flex flex-col gap-1">
+              <p className="text-xs sm:text-sm font-medium text-foreground/80 line-clamp-1">
+                {video?.uploader}
+              </p>
+              
+              <div className="flex items-center text-xs text-muted-foreground gap-2">
+                <div className="flex items-center gap-1">
+                  <Eye className="h-3 w-3 text-muted-foreground/70" />
+                  <span>{formatViewCount(video?.views)}</span>
+                </div>
+                
+                <span className="text-muted-foreground/50">•</span>
+                
+                <div className="flex items-center gap-1">
+                  <Clock className="h-3 w-3 text-muted-foreground/70" />
+                  <span>{formatDate(video?.uploadDate)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
-      
-      {isShareOpen && video?.id && (
-        <SharePopup
-          isOpen={isShareOpen}
-          url={`${typeof window !== 'undefined' ? window.location.origin : ''}/video/${String(video.id)}`}
-          title={video.title || ''}
-          onClose={() => setIsShareOpen(false)}
-        />
-      )}
-      <ReportDialog
-        isOpen={isReportOpen}
+
+      <SharePopup 
+        isOpen={isShareOpen} 
+        onClose={() => setIsShareOpen(false)} 
+        url={`${typeof window !== 'undefined' ? window.location.origin : ''}/video/${videoId}`}
+        title={video?.title || ''}
+      />
+      <ReportDialog 
+        isOpen={isReportOpen} 
         onClose={() => setIsReportOpen(false)}
         onSubmit={handleReport}
       />
-      {isFeedbackOpen && (
-        <FeedbackDialog
-          isOpen={isFeedbackOpen}
-          onClose={() => setIsFeedbackOpen(false)}
-          onSubmit={handleFeedbackSubmit}
-        />
-      )}
+      <FeedbackDialog
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+        onSubmit={handleFeedbackSubmit}
+      />
     </>
   )
 }

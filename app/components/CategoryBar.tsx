@@ -16,7 +16,6 @@ interface LinkItem {
 const mainPages: LinkItem[] = [
   { name: 'All', path: '/' },
   { name: 'Trending', path: '/trending' },
-  { name: 'Explore', path: '/explore' },
   { name: 'Music', path: '/music' },
   { name: 'Movies', path: '/tmdb-movies' },
   { name: 'Shorts', path: '/shorts' },

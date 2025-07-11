@@ -1,150 +1,62 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import Image from 'next/image'
-import { formatDistanceToNowStrict } from 'date-fns'
-import { Eye, MoreVertical, Share, Clock, Flag } from 'lucide-react'
+import { useState, useCallback } from "react"
+import { Flag } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
+import { InfiniteVideoGrid } from "@/components/video-grid"
 import SharePopup from "@/components/share-popup"
-import { Loader2 } from "lucide-react"
-import type { Video as AppVideo } from '@/types/data'; // Use the main Video type
-
-// Use the main Video type for consistency
-interface Video extends AppVideo {}
+import type { Video } from '@/types/data'
 
 export default function TrendingPage() {
   const router = useRouter()
-  const [videos, setVideos] = useState<Video[]>([])
-  const [loading, setLoading] = useState(true)
   const [isShareOpen, setIsShareOpen] = useState(false)
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null)
-  const [nextPageToken, setNextPageToken] = useState<string | null>(null)
-  const [hasMore, setHasMore] = useState(true)
-  const observerRef = useRef<IntersectionObserver | null>(null)
-  const lastVideoRef = useRef<HTMLDivElement | null>(null)
-  const [loadingMore, setLoadingMore] = useState(false)
   const regionCode = "IN" // Explicitly set to India
 
-  const loadMoreVideos = useCallback(async () => {
-    if (loadingMore || (!nextPageToken && videos.length > 0 && hasMore)) return
-    
-    if (!hasMore) return
-
+  const fetchTrendingVideos = useCallback(async (pageToken?: string) => {
     try {
-      if (videos.length === 0) {
-        setLoading(true)
-      } else {
-        setLoadingMore(true)
-      }
-
-      const response = await fetch(`/api/youtube/trending?region=IN${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`)
+      const response = await fetch(`/api/youtube/trending?region=${regionCode}${pageToken ? `&pageToken=${pageToken}` : ''}`)
       
       if (!response.ok) {
-        let errorMsg = 'Failed to fetch trending videos';
-        try {
-          const errorData = await response.json();
-          errorMsg = errorData.error || errorMsg;
-          console.error("API Error Details:", errorData.details || "No additional details");
-        } catch (parseError) {
-          // Ignore parsing error, use default message
-        }
-        console.error("Initial API Error:", errorMsg);
-        setHasMore(false);
-        if (videos.length > 0) {
-          setLoading(false);
-          setLoadingMore(false);
-          return;
-        }
-        
-        throw new Error(errorMsg);
+        throw new Error('Failed to fetch trending videos')
       }
       
-      const data = await response.json();
+      const data = await response.json()
 
       if (!data.items || data.items.length === 0) {
-        setHasMore(false)
-      } else {
-        setVideos(prev => {
-          const existingIds = new Set(prev.map(v => v.id))
-          const uniqueNewVideos = data.items.map((item: any) => ({
-            id: item.id,
-            title: item.title || item.snippet.title,
-            thumbnail: item.thumbnail || (item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url),
-            uploader: item.channelTitle || item.snippet.channelTitle,
-            views: formatViewCount(item.viewCount || item.statistics?.viewCount),
-            uploadDate: item.publishedAt || item.snippet.publishedAt,
-            description: item.snippet.description,
-            platform: 'youtube',
-            category: 'trending',
-            likes: formatViewCount(item.statistics?.likeCount),
-            comments: formatViewCount(item.statistics?.commentCount),
-            url: `https://www.youtube.com/watch?v=${item.id}`,
-            duration: item.duration || item.contentDetails?.duration,
-          })).filter((video: Video) => !existingIds.has(video.id))
-          
-          if (uniqueNewVideos.length === 0) {
-            setHasMore(false)
-            return prev
-          }
-          
-          return [...prev, ...uniqueNewVideos]
-        })
-        setNextPageToken(data.nextPageToken || null)
+        return { items: [], nextPageToken: null }
+      }
+      
+      const formattedVideos = data.items.map((item: any) => ({
+        id: item.id,
+        title: item.title || item.snippet?.title || 'Untitled Video',
+        thumbnail: item.thumbnail || (item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.medium?.url || item.snippet?.thumbnails?.default?.url || '/placeholder-thumbnail.jpg'),
+        uploader: item.channelTitle || item.snippet?.channelTitle || 'Unknown Channel',
+        views: item.viewCount || item.statistics?.viewCount || '0',
+        uploadDate: item.publishedAt || item.snippet?.publishedAt,
+        description: item.snippet?.description || '',
+        platform: 'youtube',
+        category: 'trending',
+        likes: item.statistics?.likeCount || '0',
+        comments: item.statistics?.commentCount || '0',
+        url: `https://www.youtube.com/watch?v=${item.id}`,
+        duration: item.duration || formatDuration(item.contentDetails?.duration),
+      }))
+      
+      return {
+        items: formattedVideos,
+        nextPageToken: data.nextPageToken || null
       }
     } catch (err) {
-      console.error("Error loading videos:", err);
-      setHasMore(false);
-    } finally {
-      setLoading(false)
-      setLoadingMore(false)
+      console.error("Error fetching trending videos:", err)
+      return { items: [], nextPageToken: null }
     }
-  }, [nextPageToken, videos.length, loadingMore, hasMore])
+  }, [regionCode])
 
-  // Initialize intersection observer
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading && !loadingMore) {
-          loadMoreVideos()
-        }
-      },
-      { threshold: 0.1 }
-    )
-  }, [hasMore, loading, loadMoreVideos, loadingMore])
-
-  // Observe last video element
-  useEffect(() => {
-    const currentObserver = observerRef.current
-    const lastElement = lastVideoRef.current
-
-    if (currentObserver && lastElement) {
-      currentObserver.observe(lastElement)
-    }
-
-    return () => {
-      if (currentObserver && lastElement) {
-        currentObserver.unobserve(lastElement)
-      }
-    }
-  }, [videos])
-
-  // Initial load
-  useEffect(() => {
-    setVideos([]);
-    setNextPageToken(null);
-    setHasMore(true);
-    setLoading(true);
-    loadMoreVideos();
-  }, []);
+  const handleShare = (video: Video) => {
+    setSelectedVideo(video)
+    setIsShareOpen(true)
+  }
 
   const handleVideoClick = (video: Video) => {
     sessionStorage.setItem('currentVideo', JSON.stringify({
@@ -158,25 +70,6 @@ export default function TrendingPage() {
     router.push(`/video/${video.id}`)
   }
 
-  const handleShare = (video: Video, e: React.MouseEvent) => {
-    e.stopPropagation()
-    setSelectedVideo(video)
-    setIsShareOpen(true)
-  }
-
-  const handleReport = (video: Video, e: React.MouseEvent) => {
-    e.stopPropagation()
-    toast.success("Thank you for reporting this video")
-  }
-
-  if (loading && videos.length === 0) {
-    return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
-  }
-
   return (
     <div className="container mx-auto px-0 sm:px-4 py-4 sm:py-8">
       <div className="flex items-center justify-between mb-4 sm:mb-6 px-2 sm:px-0">
@@ -188,136 +81,80 @@ export default function TrendingPage() {
           </span>
         </div>
       </div>
-      {videos.length > 0 ? (
-        <div className="space-y-2 sm:space-y-6">
-          {videos.map((video, index) => (
-            <div 
-              key={video.id} 
-              ref={index === videos.length - 1 ? lastVideoRef : null}
-              className="flex flex-col sm:flex-row space-x-0 sm:space-x-4 group cursor-pointer hover:bg-muted/50 rounded-xl p-2 sm:p-4 relative"
-              onClick={() => handleVideoClick(video)}
-            >
-              <div className="relative w-full sm:w-[360px] aspect-video mb-2 sm:mb-0 flex-shrink-0">
-                <Image
-                  src={video.thumbnail || '/placeholder-thumbnail.jpg'}
-                  alt={video.title || 'Video thumbnail'}
-                  fill
-                  className="rounded-xl object-cover"
-                  sizes="(max-width: 640px) 100vw, 360px"
-                  priority={index < 2}
-                />
-                {video.duration && (
-                  <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
-                    {video.duration}
-                  </span>
-                )}
-              </div>
-
-              <div className="flex-1 min-w-0 px-2 sm:px-0">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-base sm:text-lg font-semibold line-clamp-2 mb-1 sm:mb-2 group-hover:text-foreground/90 pr-8">
-                    {video.title || 'Untitled Video'}
-                  </h3>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        className="absolute right-2 sm:right-4 top-2 sm:top-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <MoreVertical className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuItem onClick={(e) => handleShare(video, e)}>
-                        <Share className="mr-2 h-4 w-4" />
-                        Share
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={(e) => handleReport(video, e)}>
-                        <Flag className="mr-2 h-4 w-4" />
-                        Report
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                {video.uploader && (
-                  <p className="text-xs sm:text-sm text-muted-foreground mb-1">
-                    {video.uploader}
-                  </p>
-                )}
-                <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
-                  {video.views && (
-                    <span className="flex items-center gap-1">
-                      <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
-                      {video.views}
-                    </span>
-                  )}
-                  {video.uploadDate && (
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                      {formatPublishedDate(video.uploadDate)}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-          {loadingMore && (
-            <div className="flex justify-center py-4">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">No trending videos found</p>
-        </div>
+      
+      <InfiniteVideoGrid fetchVideos={fetchTrendingVideos} batchSize={12} />
+      
+      {isShareOpen && selectedVideo && (
+        <SharePopup
+          isOpen={isShareOpen}
+          onClose={() => setIsShareOpen(false)}
+          url={selectedVideo.url || `https://youtube.com/watch?v=${selectedVideo.id}`}
+          title={selectedVideo.title}
+        />
       )}
-      <SharePopup
-        isOpen={isShareOpen}
-        onClose={() => setIsShareOpen(false)}
-        url={selectedVideo ? `${typeof window !== 'undefined' ? window.location.origin : ''}/video/${selectedVideo.id}` : ''}
-        title={selectedVideo?.title || 'Check out this video'}
-      />
     </div>
   )
 }
 
-// Helper function for formatting view counts with safe handling
+// Helper function to format view counts
 const formatViewCount = (count: string | number | undefined): string => {
-  if (count === undefined) return "0 views"
-  const numCount = typeof count === "string" ? parseInt(count) : count
-  if (isNaN(numCount)) return "0 views"
+  if (!count) return '0 views'
   
-  try {
-    if (numCount >= 1_000_000_000) {
-      return (numCount / 1_000_000_000).toFixed(1).replace(".0", "") + "B views"
-    }
-    if (numCount >= 1_000_000) {
-      return (numCount / 1_000_000).toFixed(1).replace(".0", "") + "M views"
-    }
-    if (numCount >= 1_000) {
-      return (numCount / 1_000).toFixed(1).replace(".0", "") + "K views"
-    }
-    return numCount.toString() + " views"
-  } catch (error) {
-    console.error("Error formatting view count:", error)
-    return "0 views"
+  let numCount: number
+  if (typeof count === 'string') {
+    numCount = parseInt(count.replace(/[^0-9]/g, ''))
+    if (isNaN(numCount)) return '0 views'
+  } else {
+    numCount = count
+  }
+  
+  if (numCount >= 1000000) {
+    return `${(numCount / 1000000).toFixed(1).replace(/\.0$/, '')}M views`
+  } else if (numCount >= 1000) {
+    return `${(numCount / 1000).toFixed(1).replace(/\.0$/, '')}K views`
+  } else {
+    return `${numCount} views`
   }
 }
 
-// Helper function for safe date formatting
+// Helper function to format dates
 const formatPublishedDate = (dateString: string | undefined): string => {
-  if (!dateString) return ""
+  if (!dateString) return ''
+  
   try {
     const date = new Date(dateString)
-    if (isNaN(date.getTime())) {
-      return ""
-    }
-    return formatDistanceToNowStrict(date) + " ago"
-  } catch (error) {
-    console.error("Error formatting date:", error)
-    return ""
+    if (isNaN(date.getTime())) return ''
+    
+    const now = new Date()
+    const diffTime = Math.abs(now.getTime() - date.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    
+    if (diffDays < 1) return 'Today'
+    if (diffDays === 1) return 'Yesterday'
+    if (diffDays < 7) return `${diffDays} days ago`
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`
+    return `${Math.floor(diffDays / 365)} years ago`
+  } catch (e) {
+    return ''
+  }
+}
+
+// Helper function to format YouTube duration
+const formatDuration = (duration: string | undefined): string => {
+  if (!duration) return '';
+  
+  // Parse ISO 8601 duration format
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return '';
+  
+  const hours = match[1] ? parseInt(match[1]) : 0;
+  const minutes = match[2] ? parseInt(match[2]) : 0;
+  const seconds = match[3] ? parseInt(match[3]) : 0;
+  
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  } else {
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 }
