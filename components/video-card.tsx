@@ -19,7 +19,7 @@ import { FeedbackDialog } from "./feedback-dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { useLikedVideos } from "@/contexts/liked-videos-context"
 import Image from "next/image"
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver"
+import { getBestThumbnailUrl, handleThumbnailError } from "@/lib/thumbnail-utils"
 import { useRouter } from "next/navigation"
 
 interface VideoCardProps {
@@ -255,7 +255,7 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
   }
 
   const videoId = video?.id ? String(video.id).replace('local-', '') : ''
-  const thumbnailUrl = video?.thumbnail && video.thumbnail.trim() !== "" ? video.thumbnail : "/placeholder.svg?height=240&width=400"
+  const thumbnailUrl = getBestThumbnailUrl(video)
   const isGoogleDrive = video?.thumbnail?.startsWith("https://drive.google.com") ?? false
 
   if (!video) {
@@ -270,7 +270,8 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
         fill
         className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
         style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-        onError={() => {
+        onError={(e) => {
+          handleThumbnailError(e, video);
           setImageError(true);
         }}
         onLoad={() => setImageLoaded(true)}

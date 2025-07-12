@@ -99,15 +99,23 @@ export async function GET(request: Request) {
         .filter((video: any) => video && typeof video === 'object')
         .map((video: any) => {
           try {
+            const videoId = safeExtract(video, ['id'], `fallback-${Math.random().toString(36).substring(2, 9)}`);
+            let thumbnailUrl = safeExtract(video, ['snippet', 'thumbnails', 'high', 'url']) || 
+                        safeExtract(video, ['snippet', 'thumbnails', 'medium', 'url']) || 
+                        safeExtract(video, ['snippet', 'thumbnails', 'default', 'url']);
+            
+            // If no thumbnail found in API response, generate one from video ID
+            if (!thumbnailUrl || thumbnailUrl.trim() === '') {
+              thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+            }
+            
             return {
-              id: safeExtract(video, ['id'], `fallback-${Math.random().toString(36).substring(2, 9)}`),
+              id: videoId,
               snippet: safeExtract(video, ['snippet'], {}),
               statistics: safeExtract(video, ['statistics'], {}),
               contentDetails: safeExtract(video, ['contentDetails'], {}),
               title: safeExtract(video, ['snippet', 'title'], 'Untitled Video'),
-              thumbnail: safeExtract(video, ['snippet', 'thumbnails', 'high', 'url']) || 
-                        safeExtract(video, ['snippet', 'thumbnails', 'medium', 'url']) || 
-                        safeExtract(video, ['snippet', 'thumbnails', 'default', 'url']),
+              thumbnail: thumbnailUrl,
               thumbnailDetails: safeExtract(video, ['snippet', 'thumbnails'], {}),
               channelTitle: safeExtract(video, ['snippet', 'channelTitle'], 'Unknown Channel'),
               publishedAt: safeExtract(video, ['snippet', 'publishedAt'], new Date().toISOString()),

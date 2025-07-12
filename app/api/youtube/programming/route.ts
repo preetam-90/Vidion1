@@ -199,7 +199,13 @@ export async function GET(request: NextRequest) {
         const detailContent = details.contentDetails;
         
         // Check if this is a short video by examining thumbnails aspect ratio
-        const thumbnailUrl = detailSnippet?.thumbnails?.high?.url || searchSnippet?.thumbnails?.high?.url || '';
+        let thumbnailUrl = detailSnippet?.thumbnails?.high?.url || searchSnippet?.thumbnails?.high?.url || '';
+        
+        // If no thumbnail found in API response, generate one from video ID
+        if (!thumbnailUrl || thumbnailUrl.trim() === '') {
+          thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+        }
+        
         const thumbnailWidth = detailSnippet?.thumbnails?.high?.width || searchSnippet?.thumbnails?.high?.width || 0;
         const thumbnailHeight = detailSnippet?.thumbnails?.high?.height || searchSnippet?.thumbnails?.high?.height || 0;
         
