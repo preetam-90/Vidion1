@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Helps break complex problems into steps"
+    },
+    "shell-agent": {
+      "command": "npx",
+      "args": ["-y", "hyper-mcp-shell"],
+      "description": "Run safe shell commands from AI chat"
+    },
+    "file-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "description": "Search & read files in your project"
+    },
+    "markdown-generator": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-markdown"],
+      "description": "Generate markdown from raw text"
+    },
+    "directory-tree": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "description": "Show your project folder structure"
+    }
+  }
+}

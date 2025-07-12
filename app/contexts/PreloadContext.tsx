@@ -20,7 +20,7 @@ const routesToPreload = [
   '/music',
   '/tmdb-movies',
   '/shorts',
-  '/favorites',
+  '/liked-videos',
   '/history',
   '/watch-later',
   '/category/gaming',

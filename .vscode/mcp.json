@@ -1,0 +1,38 @@
+[
+  {
+    "name": "sequential-thinking",
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+    "description": "Helps break complex problems into steps for better reasoning"
+  },
+  {
+    "name": "shell-agent",
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-shell"],
+    "description": "Allows running safe shell commands from AI chat"
+  },
+  {
+    "name": "file-search",
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", "${workspaceFolder}"],
+    "description": "Lets AI search and read file contents in your project"
+  },
+  {
+    "name": "time-server",
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-time"],
+    "description": "Returns current time/date information"
+  },
+  {
+    "name": "math-solver",
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-math"],
+    "description": "Solves mathematical expressions and unit conversions"
+  },
+  {
+    "name": "directory-tree",
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-directory-tree", "${workspaceFolder}"],
+    "description": "Shows folder structure and file types in your project"
+  }
+]

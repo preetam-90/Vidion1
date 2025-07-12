@@ -224,7 +224,7 @@ export default function HomePage() {
         
         // Duplicate local videos to increase their presence
         // Each local video will appear 2-3 times
-        let duplicatedLocalVideos = [];
+        let duplicatedLocalVideos: Video[] = [];
         shuffledLocalVideos.forEach(video => {
           // Add each video 2-3 times
           const duplicateCount = Math.floor(Math.random() * 2) + 2; // Random number between 2-3

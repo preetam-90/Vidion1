@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [
-      'i.ytimg.com',
-      'i.postimg.cc',
-      'drive.google.com',
-      'lh3.googleusercontent.com',
-      'yt3.ggpht.com',
-      'img.youtube.com',
-      'image.tmdb.org'
+    remotePatterns: [
+      { protocol: 'https', hostname: '*.ytimg.com' },
+      { protocol: 'https', hostname: 'i.postimg.cc' },
+      { protocol: 'https', hostname: 'drive.google.com' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'yt3.ggpht.com' },
+      { protocol: 'https', hostname: 'img.youtube.com' },
+      { protocol: 'https', hostname: 'image.tmdb.org' }
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

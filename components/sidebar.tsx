@@ -24,6 +24,7 @@ import {
   Moon,
   PlusCircle,
   Heart,
+  ThumbsUp,
   Bell,
   HelpCircle,
   LogOut,
@@ -77,7 +78,7 @@ const categoriesItems: SidebarItem[] = [
 const libraryItems: SidebarItem[] = [
   { icon: Clock, label: "Watch Later", href: "/watch-later", badge: 5 },
   { icon: History, label: "History", href: "/history" },
-  { icon: Heart, label: "Favorites", href: "/favorites" },
+  { icon: ThumbsUp, label: "Liked Videos", href: "/liked-videos" },
 ];
 
 // Define props interface

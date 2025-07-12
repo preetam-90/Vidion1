@@ -19,7 +19,7 @@ const mainPages: LinkItem[] = [
   { name: 'Music', path: '/music' },
   { name: 'Movies', path: '/tmdb-movies' },
   { name: 'Shorts', path: '/shorts' },
-  { name: 'Favorites', path: '/favorites' },
+  { name: 'Liked Videos', path: '/liked-videos' },
   { name: 'History', path: '/history' },
   { name: 'Watch Later', path: '/watch-later' },
 ];

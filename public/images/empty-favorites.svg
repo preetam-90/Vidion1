@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with gradient -->
+  <circle cx="120" cy="120" r="100" fill="url(#paint0_radial)" opacity="0.2"/>
+  
+  <!-- Heart outline -->
+  <path d="M120 190L105.9 177.2C72 146.4 50 126.6 50 102C50 82.2 65.2 67 85 67C96.4 67 107.3 72.4 114 80.9C120.7 72.4 131.6 67 143 67C162.8 67 178 82.2 178 102C178 126.6 156 146.4 122.1 177.3L120 190Z" 
+    stroke="url(#paint1_linear)" 
+    stroke-width="8" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"/>
+  
+  <!-- Video play button -->
+  <rect x="90" y="100" width="60" height="40" rx="8" fill="url(#paint2_linear)" opacity="0.7"/>
+  <path d="M115 110L125 120L115 130V110Z" fill="white"/>
+  
+  <!-- Sparkles -->
+  <path d="M60 60L63 67L70 70L63 73L60 80L57 73L50 70L57 67L60 60Z" fill="#FFD700"/>
+  <path d="M180 70L182 75L187 77L182 79L180 84L178 79L173 77L178 75L180 70Z" fill="#FFD700"/>
+  <path d="M170 160L172 165L177 167L172 169L170 174L168 169L163 167L168 165L170 160Z" fill="#FFD700"/>
+  
+  <!-- Gradient definitions -->
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(120 120) rotate(90) scale(100)">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="paint1_linear" x1="50" y1="67" x2="178" y2="190" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#EC4899"/>
+    </linearGradient>
+    <linearGradient id="paint2_linear" x1="90" y1="100" x2="150" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#EC4899"/>
+    </linearGradient>
+  </defs>
+</svg>

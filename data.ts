@@ -7,12 +7,13 @@ export interface Video {
   uploader: string
   uploadDate: string
   likes: number | string
+  comments: number | string
   url: string
   platform: string
   category: string
-  comments: number | string
-  duration?: string // Optional duration property
+  duration?: string
   isShort?: boolean // Flag to indicate if video is a short format video
+  watchDate?: string // Added for history tracking
 }
 
 export const videos: Video[] = [

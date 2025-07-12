@@ -12,6 +12,7 @@ export interface Video {
   comments: string | number;
   url: string;
   duration?: string;
+  watchDate?: string; // Added for history tracking
 }
 
 export interface MovieCategory {
@@ -20,4 +21,4 @@ export interface MovieCategory {
   type: 'horizontal' | 'featured' | 'language' | 'small';
   showMore?: boolean;
   label?: string;
-} 
+}
