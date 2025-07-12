@@ -6,6 +6,7 @@ import { Video } from "@/types/data"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import { getBestThumbnailUrl, handleThumbnailError } from "@/lib/thumbnail-utils"
 
 export default function WatchLaterPage() {
   usePageTitle("Watch Later")
@@ -32,7 +33,7 @@ export default function WatchLaterPage() {
           <div className="flex flex-col items-center justify-center h-[60vh] text-center">
             <div className="mb-6">
               <Image
-                src="/images/empty-watch-later.svg"
+                src="/placeholder-thumbnail.jpg"
                 alt="Empty Watch Later"
                 width={300}
                 height={300}
@@ -55,15 +56,13 @@ export default function WatchLaterPage() {
               >
                 <div className="relative aspect-video">
                   <Image
-                    src={video.thumbnail || '/images/placeholder.jpg'}
+                    src={getBestThumbnailUrl(video)}
                     alt={video.title}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/images/placeholder.jpg';
-                    }}
+                    priority={false}
+                    onError={(e) => handleThumbnailError(e, video)}
                   />
                   <div className="absolute bottom-2 right-2 bg-black/80 px-1.5 py-1 rounded text-xs font-medium text-white">
                     {video.duration || '10:30'}

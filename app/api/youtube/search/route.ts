@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { videos as localVideos } from '@/data'
 import type { Video } from '@/data'
 
-export const runtime = 'edge'
+// Remove edge runtime to allow access to server-side environment variables
+// export const runtime = 'edge'
 
 export async function GET(request: Request) {
   try {

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getYouTubeAPIStatus, validateYouTubeAPIKeys } from '@/lib/youtube-api';
 
-export const runtime = 'edge'
+// Remove edge runtime to allow access to server-side environment variables
+// export const runtime = 'edge'
 
 // Endpoint to check YouTube API key status
 export async function GET() {

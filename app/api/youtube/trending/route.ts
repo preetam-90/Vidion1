@@ -1,7 +1,8 @@
 import { getTrendingVideos } from "@/lib/youtube-api"
 import { NextResponse } from "next/server"
 
-export const runtime = 'edge'
+// Remove edge runtime to allow access to server-side environment variables
+// export const runtime = 'edge'
 
 // Helper function to safely extract values
 function safeExtract(obj: any, path: string[], defaultValue: any = undefined) {

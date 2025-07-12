@@ -2,10 +2,11 @@
 import { videos as localVideos } from '@/data'
 import type { Video } from '@/data'
 
-// Properly parse API keys - ensure we're getting clean, usable keys
-const API_KEYS = process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS?.split(',')
+// Properly parse API keys - use server-side only environment variable
+const API_KEYS = (process.env.YOUTUBE_API_KEYS || process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS || '')
+  .split(',')
   .map(key => key.trim())
-  .filter(Boolean) || []
+  .filter(Boolean)
 
 console.log(`Loaded ${API_KEYS.length} YouTube API keys`)
 
@@ -1100,10 +1101,11 @@ declare global {
  * @returns API key as a simple token
  */
 async function getAccessToken(): Promise<string> {
-  // Get API keys from the same environment variable used elsewhere in the file
-  const API_KEYS = process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS?.split(',')
+  // Get API keys from server-side environment variable
+  const API_KEYS = (process.env.YOUTUBE_API_KEYS || process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS || '')
+    .split(',')
     .map(key => key.trim())
-    .filter(Boolean) || [];
+    .filter(Boolean);
 
   if (API_KEYS.length === 0) {
     console.warn('No YouTube API keys available');
