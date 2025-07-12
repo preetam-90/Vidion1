@@ -179,14 +179,32 @@ export default function HomePage() {
         params.append("queryIndex", queryIndex.toString());
       }
       
-      const response = await fetch(`/api/youtube/programming?${params.toString()}`);
-      
-      if (!response.ok) {
-        throw new Error("Failed to fetch programming videos");
+      let data;
+      try {
+        const response = await fetch(`/api/youtube/programming?${params.toString()}`);
+        
+        if (!response.ok) {
+          console.warn(`API response not OK: ${response.status} ${response.statusText}`);
+          // Don't throw, just return local videos
+          return {
+            items: programmingLocalVideos,
+            nextPageToken: null,
+            nextQueryIndex: 0
+          };
+        }
+        
+        data = await response.json();
+      } catch (error) {
+        console.error("Error in fetch operation:", error);
+        // Return local videos on fetch error
+        return {
+          items: programmingLocalVideos,
+          nextPageToken: null,
+          nextQueryIndex: 0
+        };
       }
       
-      const data = await response.json();
-      
+      // If we got here, we have data
       const formattedYouTubeVideos = data.videos.map((video: any) => ({
         id: video.id,
         title: video.title,

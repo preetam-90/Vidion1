@@ -114,6 +114,7 @@ export default function MovieCarousel({ category }: MovieCarouselProps) {
                     src={video.thumbnail || '/placeholder-thumbnail.jpg'}
                     alt={video.title}
                     fill
+                    unoptimized={video.thumbnail?.includes('ytimg.com')} // Don't optimize YouTube thumbnails
                     className="object-cover transition-transform hover:scale-105"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 66vw"
                   />
@@ -174,6 +175,7 @@ export default function MovieCarousel({ category }: MovieCarouselProps) {
                       src={video.thumbnail || '/placeholder-thumbnail.jpg'}
                       alt={video.title}
                       fill
+                      unoptimized={video.thumbnail?.includes('ytimg.com')} // Don't optimize YouTube thumbnails
                       className="object-cover transition-transform group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
                     />
@@ -227,6 +229,7 @@ export default function MovieCarousel({ category }: MovieCarouselProps) {
                   src={video.thumbnail || '/placeholder-thumbnail.jpg'}
                   alt={video.title}
                   fill
+                  unoptimized={video.thumbnail?.includes('ytimg.com')} // Don't optimize YouTube thumbnails
                   className="object-cover transition-transform group-hover:scale-105"
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                 />
@@ -271,6 +274,7 @@ export default function MovieCarousel({ category }: MovieCarouselProps) {
                     src={video.thumbnail || '/placeholder-thumbnail.jpg'}
                     alt={video.title}
                     fill
+                    unoptimized={video.thumbnail?.includes('ytimg.com')} // Don't optimize YouTube thumbnails
                     className="object-cover transition-transform group-hover:scale-105"
                     sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
                   />

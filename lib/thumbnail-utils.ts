@@ -34,18 +34,23 @@ export function getYouTubeThumbnailUrl(videoId: string, quality: 'default' | 'hq
 /**
  * Get the best available thumbnail URL for a video
  */
-export function getBestThumbnailUrl(video: { thumbnail?: string; url?: string }): string {
+export function getBestThumbnailUrl(video: { thumbnail?: string; url?: string; id?: string | number }): string {
   // If we have a thumbnail, use it
   if (video.thumbnail && video.thumbnail.trim() !== '') {
     return video.thumbnail;
   }
   
-  // Try to extract YouTube video ID and generate thumbnail
+  // Try to extract YouTube video ID from URL
   if (video.url) {
     const videoId = extractYouTubeVideoId(video.url);
     if (videoId) {
       return getYouTubeThumbnailUrl(videoId, 'hqdefault');
     }
+  }
+  
+  // If we have a video ID that looks like a YouTube ID, use it directly
+  if (video.id && typeof video.id === 'string' && video.id.length === 11) {
+    return getYouTubeThumbnailUrl(video.id, 'hqdefault');
   }
   
   // Fallback to placeholder
@@ -57,7 +62,7 @@ export function getBestThumbnailUrl(video: { thumbnail?: string; url?: string })
  */
 export function handleThumbnailError(
   event: React.SyntheticEvent<HTMLImageElement>,
-  video: { thumbnail?: string; url?: string }
+  video: { thumbnail?: string; url?: string; id?: string | number }
 ): void {
   const target = event.target as HTMLImageElement;
   const currentSrc = target.src;
@@ -65,13 +70,25 @@ export function handleThumbnailError(
   // If it's already a YouTube thumbnail and failed, try different quality
   if (currentSrc.includes('ytimg.com')) {
     if (currentSrc.includes('hqdefault')) {
-      const videoId = extractYouTubeVideoId(video.url || '');
+      // Try to extract video ID from URL or use the video ID directly
+      let videoId = extractYouTubeVideoId(video.url || '');
+      
+      // If we couldn't extract from URL, try to use the video ID directly if it looks like a YouTube ID
+      if (!videoId && video.id && typeof video.id === 'string' && video.id.length === 11) {
+        videoId = video.id;
+      }
+      
       if (videoId) {
         target.src = getYouTubeThumbnailUrl(videoId, 'mqdefault');
         return;
       }
     } else if (currentSrc.includes('mqdefault')) {
-      const videoId = extractYouTubeVideoId(video.url || '');
+      let videoId = extractYouTubeVideoId(video.url || '');
+      
+      if (!videoId && video.id && typeof video.id === 'string' && video.id.length === 11) {
+        videoId = video.id;
+      }
+      
       if (videoId) {
         target.src = getYouTubeThumbnailUrl(videoId, 'default');
         return;
@@ -86,6 +103,12 @@ export function handleThumbnailError(
       target.src = getYouTubeThumbnailUrl(videoId, 'hqdefault');
       return;
     }
+  }
+  
+  // Try to use the video ID directly if it looks like a YouTube ID
+  if (video.id && typeof video.id === 'string' && video.id.length === 11 && !currentSrc.includes('ytimg.com')) {
+    target.src = getYouTubeThumbnailUrl(video.id, 'hqdefault');
+    return;
   }
   
   // Final fallback

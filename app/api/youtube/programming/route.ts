@@ -122,8 +122,10 @@ export async function GET(request: NextRequest) {
       console.error('No YouTube API keys configured')
       return NextResponse.json({ 
         error: 'YouTube API is not configured correctly. Please check your API keys.',
-        videos: [] 
-      }, { status: 503 })
+        videos: [],
+        nextPageToken: null,
+        nextQueryIndex: 0
+      }, { status: 200 }) // Return 200 to avoid client-side errors
     }
     
     // Step 1: Search for videos using search.list
@@ -268,23 +270,29 @@ export async function GET(request: NextRequest) {
         error: 'YouTube API quota exceeded for all keys. Please try again tomorrow.',
         details: errorMessage,
         quotaExceeded: true,
-        videos: [] // Return empty videos array for client to handle
-      }, { status: 429 })
+        videos: [], // Return empty videos array for client to handle
+        nextPageToken: null,
+        nextQueryIndex: 0
+      }, { status: 200 }) // Return 200 to avoid client-side errors
     } else if (errorMessage.includes('API key') || errorMessage.includes('quota')) {
       console.warn('YouTube API quota exceeded or key issue')
       
       return NextResponse.json({ 
         error: 'YouTube API quota exceeded. Please try again later.',
         details: errorMessage,
-        videos: [] // Return empty videos array for client to handle
-      }, { status: 429 })
+        videos: [], // Return empty videos array for client to handle
+        nextPageToken: null,
+        nextQueryIndex: 0
+      }, { status: 200 }) // Return 200 to avoid client-side errors
     }
     
     return NextResponse.json({ 
       error: 'Failed to fetch videos. Please try again later.',
       details: errorMessage,
-      videos: [] // Return empty videos array for client to handle
-    }, { status: 500 })
+      videos: [], // Return empty videos array for client to handle
+      nextPageToken: null,
+      nextQueryIndex: 0
+    }, { status: 200 }) // Return 200 to avoid client-side errors
   }
 }
 

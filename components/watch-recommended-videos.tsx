@@ -61,6 +61,7 @@ export default function WatchRecommendedVideos({ videos }: WatchRecommendedVideo
               src={video.thumbnail || '/placeholder-video.jpg'}
               alt={video.title}
               fill
+              unoptimized={video.thumbnail?.includes('ytimg.com')} // Don't optimize YouTube thumbnails
               className="object-cover"
               sizes="140px"
             />

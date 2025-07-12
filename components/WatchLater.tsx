@@ -6,6 +6,7 @@ import { useWatchLater } from "@/contexts/watch-later-context";
 import type { Video } from "@/data";
 import { Button } from "@/components/ui/button";
 import { Play, Shuffle, Trash, Share2, MoreVertical, Download, GripVertical, Clock } from "lucide-react";
+import { extractYouTubeVideoId, getYouTubeThumbnailUrl, getBestThumbnailUrl } from "@/lib/thumbnail-utils";
 import {
   DragDropContext,
   Droppable,
@@ -54,23 +55,10 @@ export default function WatchLater() {
     // Handle YouTube URLs - extract video ID and construct proper thumbnail URL
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
       try {
-        // Extract video ID from various YouTube URL formats
-        let videoId = '';
-        if (url.includes('v=')) {
-          // Regular youtube.com URL
-          const urlParams = new URLSearchParams(url.split('?')[1]);
-          videoId = urlParams.get('v') || '';
-        } else if (url.includes('youtu.be')) {
-          // Shortened youtu.be URL
-          videoId = url.split('/').pop() || '';
-        } else if (url.includes('/embed/')) {
-          // Embed URL
-          videoId = url.split('/embed/')[1].split('?')[0];
-        }
-        
+        const videoId = extractYouTubeVideoId(url);
         if (videoId) {
           // Return high-quality thumbnail URL
-          return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+          return getYouTubeThumbnailUrl(videoId, 'hqdefault');
         }
       } catch (error) {
         console.error('Error parsing YouTube URL:', error);
@@ -83,7 +71,7 @@ export default function WatchLater() {
     } catch {
       // If URL is invalid but contains what looks like a YouTube video ID (11 chars)
       if (url.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(url)) {
-        return `https://i.ytimg.com/vi/${url}/hqdefault.jpg`;
+        return getYouTubeThumbnailUrl(url, 'hqdefault');
       }
       return "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"; // Default thumbnail for invalid URLs
     }
@@ -246,11 +234,25 @@ export default function WatchLater() {
                                   onError={(e) => {
                                     const target = e.target as HTMLImageElement;
                                     target.onerror = null;
-                                    // Try to use YouTube ID if available or fallback to default
-                                    const videoId = typeof video.id === 'string' && video.id.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(video.id) 
-                                      ? video.id 
-                                      : "dQw4w9WgXcQ";
-                                    target.src = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+                                    
+                                    // Try multiple fallback strategies
+                                    // 1. Try to use YouTube ID if available
+                                    if (typeof video.id === 'string' && video.id.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(video.id)) {
+                                      target.src = getYouTubeThumbnailUrl(video.id, 'hqdefault');
+                                      return;
+                                    }
+                                    
+                                    // 2. Try to extract from URL if available
+                                    if (video.url) {
+                                      const videoId = extractYouTubeVideoId(video.url);
+                                      if (videoId) {
+                                        target.src = getYouTubeThumbnailUrl(videoId, 'hqdefault');
+                                        return;
+                                      }
+                                    }
+                                    
+                                    // 3. Final fallback
+                                    target.src = "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg";
                                   }}
                                 />
                                 {video.duration && (
