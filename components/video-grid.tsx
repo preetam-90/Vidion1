@@ -51,23 +51,28 @@ interface InfiniteVideoGridProps {
   }>;
   initialItems?: Video[];
   batchSize?: number;
+  className?: string;
+  gridKey?: any;
 }
 
-export function InfiniteVideoGrid({ 
+export function InfiniteVideoGrid({
   fetchVideos,
   initialItems = [],
-  batchSize = 12 
+  batchSize = 12,
+  className = '',
+  gridKey: key = null
 }: InfiniteVideoGridProps) {
-  const { 
-    items, 
-    hasMore, 
+  const {
+    items,
+    hasMore,
     loaderRef,
     loading,
     error
   } = useInfiniteAPIScroll<Video>({
     fetchFunction: fetchVideos,
     batchSize,
-    initialItems
+    initialItems,
+    key,
   });
 
   if (error) {
@@ -79,7 +84,7 @@ export function InfiniteVideoGrid({
   }
 
   return (
-    <>
+    <div className={className}>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {items.map((video) => (
           <LazyComponent 
@@ -104,6 +109,6 @@ export function InfiniteVideoGrid({
           )}
         </div>
       )}
-    </>
+    </div>
   )
-} 
+}

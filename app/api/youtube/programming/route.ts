@@ -7,56 +7,171 @@ let currentKeyIndex = 0
 
 // Programming-related keywords as requested
 const PROGRAMMING_KEYWORDS = [
-  "Programming",
+  // Core Programming & Algorithms
+  "Programming Fundamentals",
   "Flowcharts",
-  "Patterns",
-  "Arrays",
-  "Sorting",
-  "Searching",
-  "Recursion",
-  "Pointers",
-  "Linked Lists",
-  "Stacks",
-  "Queues",
-  "Trees",
-  "Binary Search Trees",
-  "Heaps",
-  "Hashmaps",
-  "Tries",
+  "Programming Patterns",
+  "Sorting Algorithms",
+  "QuickSort",
+  "MergeSort",
+  "Knapsack Problem",
   "Dynamic Programming",
-  "Graphs",
-  "Greedy Algorithm",
+  "Breadth-First Search BFS",
+  "Depth-First Search DFS",
+  "Binary Trees",
+  "Tree Traversals",
+  "Hashing",
+  "Hash Tables",
+  "AVL Trees",
+  "Recursion",
+  "Backtracking",
+  "Greedy Algorithms",
+  "Divide and Conquer",
+  "Heap Data Structures",
+  "Min-Heap",
+  "Max-Heap",
+  "Graph Traversal",
+  "Matrix Chain Multiplication",
+  "N-Queens Problem",
+  "Segment Trees",
+  "Range Queries",
+  "Trie Data Structure",
+  "String Processing",
+  "Operators",
+  "Loops",
+  "Conditionals",
+  "Functions",
+  "Arrays",
+  "Pointers",
+  "Red-Black Trees",
+  "B-Trees",
+  "Radix Sort",
+  "Topological Sort",
+  "Kadane's Algorithm",
+  "Dijkstra's Algorithm",
+  "A* Search Algorithm",
+  "Sliding Window Technique",
+  "Two-Pointer Technique",
   "Bit Manipulation",
-  "Strings",
-  "Algorithms",
-  "Data Structures",
-  "Interview",
-  "Resume",
-  "Placement",
-  "Mathematics",
-  "Number Systems",
-  "Complexity Analysis",
-  "Matrix",
-  "Subarrays",
-  "Traversal",
-  "Palindrome",
-  "Zig-Zag",
-  "Binary Search",
-  "Prime Numbers",
+  "KMP Algorithm",
+  
+  // Math & Problem Patterns
+  "Number System",
+  "Binary",
+  "Decimal",
+  "Numeric Patterns",
   "Factorial",
-  "Temperature Conversion",
-  "Stock Span",
-  "Celebrity Problem",
-  "K-Sum Paths",
-  "Vertical Order",
-  "Diagonal",
-  "Mirror Trees",
-  "Diameter",
-  "Balanced Trees",
-  "Substrings",
-  "Anagram",
-  "Wildcard Matching",
-  "Decode String"
+  "Check Prime Number",
+  "Reverse Integer",
+  "Kth Bit",
+  "Convert Temperature",
+  "Time Complexity",
+  "Space Complexity",
+  "Recursive Solutions",
+  "Pascal's Triangle",
+  "Floyd's Triangle",
+  "Combinatorics",
+  "Linear Algebra",
+  "Probability",
+  
+  // Output Patterns & Graphics
+  "Hollow Pattern",
+  "Half Pyramid",
+  "Inverted Pattern",
+  "Palindrome Pattern",
+  "Equilateral Pattern",
+  "Solid Pattern",
+  "Half Diamond",
+  "Fancy Pattern",
+  "Butterfly Pattern",
+  "Circle Area",
+  "Wave Print",
+  "Spiral Print",
+  
+  // System & Linux
+  "Linux Programming",
+  "Terminal Commands",
+  "Bash Scripting",
+  "Git Tutorial",
+  "Version Control",
+  "Linux Kernel",
+  "File Permissions",
+  "Package Managers",
+  "System Calls",
+  "Docker Tutorial",
+  "Kubernetes",
+  "Cloud Computing",
+  "CI/CD Pipeline",
+  "grep command",
+  "sed command",
+  "awk command",
+  "ssh tutorial",
+  "cron jobs",
+  
+  // AI/ML & Data Science
+  "Machine Learning",
+  "Artificial Intelligence",
+  "Deep Learning",
+  "Neural Networks",
+  "Convolutional Neural Networks",
+  "Reinforcement Learning",
+  "Natural Language Processing",
+  "Computer Vision",
+  "Robot Operating System",
+  "Path Planning",
+  "SLAM Algorithm",
+  "Robot Perception",
+  "Control Systems",
+  "PyTorch Tutorial",
+  "TensorFlow Tutorial",
+  "OpenCV Tutorial",
+  "Scikit-Learn",
+  "Embedded AI",
+  "Sensor Fusion",
+  
+  // Robotics & Hardware
+  "Microcontrollers",
+  "Arduino",
+  "STM32",
+  "Sensors",
+  "LiDAR",
+  "IMU Sensor",
+  "Camera Calibration",
+  "Actuators",
+  "Motors",
+  "Servos",
+  "PCB Design",
+  "EAGLE CAD",
+  "ROS Parameters",
+  "Kinematics",
+  "Motion Planning",
+  "OMPL Library",
+  
+  // Development & Ops
+  "REST API",
+  "GraphQL API",
+  "SQL Database",
+  "NoSQL Database",
+  "Unit Testing",
+  "Test-Driven Development",
+  "Design Patterns",
+  "SOLID Principles",
+  "Functional Programming",
+  "Big Data",
+  "Hadoop",
+  "Spark",
+  "React Tutorial",
+  "Django Tutorial",
+  
+  // Miscellaneous
+  "Quantum Computing",
+  "Blockchain",
+  "Smart Contracts",
+  "Internet of Things",
+  "Edge Computing",
+  "AR VR Development",
+  "Numerical Methods",
+  "Computational Geometry"
 ];
 
 const VIDEOS_PER_PAGE = 12;
@@ -66,6 +181,11 @@ async function fetchWithRotatingKeys(url: string) {
   let quotaErrors = 0
   let otherErrors = 0
   const totalKeys = API_KEYS.length
+  
+  // Check if we have any keys at all
+  if (totalKeys === 0) {
+    throw new Error('NO_API_KEYS: No YouTube API keys configured')
+  }
   
   for (let i = 0; i < API_KEYS.length; i++) {
     const keyIndex = (currentKeyIndex + i) % API_KEYS.length
@@ -118,7 +238,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         error: 'YouTube API is not configured correctly. Please check your API keys.',
         videos: [] 
-      }, { status: 503 })
+      }, { status: 200 }) // Return 200 so client can handle gracefully
     }
     
     // Step 1: Search for videos using search.list
@@ -250,7 +370,15 @@ export async function GET(request: NextRequest) {
     
     // Check if error is related to API keys
     const errorMessage = error instanceof Error ? error.message : String(error)
-    if (errorMessage.includes('QUOTA_EXCEEDED')) {
+    if (errorMessage.includes('NO_API_KEYS')) {
+      console.warn('No YouTube API keys configured')
+      
+      return NextResponse.json({ 
+        error: 'YouTube API is not configured. Please add API keys to your environment.',
+        details: errorMessage,
+        videos: [] // Return empty videos array for client to handle
+      }, { status: 200 }) // Return 200 so client can handle gracefully
+    } else if (errorMessage.includes('QUOTA_EXCEEDED')) {
       console.warn('All YouTube API keys have reached quota limits')
       
       return NextResponse.json({ 
@@ -258,7 +386,7 @@ export async function GET(request: NextRequest) {
         details: errorMessage,
         quotaExceeded: true,
         videos: [] // Return empty videos array for client to handle
-      }, { status: 429 })
+      }, { status: 200 }) // Return 200 so client can handle gracefully
     } else if (errorMessage.includes('API key') || errorMessage.includes('quota')) {
       console.warn('YouTube API quota exceeded or key issue')
       
@@ -266,14 +394,14 @@ export async function GET(request: NextRequest) {
         error: 'YouTube API quota exceeded. Please try again later.',
         details: errorMessage,
         videos: [] // Return empty videos array for client to handle
-      }, { status: 429 })
+      }, { status: 200 }) // Return 200 so client can handle gracefully
     }
     
     return NextResponse.json({ 
       error: 'Failed to fetch videos. Please try again later.',
       details: errorMessage,
       videos: [] // Return empty videos array for client to handle
-    }, { status: 500 })
+    }, { status: 200 }) // Return 200 so client can handle gracefully
   }
 }
 

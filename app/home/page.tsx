@@ -119,10 +119,28 @@ export default function HomePage() {
       const response = await fetch(`/api/youtube/home?${params.toString()}`);
       
       if (!response.ok) {
-        throw new Error("Failed to fetch videos");
+        console.warn("YouTube API error:", response.status, response.statusText);
+        // Fallback to local videos tagged as YouTube
+        const fallbackVideos = localVideos.filter(v => (v.platform || '').toLowerCase() === 'youtube');
+        return {
+          items: fallbackVideos,
+          nextPageToken: null,
+          nextQueryIndex: 0
+        };
       }
       
       const data = await response.json();
+      
+      // Check if we got an error response from the API
+      if (data.error) {
+        console.warn("YouTube API returned error:", data.error);
+        const fallbackVideos = localVideos.filter(v => (v.platform || '').toLowerCase() === 'youtube');
+        return {
+          items: fallbackVideos,
+          nextPageToken: null,
+          nextQueryIndex: 0
+        };
+      }
       
       const formattedVideos = data.videos.map((video: any) => ({
         id: video.id,
@@ -146,9 +164,10 @@ export default function HomePage() {
         nextQueryIndex: data.nextQueryIndex
       };
     } catch (error) {
-      console.error("Error fetching YouTube videos:", error);
+      console.warn("Error fetching YouTube videos:", error);
+      const fallbackVideos = localVideos.filter(v => (v.platform || '').toLowerCase() === 'youtube');
       return {
-        items: [],
+        items: fallbackVideos,
         nextPageToken: null,
         nextQueryIndex: 0
       };
@@ -165,12 +184,16 @@ export default function HomePage() {
         video.category.toLowerCase().includes("flowcharts") ||
         video.category.toLowerCase().includes("algorithms") ||
         video.category.toLowerCase().includes("data structure") ||
-        video.category.toLowerCase().includes("number systems")) &&
+        video.category.toLowerCase().includes("number systems") ||
+        video.category.toLowerCase().includes("sorting") ||
+        video.category.toLowerCase().includes("search") ||
+        video.category.toLowerCase().includes("tree") ||
+        video.category.toLowerCase().includes("graph")) &&
         // Filter out shorts
         video.isShort !== true
       );
       
-      // Fetch YouTube videos
+      // Fetch YouTube videos with expanded query scope
       const params = new URLSearchParams();
       if (pageToken) {
         params.append("pageToken", pageToken);
@@ -179,13 +202,32 @@ export default function HomePage() {
         params.append("queryIndex", queryIndex.toString());
       }
       
+      // Increase results per page to get more diverse content
+      params.append("maxResults", "16"); // Request more videos per page
+      
       const response = await fetch(`/api/youtube/programming?${params.toString()}`);
       
       if (!response.ok) {
-        throw new Error("Failed to fetch programming videos");
+        console.error("Programming API error:", response.status, response.statusText);
+        // If API fails, return just the local videos
+        return {
+          items: programmingLocalVideos,
+          nextPageToken: null,
+          nextQueryIndex: 0
+        };
       }
       
       const data = await response.json();
+      
+      // Check if we got an error response from the API
+      if (data.error) {
+        console.error("Programming API returned error:", data.error);
+        return {
+          items: programmingLocalVideos,
+          nextPageToken: null,
+          nextQueryIndex: 0
+        };
+      }
       
       const formattedYouTubeVideos = data.videos.map((video: any) => ({
         id: video.id,
@@ -196,7 +238,7 @@ export default function HomePage() {
         uploadDate: video.publishedAt,
         duration: video.duration,
         platform: "youtube",
-        category: "programming",
+        category: video.category || "programming", // Use category if available
         likes: "0",
         comments: "0",
         url: `https://www.youtube.com/watch?v=${video.id}`,
@@ -223,11 +265,11 @@ export default function HomePage() {
         }
         
         // Duplicate local videos to increase their presence
-        // Each local video will appear 2-3 times
+        // Each local video will appear 1-2 times
         let duplicatedLocalVideos: Video[] = [];
         shuffledLocalVideos.forEach(video => {
-          // Add each video 2-3 times
-          const duplicateCount = Math.floor(Math.random() * 2) + 2; // Random number between 2-3
+          // Add each video 1-2 times
+          const duplicateCount = Math.floor(Math.random() * 2) + 1; // Random number between 1-2
           for (let i = 0; i < duplicateCount; i++) {
             // Create a new object with a slightly modified ID to avoid React key issues
             duplicatedLocalVideos.push({
@@ -245,8 +287,8 @@ export default function HomePage() {
         
         // Determine how many videos to take from each source
         // We want more YouTube videos than local videos
-        const youtubeRatio = 0.7; // 70% YouTube videos
-        const localRatio = 0.3;   // 30% local videos
+        const youtubeRatio = 0.8; // 80% YouTube videos
+        const localRatio = 0.2;   // 20% local videos
         
         const totalDesiredVideos = Math.min(50, shuffledYouTubeVideos.length + duplicatedLocalVideos.length);
         const desiredYoutubeCount = Math.floor(totalDesiredVideos * youtubeRatio);
@@ -267,41 +309,8 @@ export default function HomePage() {
         
         combinedVideos = allVideos;
       } else {
-        // For subsequent pages, mix in some local videos with YouTube videos
-        const shuffledYouTubeVideos = [...formattedYouTubeVideos];
-        
-        // If we have local videos, duplicate and mix some in
-        if (programmingLocalVideos.length > 0) {
-          // Shuffle local videos
-          const shuffledLocalVideos = [...programmingLocalVideos];
-          for (let i = shuffledLocalVideos.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffledLocalVideos[i], shuffledLocalVideos[j]] = [shuffledLocalVideos[j], shuffledLocalVideos[i]];
-          }
-          
-          // Take a few random local videos (about 20% of the page size)
-          const localVideoCount = Math.ceil(shuffledYouTubeVideos.length * 0.2);
-          const selectedLocalVideos = [];
-          
-          // Select random local videos with duplication
-          for (let i = 0; i < localVideoCount; i++) {
-            const randomIndex = Math.floor(Math.random() * shuffledLocalVideos.length);
-            const video = shuffledLocalVideos[randomIndex];
-            // Create a new object with a slightly modified ID to avoid React key issues
-            selectedLocalVideos.push({
-              ...video,
-              id: `${video.id}-dup-${i}-${Date.now()}`
-            });
-          }
-          
-          // Mix the local videos into random positions in the YouTube videos
-          selectedLocalVideos.forEach(video => {
-            const insertPosition = Math.floor(Math.random() * (shuffledYouTubeVideos.length + 1));
-            shuffledYouTubeVideos.splice(insertPosition, 0, video);
-          });
-        }
-        
-        combinedVideos = shuffledYouTubeVideos;
+        // For subsequent pages, prioritize YouTube videos
+        combinedVideos = formattedYouTubeVideos;
       }
       
       return {
@@ -341,7 +350,7 @@ export default function HomePage() {
   }
   
   // Featured video card component to avoid type issues
-  const FeaturedVideoCard = ({ video }: { video: Video }) => (
+  const FeaturedVideoCard = ({ video, priority }: { video: Video, priority?: boolean }) => (
     <Card 
       key={`featured-${video.id}`} 
       className="min-w-[300px] sm:min-w-[340px] overflow-hidden flex-shrink-0 cursor-pointer hover:shadow-md transition-shadow"
@@ -354,6 +363,7 @@ export default function HomePage() {
           fill
           sizes="(max-width: 640px) 300px, 340px"
           className="object-cover"
+          priority={priority}
         />
         {video.duration && (
           <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
@@ -443,7 +453,7 @@ export default function HomePage() {
           <ScrollArea className="w-full whitespace-nowrap pb-4">
             <div className="flex space-x-4 px-2 sm:px-0">
               {featuredVideos.map((video, idx) => (
-                <FeaturedVideoCard key={`featured-${video.id}`} video={video} />
+                <FeaturedVideoCard key={`featured-${video.id}`} video={video} priority={idx === 0} />
               ))}
             </div>
             <ScrollBar orientation="horizontal" />
@@ -453,10 +463,15 @@ export default function HomePage() {
         {/* Programming Videos Section */}
         <div className="mb-6 sm:mb-10">
           <div className="flex items-center justify-between mb-4 sm:mb-6 px-2 sm:px-0">
-            <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
-              <Code className="h-6 w-6" />
-              Programming
-            </h2>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+                <Code className="h-6 w-6" />
+                Core Programming & Algorithms
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Tutorials on Algorithms, Data Structures, Math & Programming Concepts
+              </p>
+            </div>
             <Button 
               variant="ghost" 
               className="text-xs sm:text-sm text-primary"
@@ -469,7 +484,8 @@ export default function HomePage() {
           <div className="px-2 sm:px-0">
             <InfiniteVideoGrid 
               fetchVideos={fetchProgrammingVideos} 
-              batchSize={8} 
+              batchSize={12} 
+              className="mb-8"
             />
           </div>
         </div>
@@ -478,7 +494,10 @@ export default function HomePage() {
         <div className="mt-8 mb-6">
           <Tabs defaultValue="youtube" onValueChange={setActiveTab}>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl sm:text-2xl font-bold">Videos</h2>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold">Explore More</h2>
+                <p className="text-xs text-muted-foreground mt-1">Discover videos from YouTube and local sources</p>
+              </div>
               <TabsList>
                 <TabsTrigger value="youtube">YouTube</TabsTrigger>
                 <TabsTrigger value="local">Local</TabsTrigger>

@@ -68,6 +68,7 @@ interface UseInfiniteAPIScrollOptions<T> {
   threshold?: number;
   rootMargin?: string;
   initialItems?: T[];
+  key?: any;
 }
 
 export function useInfiniteAPIScroll<T>({
@@ -75,7 +76,8 @@ export function useInfiniteAPIScroll<T>({
   batchSize = 12,
   threshold = 0.1,
   rootMargin = "0px",
-  initialItems = []
+  initialItems = [],
+  key = null
 }: UseInfiniteAPIScrollOptions<T>) {
   const [items, setItems] = useState<T[]>(initialItems);
   const [loading, setLoading] = useState(false);
@@ -124,13 +126,46 @@ export function useInfiniteAPIScroll<T>({
     }
   }, [fetchFunction, loading, nextPageToken, nextQueryIndex, hasMore]);
   
-  // Initial load
+  // Combined effect for initialization and key changes
   useEffect(() => {
-    if (items.length === 0) {
-      loadMore(true);
-    }
+    const initialLoad = async () => {
+      // Reset state before fetching
+      setItems([]);
+      setNextPageToken(null);
+      setNextQueryIndex(0);
+      setHasMore(true);
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetchFunction(undefined, 0); // Always fetch first page on key change
+        
+        const newItems = response.items;
+        const newNextPageToken = response.nextPageToken || null;
+        const newNextQueryIndex = response.nextQueryIndex !== undefined ? response.nextQueryIndex : 0;
+
+        if (newItems && newItems.length > 0) {
+          setItems(newItems);
+        } else {
+          setItems([]);
+        }
+        
+        setNextPageToken(newNextPageToken);
+        setNextQueryIndex(newNextQueryIndex);
+        setHasMore(!!newNextPageToken || (newNextQueryIndex !== 0));
+
+      } catch (err) {
+        console.error("Error fetching data on initial load:", err);
+        setError(typeof err === 'string' ? err : (err as Error).message || 'Failed to fetch data');
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initialLoad();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [key, fetchFunction]);
 
   // Load more when the sentinel comes into view
   useEffect(() => {
