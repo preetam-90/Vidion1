@@ -28,11 +28,18 @@ const NewsVideoCard: React.FC<NewsVideoCardProps> = ({ video }) => {
     return count + ' views';
   };
 
+  // Get thumbnail URL with fallbacks
+  const thumbnailUrl = 
+    video.snippet.thumbnails?.high?.url || 
+    video.snippet.thumbnails?.medium?.url || 
+    video.snippet.thumbnails?.default?.url || 
+    '/placeholder-thumbnail.jpg';
+
   return (
     <Link href={`/video/${video.id}`} className="block group">
       <div className="relative">
         <img
-          src={video.snippet.thumbnails.high.url}
+          src={thumbnailUrl}
           alt={video.snippet.title}
           className="w-full h-auto rounded-lg"
           loading="lazy"
