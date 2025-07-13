@@ -49,13 +49,15 @@ export async function GET(request: Request) {
             return null
           }
 
-          // Stricter aspect ratio check for landscape (16:9)
-          const aspectRatio = highThumbnail.width / highThumbnail.height
-          const isLandscape = aspectRatio > 1.7 && aspectRatio < 1.8 // Tolerance for 16:9
+          // More lenient landscape check: allow any thumbnail where width >= height.
+          // Some YouTube API responses have width/height only on certain resolutions.
+          let isLandscape = true
+          if (highThumbnail.width && highThumbnail.height) {
+            isLandscape = highThumbnail.width >= highThumbnail.height // portrait if height greater than width
+          }
 
-          // Filter out non-landscape videos
           if (!isLandscape) {
-            console.log(`Filtering out non-landscape video: ${video.id}`)
+            console.log(`Filtering out portrait video: ${video.id}`)
             return null
           }
 
