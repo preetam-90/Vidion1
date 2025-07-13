@@ -82,7 +82,10 @@ const ModernSearchBar = ({ closeSearchBar }: ModernSearchBarProps) => {
       if (localResults.length < 3) {
         try {
           const ytResults = await searchVideos(searchTerm)
-          const formattedResults = ytResults
+          // Check if ytResults is an array or an object with items property
+          const items = Array.isArray(ytResults) ? ytResults : ytResults?.items || []
+          
+          const formattedResults = items
             .map(convertYouTubeVideoToVideo)
             .slice(0, 3 - localResults.length)
             
