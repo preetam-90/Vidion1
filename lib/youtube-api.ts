@@ -330,33 +330,33 @@ export interface YouTubeVideo {
     title: string
     description: string
     thumbnails: {
-      high: {
+      high?: {
         url: string;
-        width: number;
-        height: number;
+        width?: number;
+        height?: number;
       };
-      medium: {
+      medium?: {
         url: string;
-        width: number;
-        height: number;
+        width?: number;
+        height?: number;
       };
       default: {
         url: string;
-        width: number;
-        height: number;
+        width?: number;
+        height?: number;
       };
     }
     channelTitle: string
     publishedAt: string
     channelId: string
   }
-  statistics: {
-    viewCount: string
-    likeCount: string
-    commentCount: string
+  statistics?: {
+    viewCount?: string
+    likeCount?: string
+    commentCount?: string
   }
   contentDetails?: {
-    duration: string
+    duration?: string
   }
 }
 

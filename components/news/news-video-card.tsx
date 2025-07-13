@@ -44,9 +44,9 @@ const NewsVideoCard: React.FC<NewsVideoCardProps> = ({ video }) => {
         </h3>
         <p className="text-sm text-gray-400 mt-1">{video.snippet.channelTitle}</p>
         <div className="flex items-center text-xs text-gray-400 mt-1 space-x-2">
-          {video.statistics?.viewCount && (
+          {video.statistics?.viewCount ? (
             <span>{formatViewCount(video.statistics.viewCount)}</span>
-          )}
+          ) : null}
           {formattedDate && (
             <>
               <span>•</span>

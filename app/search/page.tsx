@@ -69,7 +69,10 @@ export default function SearchPage() {
     setLoadingYoutube(true)
     try {
       const ytVideos = await searchVideos(query)
-      const results = ytVideos.map(convertYouTubeVideoToVideo)
+      if (!ytVideos?.items) {
+        throw new Error('Invalid YouTube API response')
+      }
+      const results = ytVideos.items.map(convertYouTubeVideoToVideo)
       setYoutubeResults(results)
       
       // Combine results if showYouTube is true
