@@ -253,6 +253,10 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
         src={imageError ? "/placeholder.svg?height=240&width=400" : thumbnailUrl}
         alt={video?.title || "Video thumbnail"}
         fill
+        unoptimized
+        loading="lazy"
+        placeholder="blur"
+        blurDataURL="/placeholder.svg?height=10&width=10"
         className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
         style={{ objectFit: 'cover', width: '100%', height: '100%' }}
         onError={() => {
