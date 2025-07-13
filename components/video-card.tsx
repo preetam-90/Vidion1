@@ -19,7 +19,7 @@ import { FeedbackDialog } from "./feedback-dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { useLikedVideos } from "@/contexts/liked-videos-context"
 import Image from "next/image"
-import { getBestThumbnailUrl, handleThumbnailError } from "@/lib/thumbnail-utils"
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver"
 import { useRouter } from "next/navigation"
 
 interface VideoCardProps {
@@ -160,29 +160,14 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
     }
   }
 
-  // Format upload date safely
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return ""
-    
-    // Check if the date is in the format "X days ago"
-    if (typeof dateString === 'string' && 
-       (dateString.includes("ago") || 
-        dateString.includes("day") || 
-        dateString.includes("month") || 
-        dateString.includes("year") ||
-        dateString.includes("hour") ||
-        dateString.includes("minute") ||
-        dateString.includes("second"))) {
-      return dateString
-    }
-
-    // Otherwise, try to parse it as a date
     try {
-      const date = new Date(dateString)
-      return formatDistanceToNow(date, { addSuffix: true })
+      // Robust date parsing
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true })
     } catch (error) {
-      console.error('Error formatting date:', error)
-      return dateString || ""
+      // Fallback for invalid date formats
+      return dateString
     }
   }
   
@@ -255,7 +240,7 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
   }
 
   const videoId = video?.id ? String(video.id).replace('local-', '') : ''
-  const thumbnailUrl = getBestThumbnailUrl(video)
+  const thumbnailUrl = video?.thumbnail && video.thumbnail.trim() !== "" ? video.thumbnail : "/placeholder.svg?height=240&width=400"
   const isGoogleDrive = video?.thumbnail?.startsWith("https://drive.google.com") ?? false
 
   if (!video) {
@@ -268,11 +253,9 @@ export default function VideoCard({ video, layout = "grid", context, onRemoveFro
         src={imageError ? "/placeholder.svg?height=240&width=400" : thumbnailUrl}
         alt={video?.title || "Video thumbnail"}
         fill
-        unoptimized={thumbnailUrl.includes('ytimg.com')} // Don't optimize YouTube thumbnails
         className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
         style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-        onError={(e) => {
-          handleThumbnailError(e, video);
+        onError={() => {
           setImageError(true);
         }}
         onLoad={() => setImageLoaded(true)}

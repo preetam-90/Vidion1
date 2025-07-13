@@ -35,7 +35,6 @@ const MusicVideoCard = ({ title, thumbnail, artist, views, videoId, onClick }: M
             src={thumbnail}
             alt={title}
             fill
-            unoptimized={thumbnail.includes('ytimg.com')} // Don't optimize YouTube thumbnails
             className={`object-cover transition-opacity duration-300 ${
               isLoaded ? 'opacity-100' : 'opacity-0'
             }`}

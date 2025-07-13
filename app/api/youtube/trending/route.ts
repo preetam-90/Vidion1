@@ -1,8 +1,7 @@
 import { getTrendingVideos } from "@/lib/youtube-api"
 import { NextResponse } from "next/server"
 
-// Remove edge runtime to allow access to server-side environment variables
-// export const runtime = 'edge'
+export const runtime = 'edge'
 
 // Helper function to safely extract values
 function safeExtract(obj: any, path: string[], defaultValue: any = undefined) {
@@ -44,50 +43,41 @@ export async function GET(request: Request) {
       .filter((video: any) => video && typeof video === 'object') // Filter out null/undefined items
       .map((video: any) => {
         try {
-          // Check thumbnail dimensions to detect shorts (portrait videos)
-          const highThumbnail = safeExtract(video, ['snippet', 'thumbnails', 'high'], null);
-          const mediumThumbnail = safeExtract(video, ['snippet', 'thumbnails', 'medium'], null);
-          const defaultThumbnail = safeExtract(video, ['snippet', 'thumbnails', 'default'], null);
-          
-          // Check if any thumbnail has portrait orientation (height > width)
-          const isPortrait = 
-            (highThumbnail && highThumbnail.height > highThumbnail.width) ||
-            (mediumThumbnail && mediumThumbnail.height > mediumThumbnail.width) ||
-            (defaultThumbnail && defaultThumbnail.height > defaultThumbnail.width);
-          
-          // If it's a portrait video, skip it
-          if (isPortrait) {
-            console.log(`Filtering out portrait video: ${video.id}`);
-            return null;
+          const highThumbnail = safeExtract(video, ['snippet', 'thumbnails', 'high'], null)
+          if (!highThumbnail) {
+            console.log(`Filtering out video with no high-res thumbnail: ${video.id}`)
+            return null
           }
-          
+
+          // Stricter aspect ratio check for landscape (16:9)
+          const aspectRatio = highThumbnail.width / highThumbnail.height
+          const isLandscape = aspectRatio > 1.7 && aspectRatio < 1.8 // Tolerance for 16:9
+
+          // Filter out non-landscape videos
+          if (!isLandscape) {
+            console.log(`Filtering out non-landscape video: ${video.id}`)
+            return null
+          }
+
           // Check duration to filter out shorts
-          const duration = safeExtract(video, ['contentDetails', 'duration'], 'PT10M30S');
-          const durationSeconds = convertDurationToSeconds(duration);
-          
-          // If duration is less than 1 minute, consider it a short
+          const duration = safeExtract(video, ['contentDetails', 'duration'], 'PT0S')
+          const durationSeconds = convertDurationToSeconds(duration)
+
+          // Filter out videos under 60 seconds
           if (durationSeconds < 60) {
-            console.log(`Filtering out short duration video: ${video.id}`);
-            return null;
-          }
-          
-          const videoId = safeExtract(video, ['id'], `fallback-${Math.random().toString(36).substring(2, 9)}`);
-          let thumbnailUrl = safeExtract(video, ['snippet', 'thumbnails', 'high', 'url']) || 
-                     safeExtract(video, ['snippet', 'thumbnails', 'medium', 'url']) || 
-                     safeExtract(video, ['snippet', 'thumbnails', 'default', 'url']);
-          
-          // If no thumbnail found in API response, generate one from video ID
-          if (!thumbnailUrl || thumbnailUrl.trim() === '') {
-            thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+            console.log(`Filtering out short video: ${video.id}`)
+            return null
           }
           
           return {
-            id: videoId,
+            id: safeExtract(video, ['id'], `fallback-${Math.random().toString(36).substring(2, 9)}`),
             snippet: safeExtract(video, ['snippet'], {}),
             statistics: safeExtract(video, ['statistics'], {}),
             contentDetails: safeExtract(video, ['contentDetails'], {}),
             title: safeExtract(video, ['snippet', 'title'], 'Untitled Video'),
-            thumbnail: thumbnailUrl,
+            thumbnail: safeExtract(video, ['snippet', 'thumbnails', 'high', 'url']) ||
+                     safeExtract(video, ['snippet', 'thumbnails', 'medium', 'url']) ||
+                     safeExtract(video, ['snippet', 'thumbnails', 'default', 'url']),
             channelTitle: safeExtract(video, ['snippet', 'channelTitle'], 'Unknown Channel'),
             publishedAt: safeExtract(video, ['snippet', 'publishedAt'], new Date().toISOString()),
             viewCount: safeExtract(video, ['statistics', 'viewCount'], '0'),

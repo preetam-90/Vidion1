@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Remove edge runtime to allow access to server-side environment variables
-// export const runtime = 'edge'
+export const runtime = 'edge'
 
-const API_KEYS = (process.env.YOUTUBE_API_KEYS || process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS || '')
-  .split(',')
-  .map(key => key.trim())
-  .filter(Boolean)
-
+const API_KEYS = process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS?.split(',').map(key => key.trim()) || []
 let currentKeyIndex = 0
 
 const SEARCH_QUERIES = [
@@ -28,6 +23,11 @@ async function fetchWithRotatingKeys(url: string) {
   let otherErrors = 0
   const totalKeys = API_KEYS.length
   
+  // Check if we have any keys at all
+  if (totalKeys === 0) {
+    throw new Error('NO_API_KEYS: No YouTube API keys configured')
+  }
+
   for (let i = 0; i < API_KEYS.length; i++) {
     const keyIndex = (currentKeyIndex + i) % API_KEYS.length
     const key = API_KEYS[keyIndex]
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         error: 'YouTube API is not configured correctly. Please check your API keys.',
         videos: [] 
-      }, { status: 503 })
+      }, { status: 200 }) // Return 200 so client can handle gracefully
     }
     
     // Step 1: Search for videos using search.list
@@ -173,13 +173,7 @@ export async function GET(request: NextRequest) {
         const detailContent = details.contentDetails;
         
         // Check if this is a short video by examining thumbnails aspect ratio
-        let thumbnailUrl = detailSnippet?.thumbnails?.high?.url || searchSnippet?.thumbnails?.high?.url || '';
-        
-        // If no thumbnail found in API response, generate one from video ID
-        if (!thumbnailUrl || thumbnailUrl.trim() === '') {
-          thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-        }
-        
+        const thumbnailUrl = detailSnippet?.thumbnails?.high?.url || searchSnippet?.thumbnails?.high?.url || '';
         const thumbnailWidth = detailSnippet?.thumbnails?.high?.width || searchSnippet?.thumbnails?.high?.width || 0;
         const thumbnailHeight = detailSnippet?.thumbnails?.high?.height || searchSnippet?.thumbnails?.high?.height || 0;
         
@@ -233,7 +227,15 @@ export async function GET(request: NextRequest) {
     
     // Check if error is related to API keys
     const errorMessage = error instanceof Error ? error.message : String(error)
-    if (errorMessage.includes('QUOTA_EXCEEDED')) {
+    if (errorMessage.includes('NO_API_KEYS')) {
+      console.warn('No YouTube API keys configured')
+
+      return NextResponse.json({
+        error: 'YouTube API is not configured. Please add API keys to your environment.',
+        details: errorMessage,
+        videos: [] // Return empty videos array for client to handle
+      }, { status: 200 }) // Return 200 so client can handle gracefully
+    } else if (errorMessage.includes('QUOTA_EXCEEDED')) {
       console.warn('All YouTube API keys have reached quota limits')
       
       return NextResponse.json({ 
@@ -241,7 +243,7 @@ export async function GET(request: NextRequest) {
         details: errorMessage,
         quotaExceeded: true,
         videos: [] // Return empty videos array for client to handle
-      }, { status: 429 })
+      }, { status: 200 }) // Return 200 so client can handle gracefully
     } else if (errorMessage.includes('API key') || errorMessage.includes('quota')) {
       console.warn('YouTube API quota exceeded or key issue')
       
@@ -249,14 +251,14 @@ export async function GET(request: NextRequest) {
         error: 'YouTube API quota exceeded. Please try again later.',
         details: errorMessage,
         videos: [] // Return empty videos array for client to handle
-      }, { status: 429 })
+      }, { status: 200 }) // Return 200 so client can handle gracefully
     }
     
     return NextResponse.json({ 
       error: 'Failed to fetch videos. Please try again later.',
       details: errorMessage,
       videos: [] // Return empty videos array for client to handle
-    }, { status: 500 })
+    }, { status: 200 }) // Return 200 so client can handle gracefully
   }
 }
 

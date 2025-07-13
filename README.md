@@ -139,7 +139,10 @@ Create a `.env.local` file with the following variables:
 ```
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
 CLERK_SECRET_KEY=your_clerk_secret
+NEXT_PUBLIC_YOUTUBE_API_KEYS=your_youtube_api_keys_separated_by_commas
 ```
+
+For detailed information on setting up and managing YouTube API keys, please refer to [YOUTUBE_API_GUIDE.md](./YOUTUBE_API_GUIDE.md).
 
 4. Run the development server:
 ```bash
@@ -158,6 +161,12 @@ pnpm dev
 Required environment variables:
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: Clerk authentication public key
 - `CLERK_SECRET_KEY`: Clerk authentication secret key
+- `NEXT_PUBLIC_YOUTUBE_API_KEYS`: Comma-separated list of YouTube Data API v3 keys
+
+## Utility Scripts
+
+- `node check-api-keys.js`: Check the validity of your YouTube API keys
+- `node clean-api-keys.js`: Clean up invalid or quota-exceeded YouTube API keys
 
 ## Development
 

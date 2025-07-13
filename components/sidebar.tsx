@@ -66,12 +66,12 @@ const mainItems: SidebarItem[] = [
   { icon: Sparkles, label: "Featured", href: "/featured" },
   { icon: TrendingUp, label: "Trending", href: "/trending" },
   { icon: Music, label: "Music", href: "/music" },
+  { icon: Newspaper, label: "News", href: "/news", highlight: true },
   { icon: Film, label: "TMDB Movies", href: "/tmdb-movies", highlight: true },
 ];
 
 const categoriesItems: SidebarItem[] = [
   { icon: Gamepad2, label: "Gaming", href: "/category/gaming" },
-  { icon: Newspaper, label: "News", href: "/category/news" },
   { icon: Film, label: "Movies", href: "/category/movies" },
 ];
 

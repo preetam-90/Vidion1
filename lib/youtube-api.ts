@@ -2,11 +2,10 @@
 import { videos as localVideos } from '@/data'
 import type { Video } from '@/data'
 
-// Properly parse API keys - use server-side only environment variable
-const API_KEYS = (process.env.YOUTUBE_API_KEYS || process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS || '')
-  .split(',')
+// Properly parse API keys - ensure we're getting clean, usable keys
+const API_KEYS = process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS?.split(',')
   .map(key => key.trim())
-  .filter(Boolean)
+  .filter(Boolean) || []
 
 console.log(`Loaded ${API_KEYS.length} YouTube API keys`)
 
@@ -332,14 +331,20 @@ export interface YouTubeVideo {
     description: string
     thumbnails: {
       high: {
-        url: string
-      }
+        url: string;
+        width: number;
+        height: number;
+      };
       medium: {
-        url: string
-      }
+        url: string;
+        width: number;
+        height: number;
+      };
       default: {
-        url: string
-      }
+        url: string;
+        width: number;
+        height: number;
+      };
     }
     channelTitle: string
     publishedAt: string
@@ -635,9 +640,9 @@ function getFallbackComments(maxResults = 20): YouTubeComment[] {
 }
 
 // Function to search videos with optimized caching and batching
-export async function searchVideos(query: string, maxResults = 20) {
+export async function searchVideos(query: string, maxResults = 20, pageToken?: string) {
   const keyManager = APIKeyManager.getInstance()
-  const cacheKey = `search:${query}:${maxResults}`
+  const cacheKey = `search:${query}:${maxResults}:${pageToken || 'initial'}`
   
   return withMemoryCache(cacheKey, CACHE_DURATIONS.SEARCH, () =>
     keyManager.executeWithQuota(async (apiKey) => {
@@ -646,7 +651,8 @@ export async function searchVideos(query: string, maxResults = 20) {
         q: query,
         maxResults: maxResults.toString(),
         type: 'video',
-        key: apiKey
+        key: apiKey,
+        ...(pageToken ? { pageToken } : {})
       })
 
       const response = await fetch(`${BASE_URL}/search?${params}`, {
@@ -661,7 +667,10 @@ export async function searchVideos(query: string, maxResults = 20) {
 
       const data = await response.json()
       if (!data.items || data.items.length === 0) {
-        return getFallbackVideos(query, maxResults)
+        return {
+          items: getFallbackVideos(query, maxResults),
+          nextPageToken: null
+        }
       }
 
       // Get video IDs and use batch processor
@@ -670,11 +679,17 @@ export async function searchVideos(query: string, maxResults = 20) {
         videoIds.map((id: string) => VideoBatchProcessor.getInstance().add(id))
       )
       
-      return videoDetails.filter(Boolean)
+      return {
+        items: videoDetails.filter(Boolean),
+        nextPageToken: data.nextPageToken || null
+      }
     }, 100)
   ).catch(error => {
     console.warn('Error searching videos:', error)
-    return getFallbackVideos(query, maxResults)
+    return {
+      items: getFallbackVideos(query, maxResults),
+      nextPageToken: null
+    }
   })
 }
 
@@ -841,9 +856,9 @@ function getFallbackTrendingVideos(maxResults = 20, videoCategoryId?: string) {
 }
 
 // Function to get videos by category
-export async function getVideosByCategory(categoryId: string, maxResults = 20) {
+export async function getVideosByCategory(categoryId: string, maxResults = 20, regionCode = "US") {
   const keyManager = APIKeyManager.getInstance()
-  const cacheKey = `category:${categoryId}:${maxResults}`
+  const cacheKey = `category:${categoryId}:${maxResults}:${regionCode}`
 
   return withMemoryCache(cacheKey, CACHE_DURATIONS.CATEGORIES, () =>
     keyManager.executeWithQuota(async (apiKey) => {
@@ -852,6 +867,7 @@ export async function getVideosByCategory(categoryId: string, maxResults = 20) {
         chart: 'mostPopular',
         videoCategoryId: categoryId,
         maxResults: maxResults.toString(),
+        regionCode: regionCode,
         key: apiKey
       })
 
@@ -901,6 +917,66 @@ function getFallbackVideosByCategory(categoryId: string, maxResults = 20) {
       commentCount: typeof video.comments === 'string' ? video.comments : video.comments.toString()
     }
   }))
+}
+
+// Function to search for videos by category
+export async function searchVideosByCategory(categoryId: string, maxResults = 20, regionCode = "US", pageToken?: string) {
+  const keyManager = APIKeyManager.getInstance();
+  const cacheKey = `search-category:${categoryId}:${maxResults}:${regionCode}:${pageToken || 'initial'}`;
+
+  return withMemoryCache(cacheKey, CACHE_DURATIONS.SEARCH, () =>
+    keyManager.executeWithQuota(async (apiKey) => {
+      const searchParams = new URLSearchParams({
+        part: 'snippet',
+        videoCategoryId: categoryId,
+        type: 'video',
+        maxResults: maxResults.toString(),
+        regionCode: regionCode,
+        key: apiKey,
+        ...(pageToken ? { pageToken } : {})
+      });
+
+      const searchResponse = await fetch(`${BASE_URL}/search?${searchParams}`);
+      if (!searchResponse.ok) {
+        const error = await searchResponse.json();
+        throw new Error(error.error?.message || 'Failed to search videos by category');
+      }
+
+      const searchData = await searchResponse.json();
+      if (!searchData.items || searchData.items.length === 0) {
+        return {
+          items: [],
+          nextPageToken: null
+        };
+      }
+
+      const videoIds = searchData.items.map((item: any) => item.id.videoId).join(',');
+
+      const detailsParams = new URLSearchParams({
+        part: 'snippet,contentDetails,statistics',
+        id: videoIds,
+        key: apiKey,
+      });
+
+      const detailsResponse = await fetch(`${BASE_URL}/videos?${detailsParams}`);
+      if (!detailsResponse.ok) {
+        const error = await detailsResponse.json();
+        throw new Error(error.error?.message || 'Failed to fetch video details');
+      }
+
+      const detailsData = await detailsResponse.json();
+      return {
+        items: detailsData.items || [],
+        nextPageToken: searchData.nextPageToken || null
+      };
+    }, 101)
+  ).catch(error => {
+    console.warn('Error searching videos by category:', error);
+    return {
+      items: getFallbackVideosByCategory(categoryId, maxResults),
+      nextPageToken: null
+    };
+  });
 }
 
 // Function to get related videos
@@ -954,7 +1030,6 @@ export async function getRelatedVideos(videoId: string, maxResults = 10) {
     return getFallbackVideos("", maxResults)
   })
 }
-
 // Function to get video categories
 export async function getVideoCategories(regionCode = "US") {
   const keyManager = APIKeyManager.getInstance()
@@ -1101,11 +1176,10 @@ declare global {
  * @returns API key as a simple token
  */
 async function getAccessToken(): Promise<string> {
-  // Get API keys from server-side environment variable
-  const API_KEYS = (process.env.YOUTUBE_API_KEYS || process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS || '')
-    .split(',')
+  // Get API keys from the same environment variable used elsewhere in the file
+  const API_KEYS = process.env.NEXT_PUBLIC_YOUTUBE_API_KEYS?.split(',')
     .map(key => key.trim())
-    .filter(Boolean);
+    .filter(Boolean) || [];
 
   if (API_KEYS.length === 0) {
     console.warn('No YouTube API keys available');

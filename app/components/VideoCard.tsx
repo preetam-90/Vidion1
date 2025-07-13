@@ -3,7 +3,6 @@ import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/ca
 import Image from 'next/image'
 import { Clock, Eye } from 'lucide-react'
 import { useState } from 'react'
-import { getBestThumbnailUrl, handleThumbnailError } from "@/lib/thumbnail-utils"
 
 export default function VideoCard({ video, onClick }: { video: Video; onClick?: () => void }) {
   const [imageError, setImageError] = useState(false)
@@ -61,14 +60,11 @@ export default function VideoCard({ video, onClick }: { video: Video; onClick?: 
     >
       <div className="relative w-full aspect-video bg-muted">
         <Image
-          src={getBestThumbnailUrl(video)}
+          src={imageError ? '/placeholder-thumbnail.jpg' : (video.thumbnail || '/placeholder-thumbnail.jpg')}
           alt={video.title}
           fill
           className="object-cover transition-opacity duration-300"
-          onError={(e) => {
-            handleThumbnailError(e, video);
-            setImageError(true);
-          }}
+          onError={() => setImageError(true)}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
         {video.duration && (
