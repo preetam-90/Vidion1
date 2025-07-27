@@ -130,7 +130,22 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: PropsWithChildren) {
+import { createClient } from '../utils/supabase/server'
+
+export default async function RootLayout({ children }: PropsWithChildren) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const userData = user
+    ? {
+        name: user.user_metadata.full_name || user.email,
+        avatar: user.user_metadata.avatar_url,
+        email: user.email,
+      }
+    : undefined
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -163,11 +178,16 @@ export default function RootLayout({ children }: PropsWithChildren) {
             }
           `}
         </Script>
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          async
+          defer
+        />
       </head>
       <body className={inter.className}>
         <Providers>
           <ServiceWorkerRegistration />
-          <ClientLayout>{children}</ClientLayout>
+          <ClientLayout userData={userData}>{children}</ClientLayout>
           <Analytics />
         </Providers>
       </body>

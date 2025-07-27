@@ -27,7 +27,13 @@ const Sidebar = dynamic(() => import("@/components/sidebar"), {
   )
 })
 
-function LayoutContent({ children }: { children: React.ReactNode }) {
+function LayoutContent({
+  children,
+  userData,
+}: {
+  children: React.ReactNode
+  userData: any
+}) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
@@ -91,10 +97,11 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     if (isMoviesPage || isWatchPage) return null
     return (
       <Suspense fallback={<div className="w-64 h-full bg-background border-r animate-pulse" />}>
-        <Sidebar 
-          isMobileMenuOpen={isMobileMenuOpen} 
+        <Sidebar
+          isMobileMenuOpen={isMobileMenuOpen}
           closeMobileMenu={closeMobileMenu}
           toggleMobileMenu={toggleMobileMenu}
+          userData={userData}
         />
       </Suspense>
     )
@@ -117,8 +124,10 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
 export default function ClientLayout({
   children,
+  userData,
 }: {
   children: React.ReactNode
+  userData: any
 }) {
   return (
     <ThemeProvider
@@ -130,7 +139,7 @@ export default function ClientLayout({
     >
       <LikedVideosProvider>
         <WatchLaterProvider>
-          <LayoutContent>{children}</LayoutContent>
+          <LayoutContent userData={userData}>{children}</LayoutContent>
           <Toaster />
         </WatchLaterProvider>
       </LikedVideosProvider>

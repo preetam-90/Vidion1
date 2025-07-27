@@ -94,12 +94,14 @@ interface SidebarProps {
   };
 }
 
-export default function Sidebar({ 
-  isMobileMenuOpen, 
-  closeMobileMenu, 
+import { signOut } from "../app/login/actions"
+
+export default function Sidebar({
+  isMobileMenuOpen,
+  closeMobileMenu,
   toggleMobileMenu,
   shouldOverlay = false,
-  userData = { name: "User", avatar: "" } 
+  userData
 }: SidebarProps) {
   const pathname = usePathname()
   const isMobile = useMobile()
@@ -417,125 +419,135 @@ export default function Sidebar({
     )
   }
 
-  const UserProfile = () => (
-    <div className={cn(
-      "border-t pt-2 pb-3",
-      isCollapsed ? "px-2" : "px-3",
-    )}>
-      {isCollapsed ? (
-        <TooltipProvider delayDuration={300}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                    <Avatar className="h-9 w-9">
-                      {userData.avatar ? (
-                        <AvatarImage src={userData.avatar} alt={userData.name} />
-                      ) : (
-                        <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
-                      )}
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <div className="flex items-center justify-start gap-2 p-2">
-                    <Avatar className="h-8 w-8">
-                      {userData.avatar ? (
-                        <AvatarImage src={userData.avatar} alt={userData.name} />
-                      ) : (
-                        <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
-                      )}
-                    </Avatar>
-                    <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium">{userData.name}</p>
-                      {userData.email && (
-                        <p className="text-xs text-muted-foreground">{userData.email}</p>
-                      )}
-                    </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <HelpCircle className="mr-2 h-4 w-4" />
-                    <span>Help & Support</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>{userData.name}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ) : (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start font-normal"
-            >
-              <Avatar className="h-6 w-6 mr-2">
-                {userData.avatar ? (
-                  <AvatarImage src={userData.avatar} alt={userData.name} />
-                ) : (
-                  <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
-                )}
-              </Avatar>
-              <span className="truncate">{userData.name}</span>
+  const UserProfile = () => {
+    if (!userData) {
+      return (
+        <div className={cn(
+          "border-t pt-2 pb-3",
+          isCollapsed ? "px-2" : "px-3",
+        )}>
+          <Link href="/login">
+            <Button variant="ghost" className="w-full justify-start">
+              <User className={cn("h-5 w-5", !isCollapsed && "mr-2")} />
+              {!isCollapsed && "Login"}
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <div className="flex items-center justify-start gap-2 p-2">
-              <Avatar className="h-8 w-8">
-                {userData.avatar ? (
-                  <AvatarImage src={userData.avatar} alt={userData.name} />
-                ) : (
-                  <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
-                )}
-              </Avatar>
-              <div className="flex flex-col space-y-1 leading-none">
-                <p className="font-medium">{userData.name}</p>
-                {userData.email && (
-                  <p className="text-xs text-muted-foreground">{userData.email}</p>
-                )}
+          </Link>
+        </div>
+      )
+    }
+
+    return (
+      <div className={cn(
+        "border-t pt-2 pb-3",
+        isCollapsed ? "px-2" : "px-3",
+      )}>
+        {isCollapsed ? (
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                      <Avatar className="h-9 w-9">
+                        {userData.avatar ? (
+                          <AvatarImage src={userData.avatar} alt={userData.name} />
+                        ) : (
+                          <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                        )}
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <Avatar className="h-8 w-8">
+                        {userData.avatar ? (
+                          <AvatarImage src={userData.avatar} alt={userData.name} />
+                        ) : (
+                          <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                        )}
+                      </Avatar>
+                      <div className="flex flex-col space-y-1 leading-none">
+                        <p className="font-medium">{userData.name}</p>
+                        {userData.email && (
+                          <p className="text-xs text-muted-foreground">{userData.email}</p>
+                        )}
+                      </div>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => signOut()}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>{userData.name}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="w-full justify-start font-normal"
+              >
+                <Avatar className="h-6 w-6 mr-2">
+                  {userData.avatar ? (
+                    <AvatarImage src={userData.avatar} alt={userData.name} />
+                  ) : (
+                    <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                  )}
+                </Avatar>
+                <span className="truncate">{userData.name}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="flex items-center justify-start gap-2 p-2">
+                <Avatar className="h-8 w-8">
+                  {userData.avatar ? (
+                    <AvatarImage src={userData.avatar} alt={userData.name} />
+                  ) : (
+                    <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                  )}
+                </Avatar>
+                <div className="flex flex-col space-y-1 leading-none">
+                  <p className="font-medium">{userData.name}</p>
+                  {userData.email && (
+                    <p className="text-xs text-muted-foreground">{userData.email}</p>
+                  )}
+                </div>
               </div>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <HelpCircle className="mr-2 h-4 w-4" />
-              <span>Help & Support</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-    </div>
-  )
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => signOut()}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+    )
+  }
 
   // Mobile sidebar
   if (isMobile) {
