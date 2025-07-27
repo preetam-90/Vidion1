@@ -1,4 +1,4 @@
-import { createServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
@@ -8,49 +8,30 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
-  const supabase = createServerClient(
+  const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
-        },
-        set(name: string, value: string, options) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-        },
-        remove(name: string, options) {
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-        },
-      },
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+        storage: {
+          getItem: (name: string) => request.cookies.get(name)?.value ?? null,
+          setItem: (name: string, value: string) => {
+            const options = { path: '/' }
+            request.cookies.set({ name, value, ...options })
+            response = NextResponse.next({ request: { headers: request.headers } })
+            response.cookies.set({ name, value, ...options })
+          },
+          removeItem: (name: string) => {
+            const options = { path: '/' }
+            request.cookies.set({ name, value: '', ...options })
+            response = NextResponse.next({ request: { headers: request.headers } })
+            response.cookies.set({ name, value: '', ...options })
+          }
+        }
+      }
     }
   )
 
