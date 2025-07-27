@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-// Assume you have authentication middleware or helpers
-// import { getCurrentUser } from '@/lib/auth'; 
+
 // Assume you have database interaction functions
 // import { addLike, removeLike, getLikedVideos } from '@/lib/db'; 
 
