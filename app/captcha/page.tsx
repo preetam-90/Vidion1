@@ -10,17 +10,8 @@ export default function CaptchaPage() {
   const redirectUrl = searchParams.get('redirectUrl') || '/'
 
   const onCaptchaSuccess = async (token: string) => {
-    const response = await fetch('/api/auth/verify-captcha', {
-      method: 'POST',
-      body: JSON.stringify({ token }),
-      headers: {
-        'content-type': 'application/json',
-      },
-    })
-
-    if (response.ok) {
-      router.push(redirectUrl)
-    }
+    // No auth verification needed - just redirect
+    router.push(redirectUrl)
   }
 
   return (

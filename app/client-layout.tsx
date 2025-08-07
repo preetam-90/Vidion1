@@ -29,10 +29,8 @@ const Sidebar = dynamic(() => import("@/components/sidebar"), {
 
 function LayoutContent({
   children,
-  userData,
 }: {
   children: React.ReactNode
-  userData: any
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
@@ -101,7 +99,6 @@ function LayoutContent({
           isMobileMenuOpen={isMobileMenuOpen}
           closeMobileMenu={closeMobileMenu}
           toggleMobileMenu={toggleMobileMenu}
-          userData={userData}
         />
       </Suspense>
     )
@@ -124,10 +121,8 @@ function LayoutContent({
 
 export default function ClientLayout({
   children,
-  userData,
 }: {
   children: React.ReactNode
-  userData: any
 }) {
   return (
     <ThemeProvider
@@ -139,7 +134,7 @@ export default function ClientLayout({
     >
       <LikedVideosProvider>
         <WatchLaterProvider>
-          <LayoutContent userData={userData}>{children}</LayoutContent>
+          <LayoutContent>{children}</LayoutContent>
           <Toaster />
         </WatchLaterProvider>
       </LikedVideosProvider>

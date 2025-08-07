@@ -8,7 +8,8 @@ const nextConfig = {
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
       { protocol: 'https', hostname: 'yt3.ggpht.com' },
       { protocol: 'https', hostname: 'img.youtube.com' },
-      { protocol: 'https', hostname: 'image.tmdb.org' }
+      { protocol: 'https', hostname: 'image.tmdb.org' },
+      { protocol: 'https', hostname: 'content.stack-auth.com' }
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

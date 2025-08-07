@@ -6,20 +6,6 @@ import { NextResponse } from 'next/server';
 export const runtime = 'edge'
 
 // Placeholder for user type - replace with your actual user type
-interface User {
-  id: string;
-  // ... other user properties
-}
-
-// Placeholder function to get current user - replace with your actual implementation
-async function getCurrentUser(): Promise<User | null> {
-  // Simulate fetching a user
-  console.log("Attempting to get current user (placeholder)");
-  // In a real app, this would involve checking session, token, etc.
-  // Return a dummy user for now, or null if not authenticated
-  return { id: 'user-123-placeholder' }; 
-  // return null; 
-}
 
 // Placeholder function - replace with actual DB call
 async function addLike(userId: string, videoId: string): Promise<boolean> {

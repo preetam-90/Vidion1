@@ -7,16 +7,71 @@ import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Menu, X, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useMobile } from "@/hooks/use-mobile"
 import { useWatchLater } from "@/contexts/watch-later-context"
 import SearchBar from "@/components/search-bar"
 import { AnimatePresence, motion } from "framer-motion"
+import { useUser } from "@stackframe/stack";
 
 // Define props interface
 interface NavbarProps {
   isMobileMenuOpen: boolean;
   toggleMobileMenu: () => void;
+}
+
+function UserProfile() {
+  const user = useUser();
+
+  if (!user) {
+    return (
+      <Link href="/sign-in">
+        <Button>Login</Button>
+      </Link>
+    );
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <img
+            key={user.profileImageUrl} // Add key to force re-render on image URL change
+            src={`/api/proxy/image?url=${encodeURIComponent(user.profileImageUrl || "/placeholder-user.jpg")}`}
+            alt={user.displayName || "User Avatar"}
+            width={32}
+            height={32}
+            className="rounded-full"
+          />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{user.displayName || user.primaryEmail}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user.primaryEmail}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/account">Account Setting</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => user.signOut()}>
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
 
 // Use props in component signature
@@ -216,6 +271,7 @@ export default function Navbar({ isMobileMenuOpen, toggleMobileMenu }: NavbarPro
                 transition={{ duration: 0.2 }}
               >
                 <ThemeToggle />
+                <UserProfile />
               </motion.div>
             )}
           </AnimatePresence>

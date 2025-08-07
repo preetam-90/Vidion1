@@ -7,5 +7,4 @@ Sitemap: https://vidion.vercel.app/sitemap.xml
 
 # Disallow admin and API routes
 Disallow: /api/
-Disallow: /dashboard/
-Disallow: /auth/ 
+Disallow: /dashboard/ 

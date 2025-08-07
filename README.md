@@ -107,7 +107,6 @@ Here are some screenshots showcasing the main features of Vidion:
 ```
 ├── app/                    # Main application directory
 │   ├── api/               # API routes
-│   ├── auth/              # Authentication pages
 │   ├── components/        # Reusable components
 │   ├── contexts/          # React contexts
 │   ├── hooks/             # Custom React hooks
@@ -137,8 +136,6 @@ pnpm install
 3. Set up environment variables:
 Create a `.env.local` file with the following variables:
 ```
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
-CLERK_SECRET_KEY=your_clerk_secret
 NEXT_PUBLIC_YOUTUBE_API_KEYS=your_youtube_api_keys_separated_by_commas
 ```
 
@@ -153,14 +150,11 @@ pnpm dev
 
 1. Start the development server using `pnpm dev`
 2. Open [http://localhost:3000](http://localhost:3000) in your browser
-3. Sign in using the authentication system
-4. Browse and watch educational programming content
+3. Browse and watch educational programming content
 
 ## Environment Variables
 
 Required environment variables:
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: Clerk authentication public key
-- `CLERK_SECRET_KEY`: Clerk authentication secret key
 - `NEXT_PUBLIC_YOUTUBE_API_KEYS`: Comma-separated list of YouTube Data API v3 keys
 
 ## Utility Scripts

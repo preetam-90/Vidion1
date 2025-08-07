@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next"
+import { StackProvider, StackTheme } from "@stackframe/stack";
+import { stackServerApp } from "../stack";
 import type { PropsWithChildren } from "react"
 import "./globals.css"
 import { Inter } from "next/font/google"
@@ -130,21 +132,8 @@ export const metadata: Metadata = {
   },
 }
 
-import { createClient } from '../utils/supabase/server'
-
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  const userData = user
-    ? {
-        name: user.user_metadata.full_name || user.email,
-        avatar: user.user_metadata.avatar_url,
-        email: user.email,
-      }
-    : undefined
+  
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -184,13 +173,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           defer
         />
       </head>
-      <body className={inter.className}>
+      <body className={inter.className}><StackProvider app={stackServerApp}><StackTheme>
         <Providers>
           <ServiceWorkerRegistration />
-          <ClientLayout userData={userData}>{children}</ClientLayout>
+          <ClientLayout>{children}</ClientLayout>
           <Analytics />
         </Providers>
-      </body>
+      </StackTheme></StackProvider></body>
     </html>
   )
 }
