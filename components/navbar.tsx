@@ -31,6 +31,7 @@ interface NavbarProps {
 
 function UserProfile() {
   const user = useUser();
+  const [imageError, setImageError] = useState(false);
 
   if (!user) {
     return (
@@ -40,11 +41,43 @@ function UserProfile() {
     );
   }
 
+  // Use proxy for external URLs, direct path for local placeholder
+  const avatarSrc = user.profileImageUrl 
+    ? `/api/proxy/image?url=${encodeURIComponent(user.profileImageUrl)}`
+    : "/placeholder-user.jpg";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <UserAvatar size="sm" />
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full overflow-hidden">
+          {!imageError ? (
+            <img
+              key={avatarSrc}
+              src={avatarSrc}
+              alt={user.displayName || "User Avatar"}
+              width={32}
+              height={32}
+              className="rounded-full object-cover"
+              style={{
+                width: '32px',
+                height: '32px',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 10,
+                backgroundColor: '#f0f0f0'
+              }}
+              onError={(e) => {
+                setImageError(true);
+              }}
+              onLoad={() => {
+                setImageError(false);
+              }}
+            />
+          ) : (
+            <UserAvatar size="sm" />
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -58,7 +91,7 @@ function UserProfile() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/handler/account-settings">Account Settings</Link>
+          <Link href="/account">Account Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => user.signOut()}>
           Log out

@@ -359,3 +359,73 @@ html.watch-page-active {
 * {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
+
+/* Stack Auth Avatar Fixes */
+/* Ensure Stack Auth avatar images are properly displayed */
+[data-stack-component="userButton"] img,
+[data-stack-component="accountSettings"] img,
+.stack-avatar img,
+.stack-user-avatar img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+}
+
+/* Fix any potential hidden/invisible avatar containers */
+[data-stack-component="userButton"],
+[data-stack-component="accountSettings"] [role="img"],
+.stack-avatar,
+.stack-user-avatar {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ensure Stack Auth components have proper dimensions */
+[data-stack-component="userButton"] {
+  min-width: 32px !important;
+  min-height: 32px !important;
+}
+
+/* Fix potential z-index issues */
+[data-stack-component="userButton"] img,
+[data-stack-component="accountSettings"] img {
+  z-index: 1 !important;
+  position: relative !important;
+}
+
+/* More specific Stack Auth Profile Image fixes */
+/* Target Stack Auth's profile image section specifically */
+[data-stack-component] img[src*="stack-auth.com"],
+[data-stack-component] img[src*="content.stack-auth.com"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+/* Force Stack Auth avatar placeholders to show actual images */
+div[style*="background-image"]:has(+ *[data-testid*="avatar"]),
+div[data-testid*="avatar"] {
+  background-image: none !important;
+}
+
+/* Override Stack Auth's default avatar styling */
+[data-stack-component="accountSettings"] [role="button"]:has(img),
+[data-stack-component="accountSettings"] div:has(img) {
+  overflow: visible !important;
+}
+
+/* Ensure profile image in settings page is visible */
+[data-stack-component="accountSettings"] img {
+  visibility: visible !important;
+  display: block !important;
+  opacity: 1 !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
