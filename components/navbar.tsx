@@ -21,6 +21,7 @@ import { useWatchLater } from "@/contexts/watch-later-context"
 import SearchBar from "@/components/search-bar"
 import { AnimatePresence, motion } from "framer-motion"
 import { useUser } from "@stackframe/stack";
+import UserAvatar from "@/components/user-avatar";
 
 // Define props interface
 interface NavbarProps {
@@ -43,14 +44,7 @@ function UserProfile() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <img
-            key={user.profileImageUrl} // Add key to force re-render on image URL change
-            src={`/api/proxy/image?url=${encodeURIComponent(user.profileImageUrl || "/placeholder-user.jpg")}`}
-            alt={user.displayName || "User Avatar"}
-            width={32}
-            height={32}
-            className="rounded-full"
-          />
+          <UserAvatar size="sm" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -64,7 +58,7 @@ function UserProfile() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/account">Account Setting</Link>
+          <Link href="/handler/account-settings">Account Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => user.signOut()}>
           Log out
