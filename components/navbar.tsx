@@ -20,7 +20,7 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useWatchLater } from "@/contexts/watch-later-context"
 import SearchBar from "@/components/search-bar"
 import { AnimatePresence, motion } from "framer-motion"
-import { useUser } from "@stackframe/stack";
+import { useUser, UserButton } from "@stackframe/stack";
 
 // Define props interface
 interface NavbarProps {
@@ -34,41 +34,44 @@ function UserProfile() {
   if (!user) {
     return (
       <Link href="/sign-in">
-        <Button>Login</Button>
+        <Button size="sm" variant="outline">Login</Button>
       </Link>
     );
   }
 
+  // Generate user initials for avatar
+  const initials = (user.displayName || user.primaryEmail || 'U')
+    .split(/\s+/)
+    .map(w => w[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <img
-            key={user.profileImageUrl} // Add key to force re-render on image URL change
-            src={`/api/proxy/image?url=${encodeURIComponent(user.profileImageUrl || "/placeholder-user.jpg")}`}
-            alt={user.displayName || "User Avatar"}
-            width={32}
-            height={32}
-            className="rounded-full"
-          />
+        <Button variant="ghost" className="relative h-8 w-8 p-0 rounded-full" aria-label="User menu">
+          {/* Using reliable initials avatar instead of external CDN images */}
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-semibold">
+            {initials}
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.displayName || user.primaryEmail}</p>
-            <p className="text-xs leading-none text-muted-foreground">
+            <p className="text-xs leading-none text-muted-foreground break-all">
               {user.primaryEmail}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/account">Account Setting</Link>
+          <Link href="/handler/account-settings">Account Settings</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => user.signOut()}>
-          Log out
-        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => user.signOut()}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
