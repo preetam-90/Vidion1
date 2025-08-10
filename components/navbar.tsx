@@ -9,6 +9,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+<<<<<<< HEAD
+=======
+import { ThemeToggle } from "@/components/theme-toggle"
+import { useMobile } from "@/hooks/use-mobile"
+import { useWatchLater } from "@/contexts/watch-later-context"
+import SearchBar from "@/components/search-bar"
+import { AnimatePresence, motion } from "framer-motion"
+import { useUser } from "@stackframe/stack";
+import UserAvatar from "@/components/user-avatar";
+
+// Define props interface
+interface NavbarProps {
+  isMobileMenuOpen: boolean;
+  toggleMobileMenu: () => void;
+}
+>>>>>>> b03667e (Restore default Stack Auth account settings page and improve avatar handling)
 
 function UserProfile() {
   const user = useUser();
@@ -33,10 +49,14 @@ function UserProfile() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 p-0 rounded-full" aria-label="User menu">
+<<<<<<< HEAD
           {/* Using reliable initials avatar instead of external CDN images */}
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-semibold">
             {initials}
           </div>
+=======
+          <UserAvatar size="sm" />
+>>>>>>> b03667e (Restore default Stack Auth account settings page and improve avatar handling)
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -51,6 +71,12 @@ function UserProfile() {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/handler/account-settings">Account Settings</Link>
+<<<<<<< HEAD
+=======
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => user.signOut()}>
+          Log out
+>>>>>>> b03667e (Restore default Stack Auth account settings page and improve avatar handling)
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => user.signOut()}>Log out</DropdownMenuItem>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser } from "@stackframe/stack";
+<<<<<<< HEAD
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,11 +46,47 @@ export default function AccountSettingsPage() {
       toast({
         title: "Success",
         description: "Profile updated successfully!",
+=======
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
+import UserAvatar from "@/components/user-avatar";
+import { useState } from "react";
+import { redirect } from "next/navigation";
+
+export default function AccountSettingsPage() {
+  const user = useUser({ or: "redirect" });
+  const [displayName, setDisplayName] = useState(user?.displayName || "");
+  const [profileImageUrl, setProfileImageUrl] = useState(user?.profileImageUrl || "");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  if (!user) {
+    redirect("/sign-in");
+    return null;
+  }
+
+  const handleUpdateProfile = async () => {
+    setIsUpdating(true);
+    try {
+      await user.update({
+        displayName: displayName.trim() || undefined,
+        profileImageUrl: profileImageUrl.trim() || undefined,
+      });
+      
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been updated successfully.",
+>>>>>>> b03667e (Restore default Stack Auth account settings page and improve avatar handling)
       });
     } catch (error) {
       console.error("Error updating profile:", error);
       toast({
         title: "Error",
+<<<<<<< HEAD
         description: "Failed to update profile",
         variant: "destructive",
       });
@@ -111,18 +148,40 @@ export default function AccountSettingsPage() {
         description: "Please type 'DELETE' to confirm account deletion",
         variant: "destructive",
       });
+=======
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    }
+    setIsUpdating(false);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+>>>>>>> b03667e (Restore default Stack Auth account settings page and improve avatar handling)
       return;
     }
 
     setIsDeleting(true);
     try {
       await user.delete();
+<<<<<<< HEAD
+=======
+      toast({
+        title: "Account deleted",
+        description: "Your account has been deleted successfully.",
+      });
+>>>>>>> b03667e (Restore default Stack Auth account settings page and improve avatar handling)
       // User will be automatically redirected after deletion
     } catch (error) {
       console.error("Error deleting account:", error);
       toast({
         title: "Error",
+<<<<<<< HEAD
         description: "Failed to delete account",
+=======
+        description: "Failed to delete account. Please try again.",
+>>>>>>> b03667e (Restore default Stack Auth account settings page and improve avatar handling)
         variant: "destructive",
       });
       setIsDeleting(false);
@@ -183,6 +242,7 @@ export default function AccountSettingsPage() {
           <div className="flex space-x-2">
             <Button 
               onClick={handleUpdateProfile}
+<<<<<<< HEAD
               disabled={isUpdatingProfile}
             >
               {isUpdatingProfile ? "Updating..." : "Update Profile"}
@@ -192,11 +252,17 @@ export default function AccountSettingsPage() {
               onClick={() => user.signOut()}
             >
               Sign Out
+=======
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Updating..." : "Update Profile"}
+>>>>>>> b03667e (Restore default Stack Auth account settings page and improve avatar handling)
             </Button>
           </div>
         </CardContent>
       </Card>
 
+<<<<<<< HEAD
       {/* Password Section */}
       <Card className="mb-6">
         <CardHeader>
@@ -254,10 +320,68 @@ export default function AccountSettingsPage() {
           >
             {isUpdatingPassword ? "Updating..." : "Update Password"}
           </Button>
+=======
+      {/* Account Security */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Account Security</CardTitle>
+          <CardDescription>Manage your account security settings</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Email Verification</p>
+              <p className="text-sm text-muted-foreground">
+                {user.primaryEmailVerified ? "Your email is verified" : "Your email is not verified"}
+              </p>
+            </div>
+            <div className="flex items-center">
+              <div className={`w-2 h-2 rounded-full ${user.primaryEmailVerified ? 'bg-green-500' : 'bg-yellow-500'}`} />
+              <span className="ml-2 text-sm">
+                {user.primaryEmailVerified ? "Verified" : "Unverified"}
+              </span>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Password Protection</p>
+              <p className="text-sm text-muted-foreground">
+                {user.hasPassword ? "Password is set" : "No password set"}
+              </p>
+            </div>
+            <div className="flex items-center">
+              <div className={`w-2 h-2 rounded-full ${user.hasPassword ? 'bg-green-500' : 'bg-gray-500'}`} />
+              <span className="ml-2 text-sm">
+                {user.hasPassword ? "Protected" : "Not Set"}
+              </span>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Two-Factor Authentication</p>
+              <p className="text-sm text-muted-foreground">
+                {user.otpAuthEnabled ? "2FA is enabled" : "2FA is disabled"}
+              </p>
+            </div>
+            <div className="flex items-center">
+              <div className={`w-2 h-2 rounded-full ${user.otpAuthEnabled ? 'bg-green-500' : 'bg-gray-500'}`} />
+              <span className="ml-2 text-sm">
+                {user.otpAuthEnabled ? "Enabled" : "Disabled"}
+              </span>
+            </div>
+          </div>
+>>>>>>> b03667e (Restore default Stack Auth account settings page and improve avatar handling)
         </CardContent>
       </Card>
 
       {/* Danger Zone */}
+<<<<<<< HEAD
       <Card className="border-red-200">
         <CardHeader>
           <CardTitle className="text-red-600 flex items-center gap-2">
@@ -293,6 +417,29 @@ export default function AccountSettingsPage() {
           <p className="text-xs text-muted-foreground">
             This action cannot be undone. This will permanently delete your account and remove all associated data.
           </p>
+=======
+      <Card className="border-red-200 dark:border-red-800">
+        <CardHeader>
+          <CardTitle className="text-red-600 dark:text-red-400">Danger Zone</CardTitle>
+          <CardDescription>Irreversible and destructive actions</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Delete Account</p>
+              <p className="text-sm text-muted-foreground">
+                Permanently delete your account and all associated data
+              </p>
+            </div>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete Account"}
+            </Button>
+          </div>
+>>>>>>> b03667e (Restore default Stack Auth account settings page and improve avatar handling)
         </CardContent>
       </Card>
     </div>
